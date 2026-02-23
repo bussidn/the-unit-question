@@ -37,9 +37,9 @@ fun checkAvailability(items: List<OrderItem>): Boolean {
 
 ## 🤔 Débrief
 
-- Comment s'est passé le refactoring ?
 - Combien de tests ont cassé ?
-- Est-ce que les tests vous ont aidé ?
+- Combien de temps pour les corriger ?
+- Qu'avez-vous dû modifier ?
 
 ---
 
