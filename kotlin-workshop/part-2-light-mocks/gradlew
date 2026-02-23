@@ -1,0 +1,42 @@
+#!/bin/sh
+
+##############################################################################
+#  Gradle wrapper script for POSIX-compatible systems
+##############################################################################
+
+APP_NAME="Gradle"
+APP_BASE_NAME=$(basename "$0")
+DEFAULT_JVM_OPTS="-Xmx64m -Xms64m"
+
+# Resolve the script directory
+PRG="$0"
+while [ -h "$PRG" ]; do
+    ls=$(ls -ld "$PRG")
+    link=$(expr "$ls" : '.*-> \(.*\)$')
+    if expr "$link" : '/.*' > /dev/null; then
+        PRG="$link"
+    else
+        PRG=$(dirname "$PRG")/"$link"
+    fi
+done
+SCRIPT_DIR=$(cd "$(dirname "$PRG")" && pwd)
+
+# Determine the Java command to use
+if [ -n "$JAVA_HOME" ]; then
+    JAVACMD="$JAVA_HOME/bin/java"
+else
+    JAVACMD="java"
+fi
+
+# Validate Java availability
+if ! command -v "$JAVACMD" > /dev/null 2>&1; then
+    echo "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH."
+    exit 1
+fi
+
+CLASSPATH="$SCRIPT_DIR/gradle/wrapper/gradle-wrapper.jar"
+
+exec "$JAVACMD" $DEFAULT_JVM_OPTS \
+    -classpath "$CLASSPATH" \
+    org.gradle.wrapper.GradleWrapperMain "$@"
+
