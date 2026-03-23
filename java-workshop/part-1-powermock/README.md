@@ -14,7 +14,7 @@ Everyone talks about "unit tests", but nobody agrees on what a "unit" is.
 
 ### Format
 
-4 parties, chacune avec une approche différente du test unitaire. Vous implémenterez des fonctionnalités et ressentirez par vous-même les avantages et inconvénients de chaque stratégie.
+4 parts, each with a different approach to unit testing. You'll implement features and experience firsthand the pros and cons of each strategy.
 
 ---
 
