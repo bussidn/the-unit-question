@@ -79,6 +79,12 @@ If the tests pass, you're all set for the workshop.
 
 ---
 
+## 🏋️ The exercise
+
+👉 **[exercises/email-notification.md](exercises/email-notification.md)**
+
+---
+
 ## 📁 Project structure
 
 ```

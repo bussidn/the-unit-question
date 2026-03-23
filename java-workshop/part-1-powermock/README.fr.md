@@ -79,6 +79,12 @@ Si les tests passent, vous êtes paré pour l'atelier.
 
 ---
 
+## 🏋️ L'exercice
+
+👉 **[exercises/email-notification.fr.md](exercises/email-notification.fr.md)**
+
+---
+
 ## 📁 Structure du projet
 
 ```
