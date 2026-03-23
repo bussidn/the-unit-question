@@ -20,7 +20,7 @@
 
 1. Look at the existing code in `OrderService.java`
 2. Implement the feature however you see fit
-3. Make the tests pass
+3. Run the tests
 
 ---
 

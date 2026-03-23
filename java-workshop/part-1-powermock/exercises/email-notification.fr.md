@@ -20,7 +20,7 @@
 
 1. Regardez le code existant dans `OrderService.java`
 2. Implémentez la feature comme bon vous semble
-3. Faites passer les tests
+3. Lancez les tests
 
 ---
 
