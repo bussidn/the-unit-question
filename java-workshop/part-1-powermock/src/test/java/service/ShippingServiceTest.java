@@ -47,7 +47,9 @@ class ShippingServiceTest {
                 new OrderItem("PROD-002", 1, 20.0)
             ),
             OrderStatus.PENDING,
-            0.0
+            0.0,
+            null,
+            null
         );
 
         var expectedConfirmation = new ShippingConfirmation(
@@ -92,4 +94,3 @@ class ShippingServiceTest {
         verify(mockedConstruction.constructed().get(0)).cancelShipment(trackingNumber);
     }
 }
-

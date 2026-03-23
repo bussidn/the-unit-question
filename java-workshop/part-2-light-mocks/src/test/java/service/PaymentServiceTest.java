@@ -5,27 +5,19 @@ import domain.PaymentResult;
 import domain.PaymentStatus;
 import gateway.PaymentGateway;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class PaymentServiceTest {
-
-    @Mock
-    private PaymentGateway paymentGateway;
-
-    @InjectMocks
-    private PaymentService paymentService;
 
     @Test
     void processPayment_returnsSuccess_whenGatewaySucceeds() {
+        PaymentGateway paymentGateway = mock(PaymentGateway.class);
+        GatewayPaymentService paymentService = new GatewayPaymentService(paymentGateway);
+
         when(paymentGateway.process(any(PaymentRequest.class)))
             .thenReturn(new PaymentResult("", PaymentStatus.SUCCESS, "TXN-789"));
 
@@ -43,6 +35,12 @@ class PaymentServiceTest {
 
     @Test
     void processPayment_returnsFailure_forZeroAmount_withoutCallingGateway() {
+        PaymentGateway paymentGateway = mock(PaymentGateway.class);
+        GatewayPaymentService paymentService = new GatewayPaymentService(paymentGateway);
+
+        when(paymentGateway.process(any(PaymentRequest.class)))
+            .thenReturn(new PaymentResult("", PaymentStatus.SUCCESS, "TXN-789"));
+
         PaymentResult result = paymentService.processPayment("ORDER-123", "CUST-456", 0.0);
 
         assertEquals(PaymentStatus.FAILED, result.status());
@@ -52,6 +50,9 @@ class PaymentServiceTest {
 
     @Test
     void processPayment_returnsFailure_whenGatewayFails() {
+        PaymentGateway paymentGateway = mock(PaymentGateway.class);
+        GatewayPaymentService paymentService = new GatewayPaymentService(paymentGateway);
+
         when(paymentGateway.process(any(PaymentRequest.class)))
             .thenReturn(new PaymentResult("", PaymentStatus.FAILED, null));
 
@@ -63,6 +64,9 @@ class PaymentServiceTest {
 
     @Test
     void refundPayment_delegatesToGateway() {
+        PaymentGateway paymentGateway = mock(PaymentGateway.class);
+        GatewayPaymentService paymentService = new GatewayPaymentService(paymentGateway);
+
         when(paymentGateway.refund("TXN-123")).thenReturn(true);
 
         assertTrue(paymentService.refundPayment("TXN-123"));

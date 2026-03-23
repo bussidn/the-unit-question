@@ -1,6 +1,16 @@
-# Java Workshop – Part 3: Mocks Clean with THE TRAP
+# Java Workshop – Part 3: Technical-Layer Tests + THE CONTRACT TRAP
 
-This exercise demonstrates a subtle mock-based testing problem: both unit tests pass, but the real integration is broken because the contract between two services does not match.
+This part demonstrates two things at once:
+
+- technical-layer unit tests that are clean and factored
+- a subtle mock-based testing problem: both unit tests pass, but the real integration is broken because the contract between two services does not match
+
+## What this part showcases
+
+- production code using dependency injection
+- tests with `@BeforeEach`, `given...` helpers, and focused assertions
+- an `OrderBuilder` to reduce setup noise in tests
+- a contract trap between `GatewayPaymentService` and `OrderCancellationService`
 
 ## The trap
 
@@ -28,6 +38,7 @@ Read the tests and implementation, then explain:
 
 - `src/main/java/service/GatewayPaymentService.java`
 - `src/main/java/service/OrderCancellationService.java`
+- `src/test/java/helper/OrderBuilder.java`
 - `src/test/java/service/PaymentServiceTest.java`
 - `src/test/java/service/OrderCancellationServiceTest.java`
 

@@ -6,10 +6,6 @@ import domain.OrderStatus;
 import domain.ShippingConfirmation;
 import gateway.ShippingGateway;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
@@ -17,17 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class ShippingServiceTest {
-
-    @Mock
-    private ShippingGateway shippingGateway;
-
-    @InjectMocks
-    private ShippingService shippingService;
 
     @Test
     void createShipment_callsGatewayAndReturnsConfirmation() {
+        ShippingGateway shippingGateway = mock(ShippingGateway.class);
+        GatewayShippingService shippingService = new GatewayShippingService(shippingGateway);
+
         var order = new Order(
             "ORDER-123",
             "CUST-456",
@@ -36,7 +28,9 @@ class ShippingServiceTest {
                 new OrderItem("PROD-002", 1, 20.0)
             ),
             OrderStatus.PENDING,
-            0.0
+            0.0,
+            null,
+            null
         );
         var expectedConfirmation = new ShippingConfirmation("ORDER-123", "TRACK-ABC123", "2024-12-25");
 
@@ -54,6 +48,25 @@ class ShippingServiceTest {
 
     @Test
     void cancelShipment_callsGatewayAndReturnsResult() {
+        ShippingGateway shippingGateway = mock(ShippingGateway.class);
+        GatewayShippingService shippingService = new GatewayShippingService(shippingGateway);
+
+        var order = new Order(
+            "ORDER-123",
+            "CUST-456",
+            List.of(
+                new OrderItem("PROD-001", 2, 10.0),
+                new OrderItem("PROD-002", 1, 20.0)
+            ),
+            OrderStatus.PENDING,
+            0.0,
+            "TXN-789",
+            "TRACK-ABC123"
+        );
+
+        when(shippingGateway.createShipment(any())).thenReturn(
+            new ShippingConfirmation(order.id(), order.trackingNumber(), "2024-12-25")
+        );
         when(shippingGateway.cancelShipment("TRACK-ABC123")).thenReturn(true);
 
         assertTrue(shippingService.cancelShipment("TRACK-ABC123"));

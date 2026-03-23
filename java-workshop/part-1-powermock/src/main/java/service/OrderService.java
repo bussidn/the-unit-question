@@ -8,7 +8,6 @@ import domain.StockReservation;
 import infrastructure.Database;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Main orchestrator - creates all dependencies internally.
@@ -47,13 +46,13 @@ public class OrderService {
         }
 
         ShippingConfirmation shippingConfirmation = shippingService.createShipment(order);
-        Order confirmedOrder = order.confirm(totalPrice);
+        Order confirmedOrder = order.confirm(
+            totalPrice,
+            paymentResult.transactionId(),
+            shippingConfirmation.trackingNumber()
+        );
 
-        Database.saveOrder(confirmedOrder.id(), Map.of(
-            "status", confirmedOrder.status(),
-            "totalPrice", totalPrice,
-            "trackingNumber", shippingConfirmation.trackingNumber()
-        ));
+        Database.saveOrder(confirmedOrder);
 
         return new OrderResult.Success(confirmedOrder, shippingConfirmation);
     }

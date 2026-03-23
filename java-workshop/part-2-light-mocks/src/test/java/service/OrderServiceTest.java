@@ -8,43 +8,31 @@ import domain.PaymentStatus;
 import domain.ShippingConfirmation;
 import domain.StockReservation;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.InOrder;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
-
-    @Mock
-    private StockService stockService;
-
-    @Mock
-    private PricingService pricingService;
-
-    @Mock
-    private PaymentService paymentService;
-
-    @Mock
-    private ShippingService shippingService;
-
-    @InjectMocks
-    private OrderService orderService;
 
     @Test
     void createOrder_succeeds_whenAllStepsPass() {
+        StockService stockService = mock(StockService.class);
+        PricingService pricingService = mock(PricingService.class);
+        PaymentService paymentService = mock(PaymentService.class);
+        ShippingService shippingService = mock(ShippingService.class);
+        OrderService orderService = new OrderService(stockService, pricingService, paymentService, shippingService);
+
         var order = new Order(
             "ORDER-123",
             "CUST-456",
             List.of(new OrderItem("PROD-001", 2, 10.0)),
             OrderStatus.PENDING,
-            0.0
+            0.0,
+            null,
+            null
         );
         var reservations = List.of(new StockReservation("PROD-001", 2, true));
         var shipment = new ShippingConfirmation("ORDER-123", "TRACK-ABC", "2024-12-25");
@@ -74,15 +62,30 @@ class OrderServiceTest {
 
     @Test
     void createOrder_fails_whenStockIsUnavailable() {
+        StockService stockService = mock(StockService.class);
+        PricingService pricingService = mock(PricingService.class);
+        PaymentService paymentService = mock(PaymentService.class);
+        ShippingService shippingService = mock(ShippingService.class);
+        OrderService orderService = new OrderService(stockService, pricingService, paymentService, shippingService);
+
         var order = new Order(
             "ORDER-123",
             "CUST-456",
             List.of(new OrderItem("PROD-001", 2, 10.0)),
             OrderStatus.PENDING,
-            0.0
+            0.0,
+            null,
+            null
         );
+        var reservations = List.of(new StockReservation("PROD-001", 2, true));
+        var shipment = new ShippingConfirmation("ORDER-123", "TRACK-ABC", "2024-12-25");
 
         when(stockService.checkAvailability(order.items())).thenReturn(false);
+        when(pricingService.calculateTotal(order.items())).thenReturn(24.0);
+        when(paymentService.processPayment(order.id(), order.customerId(), 24.0))
+            .thenReturn(new PaymentResult(order.id(), PaymentStatus.SUCCESS, "TXN-789"));
+        when(stockService.reserveStock(order.items())).thenReturn(reservations);
+        when(shippingService.createShipment(order)).thenReturn(shipment);
 
         OrderResult result = orderService.createOrder(order);
 
@@ -94,14 +97,23 @@ class OrderServiceTest {
 
     @Test
     void createOrder_failsAndRefunds_whenStockReservationFails() {
+        StockService stockService = mock(StockService.class);
+        PricingService pricingService = mock(PricingService.class);
+        PaymentService paymentService = mock(PaymentService.class);
+        ShippingService shippingService = mock(ShippingService.class);
+        OrderService orderService = new OrderService(stockService, pricingService, paymentService, shippingService);
+
         var order = new Order(
             "ORDER-123",
             "CUST-456",
             List.of(new OrderItem("PROD-001", 2, 10.0)),
             OrderStatus.PENDING,
-            0.0
+            0.0,
+            null,
+            null
         );
         var reservations = List.of(new StockReservation("PROD-001", 2, false));
+        var shipment = new ShippingConfirmation("ORDER-123", "TRACK-ABC", "2024-12-25");
 
         when(stockService.checkAvailability(order.items())).thenReturn(true);
         when(pricingService.calculateTotal(order.items())).thenReturn(24.0);
@@ -109,6 +121,7 @@ class OrderServiceTest {
             .thenReturn(new PaymentResult(order.id(), PaymentStatus.SUCCESS, "TXN-789"));
         when(stockService.reserveStock(order.items())).thenReturn(reservations);
         when(paymentService.refundPayment("TXN-789")).thenReturn(true);
+        when(shippingService.createShipment(order)).thenReturn(shipment);
 
         OrderResult result = orderService.createOrder(order);
 

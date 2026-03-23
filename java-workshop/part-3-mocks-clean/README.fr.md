@@ -1,6 +1,16 @@
-# Atelier Java – Partie 3 : Mocks propres avec LE PIÈGE
+# Atelier Java – Partie 3 : tests par couche technique + LE PIÈGE DU CONTRAT
 
-Cet exercice montre un problème subtil lié aux mocks : les deux tests unitaires passent, mais l'intégration réelle est cassée parce que le contrat entre deux services ne correspond pas.
+Cette partie montre deux choses en même temps :
+
+- des tests unitaires par couche technique, propres et factorisés
+- un problème subtil lié aux mocks : les deux tests unitaires passent, mais l'intégration réelle est cassée parce que le contrat entre deux services ne correspond pas
+
+## Ce que montre cette partie
+
+- code de production avec injection de dépendances
+- tests avec `@BeforeEach`, helpers `given...`, assertions dédiées
+- `OrderBuilder` pour réduire le bruit de construction des objets de test
+- un piège de contrat entre `GatewayPaymentService` et `OrderCancellationService`
 
 ## Le piège
 
@@ -28,6 +38,7 @@ Lire les tests et l'implémentation, puis expliquer :
 
 - `src/main/java/service/GatewayPaymentService.java`
 - `src/main/java/service/OrderCancellationService.java`
+- `src/test/java/helper/OrderBuilder.java`
 - `src/test/java/service/PaymentServiceTest.java`
 - `src/test/java/service/OrderCancellationServiceTest.java`
 

@@ -1,5 +1,7 @@
 package infrastructure;
 
+import domain.Order;
+import domain.OrderStatus;
 import domain.Stock;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Map;
  */
 public final class Database {
     private static final Map<String, Stock> stocks = new HashMap<>();
+    private static final Map<String, Order> orders = new HashMap<>();
 
     static {
         stocks.put("PROD-001", new Stock("PROD-001", 100));
@@ -43,7 +46,18 @@ public final class Database {
         }
     }
 
-    public static void saveOrder(String orderId, Map<String, Object> data) {
-        System.out.println("Saving order " + orderId + " to database: " + data);
+    public static Order getOrder(String orderId) {
+        return orders.get(orderId);
+    }
+
+    public static void saveOrder(Order order) {
+        orders.put(order.id(), order);
+    }
+
+    public static void updateOrderStatus(String orderId, OrderStatus status) {
+        Order existingOrder = orders.get(orderId);
+        if (existingOrder != null) {
+            orders.put(orderId, existingOrder.withStatus(status));
+        }
     }
 }

@@ -82,5 +82,28 @@ class PaymentServiceTest {
         // Then
         assertEquals(PaymentStatus.FAILED, result.status());
     }
-}
 
+    @Test
+    void refundPayment_returnsTrue_whenGatewayRefundSucceeds() {
+        String transactionId = "TXN-789";
+
+        mockedGateway.when(() -> PaymentGateway.refund(transactionId)).thenReturn(true);
+
+        boolean result = paymentService.refundPayment(transactionId);
+
+        assertTrue(result);
+        mockedGateway.verify(() -> PaymentGateway.refund(transactionId), times(1));
+    }
+
+    @Test
+    void refundPayment_returnsFalse_whenPaymentWasAlreadyRefunded() {
+        String transactionId = "TXN-789";
+
+        mockedGateway.when(() -> PaymentGateway.refund(transactionId)).thenReturn(false);
+
+        boolean result = paymentService.refundPayment(transactionId);
+
+        assertFalse(result);
+        mockedGateway.verify(() -> PaymentGateway.refund(transactionId), times(1));
+    }
+}

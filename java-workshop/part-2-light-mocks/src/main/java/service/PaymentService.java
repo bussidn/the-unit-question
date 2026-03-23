@@ -1,28 +1,9 @@
 package service;
 
-import domain.PaymentRequest;
 import domain.PaymentResult;
-import domain.PaymentStatus;
-import gateway.PaymentGateway;
 
-public class PaymentService {
-    private final PaymentGateway paymentGateway;
+public interface PaymentService {
+    PaymentResult processPayment(String orderId, String customerId, double amount);
 
-    public PaymentService(PaymentGateway paymentGateway) {
-        this.paymentGateway = paymentGateway;
-    }
-
-    public PaymentResult processPayment(String orderId, String customerId, double amount) {
-        if (amount <= 0) {
-            return new PaymentResult(orderId, PaymentStatus.FAILED, null);
-        }
-
-        PaymentRequest request = new PaymentRequest(orderId, customerId, amount);
-        PaymentResult gatewayResult = paymentGateway.process(request);
-        return new PaymentResult(orderId, gatewayResult.status(), gatewayResult.transactionId());
-    }
-
-    public boolean refundPayment(String transactionId) {
-        return paymentGateway.refund(transactionId);
-    }
+    boolean refundPayment(String transactionId);
 }

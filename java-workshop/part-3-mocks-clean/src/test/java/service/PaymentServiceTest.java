@@ -2,6 +2,7 @@ package service;
 
 import domain.RefundResult;
 import gateway.PaymentGateway;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,23 +23,48 @@ class PaymentServiceTest {
     @InjectMocks
     private GatewayPaymentService paymentService;
 
+    private String transactionId;
+
+    @BeforeEach
+    void setUp() {
+        transactionId = "TXN-001";
+    }
+
     @Test
     void refundPayment_returnsTrue_whenMoneyIsRefunded() {
-        when(paymentGateway.refund("TXN-001")).thenReturn(RefundResult.REFUNDED);
+        givenGatewayRefundReturns(RefundResult.REFUNDED);
 
-        boolean result = paymentService.refundPayment("TXN-001");
+        boolean result = paymentService.refundPayment(transactionId);
 
         assertTrue(result);
-        verify(paymentGateway).refund("TXN-001");
+        verifyRefundWasRequested();
     }
 
     @Test
     void refundPayment_returnsFalse_whenAlreadyRefunded() {
-        when(paymentGateway.refund("TXN-001")).thenReturn(RefundResult.ALREADY_REFUNDED);
+        givenGatewayRefundReturns(RefundResult.ALREADY_REFUNDED);
 
-        boolean result = paymentService.refundPayment("TXN-001");
+        boolean result = paymentService.refundPayment(transactionId);
 
         assertFalse(result);
-        verify(paymentGateway).refund("TXN-001");
+        verifyRefundWasRequested();
+    }
+
+    @Test
+    void refundPayment_returnsFalse_whenNothingNeedsToBeRefunded() {
+        givenGatewayRefundReturns(RefundResult.NOTHING_TO_REFUND);
+
+        boolean result = paymentService.refundPayment(transactionId);
+
+        assertFalse(result);
+        verifyRefundWasRequested();
+    }
+
+    private void givenGatewayRefundReturns(RefundResult refundResult) {
+        when(paymentGateway.refund(transactionId)).thenReturn(refundResult);
+    }
+
+    private void verifyRefundWasRequested() {
+        verify(paymentGateway).refund(transactionId);
     }
 }
