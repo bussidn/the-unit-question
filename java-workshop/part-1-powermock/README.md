@@ -1,4 +1,4 @@
-# The Unit Question — Java Workshop
+# The Unit Question — Part 1
 
 > **What is a "unit" in unit test?**
 
@@ -12,116 +12,85 @@ Everyone talks about "unit tests", but nobody agrees on what a "unit" is.
 
 **This workshop makes you experience different testing approaches** through hands-on exercises. You'll feel the friction of each strategy and discover which one works best for you.
 
-### Format
-
-4 parts, each with a different approach to unit testing. You'll implement features and experience firsthand the pros and cons of each strategy.
+4 parts, each with a different approach. You'll implement features and experience firsthand the pros and cons of each strategy.
 
 ---
 
-## 🛠️ Prerequisites
+## 🛠️ Before you start
 
-### Required
+### Prerequisites
 
-| Tool | Version | Check command |
-|------|---------|---------------|
+| Tool | Version | Check |
+|------|---------|-------|
 | **Java (JDK)** | 21+ | `java -version` |
 | **Git** | any | `git --version` |
 
-### Included (no installation needed)
+Gradle, JUnit and Mockito are included (downloaded automatically).
 
-- **Gradle 9.3** — via the wrapper (`./gradlew`)
-- **JUnit 5.11** — downloaded by Gradle
-- **Mockito 5.14** — downloaded by Gradle
-
----
-
-## 📦 Before you start
-
-### 1. Clone the repository
+### Setup
 
 ```bash
 git clone https://github.com/bussidn/the-unit-question.git
 cd the-unit-question/java-workshop/part-1-powermock
-```
-
-### 2. Verify the setup
-
-Run the tests to make sure everything works:
-
-```bash
 ./gradlew test
 ```
 
-You should see:
+You should see `BUILD SUCCESSFUL`. If so, you're ready!
 
-```
-BUILD SUCCESSFUL
-```
-
-> ⚠️ **On Windows**, use `gradlew.bat test` instead.
-
-### 3. Open in your IDE
-
-Open the `part-1-powermock` folder in your favorite IDE (IntelliJ IDEA recommended).
-
-Make sure your IDE:
-- Recognizes the project as a Gradle project
-- Uses JDK 21+
-- Can run the tests
+> ⚠️ **Windows**: use `gradlew.bat test`
 
 ---
 
-## ✅ You're ready!
+## 🏋️ Exercise: Implement email sending
 
-If the tests pass, you're all set for the workshop.
+**⏱️ ~15 minutes** *(don't worry if you don't finish)*
 
-**See you there!** 🚀
+We'd like the customer to receive a confirmation email after placing their order. The email address is provided by the customer when ordering. The email should contain the order number and the total amount. Obviously, if the order fails, no email should be sent.
+
+### Scenario 1: Successful order
+
+```
+GIVEN a customer with email "alice@example.com"
+AND a cart with 2 items totaling 49.99€
+AND stock is available
+AND payment is accepted
+
+WHEN the customer places the order
+
+THEN the order is created successfully
+AND an email is sent to "alice@example.com"
+AND the email contains "Order ORDER-123 confirmed: 49.99€"
+```
+
+### Scenario 2: Payment declined
+
+```
+GIVEN a customer with email "bob@example.com"
+AND a cart with 1 item
+AND stock is available
+AND payment is declined
+
+WHEN the customer places the order
+
+THEN the order fails
+AND no email is sent
+```
+
+### Your mission
+
+1. Look at the existing code in `src/main/java/service/OrderService.java`
+2. Implement the feature however you see fit
+3. Run the tests
+
+### 🎯 The point
+
+> **The goal is NOT to finish.**
+>
+> The goal is to **feel** what happens when you add a feature to this codebase.
 
 ---
 
-## 🏋️ The exercise
+## ➡️ Next
 
-👉 **[exercises/email-notification.md](exercises/email-notification.md)**
-
----
-
-## 📁 Project structure
-
-```
-part-1-powermock/
-├── src/
-│   ├── main/java/           # Production code
-│   │   ├── domain/          # Domain objects (Order, Stock, etc.)
-│   │   ├── infrastructure/  # External systems (Database, APIs)
-│   │   ├── repository/      # Data access
-│   │   └── service/         # Business logic
-│   │
-│   └── test/java/           # Test code
-│       └── service/         # Tests for services
-│
-├── build.gradle             # Dependencies & configuration
-└── gradlew                  # Gradle wrapper (use this!)
-```
-
----
-
-## ❓ Troubleshooting
-
-### "java: error: release version 21 not supported"
-
-Your IDE is using an older JDK. Configure it to use JDK 21+.
-
-**IntelliJ**: File → Project Structure → Project SDK → 21
-
-### "Could not resolve dependencies"
-
-Check your internet connection. Gradle needs to download dependencies.
-
-```bash
-./gradlew --refresh-dependencies test
-```
-
-### Tests fail with "UnsupportedClassVersionError"
-
-You're running with an old Java version. Check `java -version` and install JDK 21+.
+Once done (or time's up), move on to **[Part 2](../part-2-light-mocks/README.md)**
 

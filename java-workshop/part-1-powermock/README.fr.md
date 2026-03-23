@@ -1,4 +1,4 @@
-# The Unit Question — Atelier Java
+# The Unit Question — Part 1
 
 > **Qu'est-ce qu'un "unit" dans unit test ?**
 
@@ -12,116 +12,85 @@ Tout le monde parle de "tests unitaires", mais personne n'est d'accord sur ce qu
 
 **Cet atelier vous fait vivre différentes approches de test** à travers des exercices pratiques. Vous ressentirez les frictions de chaque stratégie et découvrirez laquelle vous convient.
 
-### Format
-
-4 parties, chacune avec une approche différente du test unitaire. Vous implémenterez des fonctionnalités et ressentirez par vous-même les avantages et inconvénients de chaque stratégie.
+4 parties, chacune avec une approche différente. Vous implémenterez des fonctionnalités et ressentirez par vous-même les avantages et inconvénients de chaque stratégie.
 
 ---
 
-## 🛠️ Prérequis
+## 🛠️ Avant de commencer
 
-### Obligatoire
+### Prérequis
 
-| Outil | Version | Commande de vérification |
-|-------|---------|--------------------------|
+| Outil | Version | Vérification |
+|-------|---------|--------------|
 | **Java (JDK)** | 21+ | `java -version` |
 | **Git** | n'importe | `git --version` |
 
-### Inclus (pas d'installation nécessaire)
+Gradle, JUnit et Mockito sont inclus (téléchargés automatiquement).
 
-- **Gradle 9.3** — via le wrapper (`./gradlew`)
-- **JUnit 5.11** — téléchargé par Gradle
-- **Mockito 5.14** — téléchargé par Gradle
-
----
-
-## 📦 Avant de commencer
-
-### 1. Cloner le dépôt
+### Installation
 
 ```bash
 git clone https://github.com/bussidn/the-unit-question.git
 cd the-unit-question/java-workshop/part-1-powermock
-```
-
-### 2. Vérifier l'installation
-
-Lancez les tests pour vérifier que tout fonctionne :
-
-```bash
 ./gradlew test
 ```
 
-Vous devriez voir :
+Vous devriez voir `BUILD SUCCESSFUL`. Si c'est le cas, vous êtes prêt !
 
-```
-BUILD SUCCESSFUL
-```
-
-> ⚠️ **Sous Windows**, utilisez `gradlew.bat test` à la place.
-
-### 3. Ouvrir dans votre IDE
-
-Ouvrez le dossier `part-1-powermock` dans votre IDE favori (IntelliJ IDEA recommandé).
-
-Vérifiez que votre IDE :
-- Reconnaît le projet comme un projet Gradle
-- Utilise le JDK 21+
-- Peut lancer les tests
+> ⚠️ **Windows** : utilisez `gradlew.bat test`
 
 ---
 
-## ✅ Vous êtes prêt !
+## 🏋️ Exercice : Implémenter l'envoi d'email
 
-Si les tests passent, vous êtes paré pour l'atelier.
+**⏱️ ~15 minutes** *(ne vous inquiétez pas si vous ne finissez pas)*
 
-**À bientôt !** 🚀
+On voudrait que le client reçoive un email de confirmation après avoir passé sa commande. L'adresse email est renseignée par le client au moment de la commande. L'email doit contenir le numéro de commande et le montant total. Évidemment, si la commande échoue, on n'envoie pas d'email.
+
+### Scénario 1 : Commande réussie
+
+```
+ÉTANT DONNÉ un client avec l'email "alice@example.com"
+ET un panier contenant 2 articles pour un total de 49.99€
+ET le stock est disponible
+ET le paiement est accepté
+
+QUAND le client valide sa commande
+
+ALORS la commande est créée avec succès
+ET un email est envoyé à "alice@example.com"
+ET l'email contient "Commande ORDER-123 confirmée : 49.99€"
+```
+
+### Scénario 2 : Paiement refusé
+
+```
+ÉTANT DONNÉ un client avec l'email "bob@example.com"
+ET un panier contenant 1 article
+ET le stock est disponible
+ET le paiement est refusé
+
+QUAND le client valide sa commande
+
+ALORS la commande échoue
+ET aucun email n'est envoyé
+```
+
+### Votre mission
+
+1. Regardez le code existant dans `src/main/java/service/OrderService.java`
+2. Implémentez la feature comme bon vous semble
+3. Lancez les tests
+
+### 🎯 Le but
+
+> **L'objectif N'EST PAS de finir.**
+>
+> L'objectif est de **ressentir** ce qui se passe quand on ajoute une feature à cette codebase.
 
 ---
 
-## 🏋️ L'exercice
+## ➡️ Suite
 
-👉 **[exercises/email-notification.fr.md](exercises/email-notification.fr.md)**
-
----
-
-## 📁 Structure du projet
-
-```
-part-1-powermock/
-├── src/
-│   ├── main/java/           # Code de production
-│   │   ├── domain/          # Objets métier (Order, Stock, etc.)
-│   │   ├── infrastructure/  # Systèmes externes (Database, APIs)
-│   │   ├── repository/      # Accès aux données
-│   │   └── service/         # Logique métier
-│   │
-│   └── test/java/           # Code de test
-│       └── service/         # Tests des services
-│
-├── build.gradle             # Dépendances & configuration
-└── gradlew                  # Wrapper Gradle (utilisez celui-ci !)
-```
-
----
-
-## ❓ Dépannage
-
-### "java: error: release version 21 not supported"
-
-Votre IDE utilise un JDK trop ancien. Configurez-le pour utiliser JDK 21+.
-
-**IntelliJ** : File → Project Structure → Project SDK → 21
-
-### "Could not resolve dependencies"
-
-Vérifiez votre connexion internet. Gradle doit télécharger les dépendances.
-
-```bash
-./gradlew --refresh-dependencies test
-```
-
-### Les tests échouent avec "UnsupportedClassVersionError"
-
-Vous utilisez une vieille version de Java. Vérifiez `java -version` et installez JDK 21+.
+Une fois l'exercice terminé (ou le temps écoulé), passez à la **[Part 2](../part-2-light-mocks/README.fr.md)**
 
