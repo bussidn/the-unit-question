@@ -12,14 +12,9 @@ Tout le monde parle de "tests unitaires", mais personne n'est d'accord sur ce qu
 
 **Cet atelier vous fait vivre différentes approches de test** à travers des exercices pratiques. Vous ressentirez les frictions de chaque stratégie et découvrirez laquelle vous convient.
 
-### Les 4 parties
+### Format
 
-| Partie | Unité = | Point de friction |
-|--------|---------|-------------------|
-| **Part 1** | La méthode/classe | Tout est mocké → tests couplés à l'implémentation |
-| **Part 2** | La couche technique | Tests mal conçus → changements d'API pénibles |
-| **Part 3** | La couche technique | Tests bien conçus → mais bugs de contrat cachés |
-| **Part 4** | Le comportement métier | Les tests décrivent le QUOI, pas le COMMENT |
+4 parties, chacune avec une approche différente du test unitaire. Vous implémenterez des fonctionnalités et ressentirez par vous-même les avantages et inconvénients de chaque stratégie.
 
 ---
 

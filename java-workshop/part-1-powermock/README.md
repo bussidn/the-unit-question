@@ -12,14 +12,9 @@ Everyone talks about "unit tests", but nobody agrees on what a "unit" is.
 
 **This workshop makes you experience different testing approaches** through hands-on exercises. You'll feel the friction of each strategy and discover which one works best for you.
 
-### The 4 parts
+### Format
 
-| Part | Unit = | Pain point |
-|------|--------|------------|
-| **Part 1** | The method/class | Everything is mocked → tests coupled to implementation |
-| **Part 2** | Technical layer | Poorly designed tests → painful API changes |
-| **Part 3** | Technical layer | Well-designed tests → but hidden contract bugs |
-| **Part 4** | Business behavior | Tests describe WHAT, not HOW |
+4 parties, chacune avec une approche différente du test unitaire. Vous implémenterez des fonctionnalités et ressentirez par vous-même les avantages et inconvénients de chaque stratégie.
 
 ---
 
