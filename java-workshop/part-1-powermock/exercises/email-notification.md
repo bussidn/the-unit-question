@@ -8,11 +8,36 @@
 
 ---
 
-## Acceptance criteria
+## Scenarios
 
-1. After a successful order, the customer receives an email
-2. The email contains the order ID and total price
-3. If the order fails (stock, payment...), no email is sent
+### Scenario 1: Successful order → email sent
+
+```
+GIVEN a customer with email "alice@example.com"
+AND a cart with 2 items totaling 49.99€
+AND stock is available
+AND payment is accepted
+
+WHEN the customer places the order
+
+THEN the order is created successfully
+AND an email is sent to "alice@example.com"
+AND the email contains "Order ORDER-123 confirmed: 49.99€"
+```
+
+### Scenario 2: Payment declined → no email
+
+```
+GIVEN a customer with email "bob@example.com"
+AND a cart with 1 item
+AND stock is available
+AND payment is declined
+
+WHEN the customer places the order
+
+THEN the order fails
+AND no email is sent
+```
 
 ---
 

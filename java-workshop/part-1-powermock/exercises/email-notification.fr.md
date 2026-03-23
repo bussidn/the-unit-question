@@ -8,11 +8,36 @@
 
 ---
 
-## Critères d'acceptation
+## Scénarios
 
-1. Après une commande réussie, le client reçoit un email
-2. L'email contient l'ID de commande et le montant total
-3. Si la commande échoue (stock, paiement...), aucun email n'est envoyé
+### Scénario 1 : Commande réussie → email envoyé
+
+```
+ÉTANT DONNÉ un client avec l'email "alice@example.com"
+ET un panier contenant 2 articles pour un total de 49.99€
+ET le stock est disponible
+ET le paiement est accepté
+
+QUAND le client valide sa commande
+
+ALORS la commande est créée avec succès
+ET un email est envoyé à "alice@example.com"
+ET l'email contient "Commande ORDER-123 confirmée : 49.99€"
+```
+
+### Scénario 2 : Paiement refusé → pas d'email
+
+```
+ÉTANT DONNÉ un client avec l'email "bob@example.com"
+ET un panier contenant 1 article
+ET le stock est disponible
+ET le paiement est refusé
+
+QUAND le client valide sa commande
+
+ALORS la commande échoue
+ET aucun email n'est envoyé
+```
 
 ---
 
