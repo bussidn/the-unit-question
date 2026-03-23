@@ -1,16 +1,14 @@
-# Exercise: Email Notification
-
-## The feature
-
-> *"When an order is successfully created, send a confirmation email to the customer."*
+# Exercise: Implement email sending
 
 **⏱️ Time: ~15 minutes** *(don't worry if you don't finish)*
 
 ---
 
-## Scenarios
+We'd like the customer to receive a confirmation email after placing their order. The email address is provided by the customer when ordering. The email should contain the order number and the total amount. Obviously, if the order fails, no email should be sent.
 
-### Scenario 1: Successful order → email sent
+---
+
+### Scenario 1: Successful order
 
 ```
 GIVEN a customer with email "alice@example.com"
@@ -25,7 +23,7 @@ AND an email is sent to "alice@example.com"
 AND the email contains "Order ORDER-123 confirmed: 49.99€"
 ```
 
-### Scenario 2: Payment declined → no email
+### Scenario 2: Payment declined
 
 ```
 GIVEN a customer with email "bob@example.com"

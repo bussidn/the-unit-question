@@ -1,16 +1,14 @@
-# Exercice : Notification Email
-
-## La feature
-
-> *"Quand une commande est créée avec succès, envoyer un email de confirmation au client."*
+# Exercice : Implémenter l'envoi d'email
 
 **⏱️ Temps : ~15 minutes** *(ne vous inquiétez pas si vous ne finissez pas)*
 
 ---
 
-## Scénarios
+On voudrait que le client reçoive un email de confirmation après avoir passé sa commande. L'adresse email est renseignée par le client au moment de la commande. L'email doit contenir le numéro de commande et le montant total. Évidemment, si la commande échoue, on n'envoie pas d'email.
 
-### Scénario 1 : Commande réussie → email envoyé
+---
+
+### Scénario 1 : Commande réussie
 
 ```
 ÉTANT DONNÉ un client avec l'email "alice@example.com"
@@ -25,7 +23,7 @@ ET un email est envoyé à "alice@example.com"
 ET l'email contient "Commande ORDER-123 confirmée : 49.99€"
 ```
 
-### Scénario 2 : Paiement refusé → pas d'email
+### Scénario 2 : Paiement refusé
 
 ```
 ÉTANT DONNÉ un client avec l'email "bob@example.com"
