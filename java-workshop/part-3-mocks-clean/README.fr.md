@@ -1,57 +1,61 @@
-# Atelier Java – Partie 3 : tests par couche technique + LE PIÈGE DU CONTRAT
+# The Unit Question — Part 3
 
-Cette partie montre deux choses en même temps :
+## 🏋️ Exercice : Annulation de Commande
 
-- des tests unitaires par couche technique, propres et factorisés
-- un problème subtil lié aux mocks : les deux tests unitaires passent, mais l'intégration réelle est cassée parce que le contrat entre deux services ne correspond pas
+**⏱️ ~20 minutes** *(ne vous inquiétez pas si vous ne finissez pas)*
 
-## Ce que montre cette partie
+On voudrait permettre aux clients d'annuler une commande. Le système doit gérer le remboursement, libérer le stock, et annuler l'expédition si nécessaire.
 
-- code de production avec injection de dépendances
-- tests avec `@BeforeEach`, helpers `given...`, assertions dédiées
-- `OrderBuilder` pour réduire le bruit de construction des objets de test
-- un piège de contrat entre `GatewayPaymentService` et `OrderCancellationService`
+### Scénario 1 : Annulation avant expédition
 
-## Le piège
+```
+ÉTANT DONNÉ une commande confirmée
+ET un paiement effectué (transaction ID présent)
+ET pas encore expédiée (pas de tracking number)
 
-`PaymentService.refundPayment()` signifie :
+QUAND le client annule sa commande
 
-- `true` → l'argent a été remboursé
-- `false` → rien à rembourser
-
-`OrderCancellationService` suppose :
-
-- `true` → succès
-- `false` → échec du remboursement
-
-Les deux côtés sont testés. Les deux tests passent. Pourtant le système reste incorrect.
-
-## Objectif
-
-Lire les tests et l'implémentation, puis expliquer :
-
-1. Pourquoi les tests passent
-2. Pourquoi le comportement en production est faux
-3. Comment redessiner le contrat pour éviter ce piège
-
-## Fichiers à inspecter
-
-- `src/main/java/service/GatewayPaymentService.java`
-- `src/main/java/service/OrderCancellationService.java`
-- `src/test/java/helper/OrderBuilder.java`
-- `src/test/java/service/PaymentServiceTest.java`
-- `src/test/java/service/OrderCancellationServiceTest.java`
-
-## Lancer les tests
-
-```bash
-./gradlew test
+ALORS le paiement est remboursé
+ET le stock est libéré
+ET le statut passe à CANCELLED
 ```
 
-## Pistes de discussion
+### Scénario 2 : Annulation avec expédition en cours
 
-- Faut-il remplacer le `boolean` par un type de résultat plus riche ?
-- Faut-il considérer « rien à rembourser » comme un succès ?
-- Les échecs doivent-ils être représentés par une exception ou par un résultat explicite du domaine ?
+```
+ÉTANT DONNÉ une commande confirmée
+ET un paiement effectué
+ET une expédition créée (tracking number présent)
 
-Si vous voulez la réponse, consultez `reveal/bug-report.fr.md`.
+QUAND le client annule sa commande
+
+ALORS le paiement est remboursé
+ET le stock est libéré
+ET l'expédition est annulée
+ET le statut passe à CANCELLED
+```
+
+### Votre mission
+
+1. Regardez le code existant dans `src/main/java/service/`
+2. Regardez les tests existants — notez les helpers et builders
+3. Implémentez la feature avec ses tests
+4. Lancez les tests : `./gradlew test`
+
+### 🎯 Le but
+
+> **L'objectif N'EST PAS de finir.**
+>
+> L'objectif est de **ressentir** ce qui se passe quand on ajoute une feature à cette codebase.
+
+---
+
+## ⏰ Temps écoulé ?
+
+Une fois l'exercice terminé (ou le temps écoulé), ouvrez le fichier **[reveal/bug-report.fr.md](reveal/bug-report.fr.md)**
+
+---
+
+## ➡️ Suite
+
+Passez à la **[Part 4](../part-4-behavior/README.fr.md)**

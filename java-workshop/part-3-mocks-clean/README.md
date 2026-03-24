@@ -1,57 +1,62 @@
-# Java Workshop – Part 3: Technical-Layer Tests + THE CONTRACT TRAP
+# The Unit Question — Part 3
 
-This part demonstrates two things at once:
+## 🏋️ Exercise: Order Cancellation
 
-- technical-layer unit tests that are clean and factored
-- a subtle mock-based testing problem: both unit tests pass, but the real integration is broken because the contract between two services does not match
+**⏱️ ~20 minutes** *(don't worry if you don't finish)*
 
-## What this part showcases
+We'd like to allow customers to cancel an order. The system should handle the refund, release stock, and cancel shipping if needed.
 
-- production code using dependency injection
-- tests with `@BeforeEach`, `given...` helpers, and focused assertions
-- an `OrderBuilder` to reduce setup noise in tests
-- a contract trap between `GatewayPaymentService` and `OrderCancellationService`
+### Scenario 1: Cancellation before shipping
 
-## The trap
+```
+GIVEN a confirmed order
+AND a payment was made (transaction ID present)
+AND not yet shipped (no tracking number)
 
-`PaymentService.refundPayment()` means:
+WHEN the customer cancels the order
 
-- `true` → money was refunded
-- `false` → nothing to refund
-
-`OrderCancellationService` assumes:
-
-- `true` → success
-- `false` → refund failed
-
-Both sides are tested. Both tests pass. The system is still wrong.
-
-## Goal
-
-Read the tests and implementation, then explain:
-
-1. Why the tests pass
-2. Why the production behavior is wrong
-3. How you would redesign the contract to avoid this trap
-
-## Files to inspect
-
-- `src/main/java/service/GatewayPaymentService.java`
-- `src/main/java/service/OrderCancellationService.java`
-- `src/test/java/helper/OrderBuilder.java`
-- `src/test/java/service/PaymentServiceTest.java`
-- `src/test/java/service/OrderCancellationServiceTest.java`
-
-## Run the tests
-
-```bash
-./gradlew test
+THEN the payment is refunded
+AND the stock is released
+AND the status becomes CANCELLED
 ```
 
-## Discussion prompts
+### Scenario 2: Cancellation with shipping in progress
 
-- Should `boolean` be replaced with a richer result type?
-- Should “nothing to refund” be considered success?
-- Should failures be represented by an exception or an explicit domain result?
+```
+GIVEN a confirmed order
+AND a payment was made
+AND a shipment was created (tracking number present)
 
-If you want the answer, see `reveal/bug-report.md`.
+WHEN the customer cancels the order
+
+THEN the payment is refunded
+AND the stock is released
+AND the shipment is cancelled
+AND the status becomes CANCELLED
+```
+
+### Your mission
+
+1. Look at the existing code in `src/main/java/service/`
+2. Look at the existing tests — notice the helpers and builders
+3. Implement the feature with its tests
+4. Run the tests: `./gradlew test`
+
+### 🎯 The point
+
+> **The goal is NOT to finish.**
+>
+> The goal is to **feel** what happens when you add a feature to this codebase.
+
+---
+
+## ⏰ Time's up?
+
+Once done (or time's up), open the file **[reveal/bug-report.md](reveal/bug-report.md)**
+
+---
+
+## ➡️ Next
+
+Move on to **[Part 4](../part-4-behavior/README.md)**
+
