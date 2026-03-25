@@ -83,8 +83,13 @@ AND no email is sent
 ### Your mission
 
 1. Look at the existing code in `src/main/java/service/OrderService.java`
-2. Implement the feature however you see fit
+2. An `EmailService` is already provided — use it to send the email
 3. Run the tests
+
+> 💡 **Hint**: To mock a constructor in your tests, use:
+> ```java
+> MockedConstruction<EmailService> mockedEmail = mockConstruction(EmailService.class)
+> ```
 
 ### 🎯 The point
 

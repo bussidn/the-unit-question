@@ -83,8 +83,13 @@ ET aucun email n'est envoyé
 ### Votre mission
 
 1. Regardez le code existant dans `src/main/java/service/OrderService.java`
-2. Implémentez la feature comme bon vous semble
+2. Un `EmailService` est déjà fourni — utilisez-le pour envoyer l'email
 3. Lancez les tests
+
+> 💡 **Indice** : Pour mocker un constructeur dans vos tests, utilisez :
+> ```java
+> MockedConstruction<EmailService> mockedEmail = mockConstruction(EmailService.class)
+> ```
 
 ### 🎯 Le but
 
