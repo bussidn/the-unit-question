@@ -45,7 +45,11 @@ You should see `BUILD SUCCESSFUL`. If so, you're ready!
 
 **⏱️ ~15 minutes** *(don't worry if you don't finish)*
 
-We'd like the customer to receive a confirmation email after placing their order. The email address is provided by the customer when ordering. The email should contain the order number and the total amount. Obviously, if the order fails, no email should be sent.
+We'd like the customer to receive a confirmation email after placing their order.
+
+**Currently, the `Order` object does not contain the customer's email address.** You'll need to add it to send the confirmation.
+
+The email should contain the order identifier (`id`) and the total amount. If the order fails, no email should be sent.
 
 ### Scenario 1: Successful order
 

@@ -45,7 +45,11 @@ Vous devriez voir `BUILD SUCCESSFUL`. Si c'est le cas, vous êtes prêt !
 
 **⏱️ ~15 minutes** *(ne vous inquiétez pas si vous ne finissez pas)*
 
-On voudrait que le client reçoive un email de confirmation après avoir passé sa commande. L'adresse email est renseignée par le client au moment de la commande. L'email doit contenir le numéro de commande et le montant total. Évidemment, si la commande échoue, on n'envoie pas d'email.
+On voudrait que le client reçoive un email de confirmation après avoir passé sa commande.
+
+**Actuellement, l'objet `Order` ne contient pas l'adresse email du client.** Vous devrez l'ajouter pour pouvoir envoyer la confirmation.
+
+L'email doit contenir l'identifiant de la commande (`id`) et le montant total. Si la commande échoue, aucun email n'est envoyé.
 
 ### Scénario 1 : Commande réussie
 
