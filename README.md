@@ -1,59 +1,29 @@
 # The Unit Question
 
-> Qu'est-ce qu'un "unit" dans unit test ?
+> What is a "unit" in a unit test?
 
-## 🎯 À propos
+## 🎯 About
 
-Ce repository contient le matériel pour un atelier (ou une présentation) sur les heuristiques de test.
+This repository contains material for a workshop (or presentation) about testing heuristics.
 
-**Le sujet** : La notion de "unit" dans les tests unitaires est galvaudée. Chacun y met sa propre définition. Ce workshop vous fait vivre différentes approches de test pour découvrir par vous-même laquelle vous convient.
+**The topic**: The notion of "unit" in unit tests is overloaded. Everyone has their own definition. This workshop lets you experience different testing approaches to discover which one works best for you.
 
-## 📁 Structure
+## 🧭 Workshop flow
 
-```
-├── presentation/          # Support et plan de présentation (live coding)
-│
-├── java/                  # Atelier en Java
-├── javascript/            # Atelier en JavaScript
-├── python/                # Atelier en Python
-├── kotlin-workshop/       # Atelier en Kotlin
-│   ├── part-1-powermock/
-│   ├── part-2-light-mocks/
-│   ├── part-3-mocks-clean/
-│   └── part-4-behavior/
-│
-└── kotlin-presentation/   # Code de démo pour le format conférence
-```
+The workshop is built around a single business domain: **a small online shop**. You'll find production code centered on order placement, payment, inventory, shipping, and notifications.
 
-## 🛠️ Prérequis
+The goal is not to discover a new domain in every exercise, but instead to **stay in a stable functional world** so you can better feel the impact of your testing choices.
 
-Selon le langage choisi :
-- **Java** : JDK 17+, Maven ou Gradle
-- **JavaScript** : Node.js 18+
-- **Python** : Python 3.10+
-- **Kotlin** : JDK 17+, Gradle
+In each language, the workshop unfolds in **4 parts that are meant to be completed in order**. Each part presents production code **very close to the previous one**, which participants will explore. At each step, you'll be asked to **implement a new feature in the existing code** and observe how that changes the way you test.
 
-## 🚀 Déroulement de l'atelier (1h45)
+Detailed instructions, business scenarios, and the feature to implement are provided in each part's `README`.
 
-| Phase | Durée | Description |
-|-------|-------|-------------|
-| Introduction | ~10 min | Histoire personnelle et analogie |
-| Part 1 - PowerMock | ~15 min | L'isolation extrême (exercice léger) |
-| Part 2 - Light Mocks | ~25 min | Évolution A avec mocks classiques |
-| Transition | ~5 min | Amélioration : factoriser les mocks |
-| Part 3 - Mocks Clean | ~25 min | Évolution B (même inputs, output différent) |
-| Part 4 - Behavior | ~20 min | Refaire les évolutions A et B |
-| Conclusion | ~5 min | La morale : What vs How |
+## 💻 Choose a language
 
-## 📝 Évolutions à implémenter
+- **Java** — [Start with Part 1](java-workshop/part-1-powermock/README.md)
+- **Kotlin** — [Start with Part 1](kotlin-workshop/part-1-powermock/README.md)
 
-### Évolution A
-*Ajouter la gestion des codes promo*
-
-### Évolution B  
-*Quand le stock est insuffisant, passer la commande en "backorder" au lieu de la rejeter*
-
-## 📄 Licence
+## 📄 License
 
 MIT
 
