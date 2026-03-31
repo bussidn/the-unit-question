@@ -1,14 +1,8 @@
 # The Unit Question — Part 2
 
-## 🏋️ Exercice : Choisissez votre feature
+## 🏋️ Exercice : Code Promo
 
 **⏱️ ~20-25 minutes** *(ne vous inquiétez pas si vous ne finissez pas)*
-
-Choisissez **une** des features suivantes à implémenter :
-
----
-
-### Option A : Code Promo
 
 On voudrait permettre aux clients d'appliquer un code promo à leur commande. Le système doit valider le code et calculer la réduction.
 
@@ -40,78 +34,18 @@ ET le total reste inchangé
 
 ---
 
-### Option B : Livraison Express
+## 💡 Pistes de conception
 
-On voudrait permettre aux clients de choisir la livraison express. Le système doit vérifier si la commande est éligible selon la zone de livraison.
-
-#### Scénario 1 : Zone couverte
-
-```
-ÉTANT DONNÉ une commande avec adresse de livraison
-ET le code postal "75001" (Paris)
-ET cette zone est couverte par l'express
-
-QUAND on vérifie l'éligibilité express
-
-ALORS la commande est éligible
-```
-
-#### Scénario 2 : Zone non couverte
-
-```
-ÉTANT DONNÉ une commande avec adresse de livraison
-ET le code postal "97500" (zone isolée)
-ET cette zone n'est pas couverte par l'express
-
-QUAND on vérifie l'éligibilité express
-
-ALORS la commande n'est pas éligible
-ET la raison est "Zone not covered"
-```
-
----
-
-### Option C : Annulation de Commande
-
-On voudrait permettre aux clients d'annuler une commande. Le système doit gérer le remboursement, libérer le stock, et annuler l'expédition si nécessaire.
-
-#### Scénario 1 : Annulation avant expédition
-
-```
-ÉTANT DONNÉ une commande confirmée
-ET un paiement effectué (transaction ID présent)
-ET pas encore expédiée (pas de tracking number)
-
-QUAND le client annule sa commande
-
-ALORS le paiement est remboursé
-ET le stock est libéré
-ET le statut passe à CANCELLED
-```
-
-#### Scénario 2 : Annulation avec expédition en cours
-
-```
-ÉTANT DONNÉ une commande confirmée
-ET un paiement effectué
-ET une expédition créée (tracking number présent)
-
-QUAND le client annule sa commande
-
-ALORS le paiement est remboursé
-ET le stock est libéré
-ET l'expédition est annulée
-ET le statut passe à CANCELLED
-```
+- Le code promo que l'on tente d'appliquer peut être stocké directement dans la commande (`Order`)
+- Le calcul de la réduction peut être délégué au `PricingService`
 
 ---
 
 ## Votre mission
 
-1. Choisissez une feature (A, B ou C)
-2. Regardez le code existant dans `src/main/java/service/`
-3. Implémentez la feature avec ses tests
-4. Lancez les tests
+1. Regardez le code existant dans `src/main/java/service/`
+2. Implémentez la feature avec ses tests
+3. Lancez les tests
 
 ## 🎯 Le but
 
