@@ -7,7 +7,7 @@ import java.util.List;
 public class PricingService {
     public static final double TAX_RATE = 0.20;
     public static final double FREE_SHIPPING_THRESHOLD = 100.0;
-    public static final double SHIPPING_COST = 5.99;
+    public static final double SHIPPING_COST = 5.00;
 
     public double calculateTotal(List<OrderItem> items) {
         double subtotal = calculateSubtotal(items);
