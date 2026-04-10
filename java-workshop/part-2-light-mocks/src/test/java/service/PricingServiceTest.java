@@ -15,10 +15,10 @@ class PricingServiceTest {
 
         var items = List.of(new OrderItem("PROD-001", 2, 10.0));
 
-        // subtotal = 20.0, tax = 4.0, shipping = 5.99
+        // subtotal = 20.0, tax = 4.0, shipping = 5.00
         double result = pricingService.calculateTotal(items);
 
-        assertEquals(29.99, result);
+        assertEquals(29.00, result);
     }
 
     @Test
@@ -51,10 +51,10 @@ class PricingServiceTest {
 
         var items = List.<OrderItem>of();
 
-        // subtotal = 0.0, tax = 0.0, shipping = 5.99
+        // subtotal = 0.0, tax = 0.0, shipping = 5.00
         double result = pricingService.calculateTotal(items);
 
-        assertEquals(5.99, result);
+        assertEquals(5.00, result);
     }
 
     @Test
@@ -66,10 +66,10 @@ class PricingServiceTest {
             new OrderItem("PROD-002", 1, 20.0)
         );
 
-        // subtotal = 40.0, tax = 8.0, shipping = 5.99
+        // subtotal = 40.0, tax = 8.0, shipping = 5.00
         double result = pricingService.calculateTotal(items);
 
-        assertEquals(53.99, result);
+        assertEquals(53.00, result);
     }
 }
 
