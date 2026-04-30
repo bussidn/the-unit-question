@@ -4,52 +4,100 @@
 
 **⏱️ ~20-25 minutes**
 
-We'd like to allow customers to apply a discount code to their order. The system should validate the code and calculate the discount.
-The discount applies to the price **before** tax and shipping are calculated.
+We'd like to allow customers to apply a discount code to their order.
 
-#### Scenario 1: Valid discount code
+---
+
+## 💡 What already exists
+
+- `PricingService` already handles tax (20%) and shipping (5€ if subtotal < 100€)
+- The [`DiscountCode`](src/main/java/domain/DiscountCode.java) enum lists available codes with their discount percentage
+- [`DiscountCodeRepository`](src/main/java/repository/DiscountCodeRepository.java) exposes two methods: `hasBeenUsed` and `markAsUsed`
+
+---
+
+## 🔧 What to implement
+
+### In `PricingService`
+
+Add an overload of `calculateTotal` that accepts a `DiscountCode` in addition to the list of items.
+
+The discount applies **on the subtotal**, before tax and shipping are calculated.
+
+### In `OrderService`
+
+Update `createOrder` to accept an optional `DiscountCode` and:
+1. **Check** via `DiscountCodeRepository` whether the code has already been used by this customer — if so, reject the order immediately
+2. **Register** the code usage (via `markAsUsed`) after the order is confirmed
+
+`DiscountCodeRepository` should be injected into `OrderService`.
+
+---
+
+## ✅ Tests to update
+
+### `PricingServiceTest`
+
+#### Scenario A — Discount applied, shipping added
 
 ```
-GIVEN an order with items worth 100€
-AND a discount code "SUMMER20" offering 20% off
-AND the customer has never used this code
+GIVEN items worth 100€
+AND a SUMMER20 code (20% off)
 
-WHEN the customer applies the discount code
-
-THEN the discount is applied to the subtotal before tax and shipping: 80€ (100€ - 20%)
-AND taxes (20%) are computed on that subtotal: +16€
-AND shipping is added (80€ < 100€ free-shipping threshold): +5€
-AND the total becomes 101€
-AND the code is marked as used for this customer
+THEN the discounted subtotal is 80€
+AND tax (20%) applies on 80€ → +16€
+AND shipping applies (80€ < 100€ threshold) → +5€
+AND the total is 101€
 ```
 
-#### Scenario 2: Code already used
+#### Scenario B — Discount applied, free shipping
 
 ```
-GIVEN an order with items worth 100€
-AND a discount code "ONCE50"
-AND the customer has already used this code
+GIVEN items worth 150€
+AND a SUMMER20 code (20% off)
 
-WHEN the customer applies the discount code
-
-THEN the system rejects with "Code already used"
-AND the total remains unchanged at 120€ (100€ + 20% tax, free shipping)
+THEN the discounted subtotal is 120€
+AND tax (20%) applies on 120€ → +24€
+AND shipping is free (120€ ≥ 100€ threshold)
+AND the total is 144€
 ```
 
 ---
 
-## 💡 Design hints
+### `OrderServiceTest`
 
-- The discount code that is being tried can be stored directly in the order (`Order`)
-- The discount computation can be delegated to the `PricingService`
+#### Scenario C — Valid code, order accepted
+
+```
+GIVEN an order with a discount code
+AND the customer has not used this code yet
+
+WHEN the order is created
+
+THEN the order is confirmed
+AND the code is marked as used for this customer
+```
+
+#### Scenario D — Already used code, order rejected
+
+```
+GIVEN an order with a discount code
+AND the customer has already used this code
+
+WHEN the order is created
+
+THEN the order is rejected with "Code already used"
+AND no further step is executed (stock, payment, shipping)
+```
 
 ---
 
 ## Your mission
 
-1. Look at the existing code in `src/main/java/service/`
-2. Implement the feature with its tests
-3. Run the tests
+1. Look at the existing code in `PricingService` and `OrderService`
+2. Implement the feature
+3. Update the tests in `PricingServiceTest` and `OrderServiceTest`
+4. Run the tests
 
 ---
 
