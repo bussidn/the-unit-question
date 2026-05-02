@@ -1,6 +1,8 @@
 package service;
 
-import domain.RefundResult;
+import domain.PaymentRequest;
+import domain.PaymentResult;
+import domain.PaymentStatus;
 import gateway.PaymentGateway;
 
 public class GatewayPaymentService implements PaymentService {
@@ -11,12 +13,18 @@ public class GatewayPaymentService implements PaymentService {
     }
 
     @Override
+    public PaymentResult processPayment(String orderId, String customerId, double amount) {
+        if (amount <= 0) {
+            return new PaymentResult(orderId, PaymentStatus.FAILED, null);
+        }
+
+        PaymentRequest request = new PaymentRequest(orderId, customerId, amount);
+        PaymentResult gatewayResult = paymentGateway.process(request);
+        return new PaymentResult(orderId, gatewayResult.status(), gatewayResult.transactionId());
+    }
+
+    @Override
     public boolean refundPayment(String transactionId) {
-        RefundResult result = paymentGateway.refund(transactionId);
-        return switch (result) {
-            case REFUNDED -> true;
-            case ALREADY_REFUNDED, NOTHING_TO_REFUND -> false;
-            case FAILED -> throw new IllegalStateException("Refund failed");
-        };
+        return paymentGateway.refund(transactionId);
     }
 }

@@ -1,17 +1,19 @@
 package service;
 
-import domain.RefundResult;
+import domain.PaymentRequest;
+import domain.PaymentResult;
+import domain.PaymentStatus;
 import gateway.PaymentGateway;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,48 +25,35 @@ class PaymentServiceTest {
     @InjectMocks
     private GatewayPaymentService paymentService;
 
-    private String transactionId;
+    @Test
+    void processPayment_returnsSuccess_whenGatewayAcceptsPayment() {
+        var gatewayResponse = new PaymentResult("ORDER-001", PaymentStatus.SUCCESS, "TXN-123");
+        when(paymentGateway.process(any(PaymentRequest.class))).thenReturn(gatewayResponse);
 
-    @BeforeEach
-    void setUp() {
-        transactionId = "TXN-001";
+        var result = paymentService.processPayment("ORDER-001", "CUST-001", 29.0);
+
+        assertEquals(PaymentStatus.SUCCESS, result.status());
+        assertEquals("TXN-123", result.transactionId());
     }
 
     @Test
-    void refundPayment_returnsTrue_whenMoneyIsRefunded() {
-        givenGatewayRefundReturns(RefundResult.REFUNDED);
+    void processPayment_returnsFailed_whenAmountIsZero() {
+        var result = paymentService.processPayment("ORDER-001", "CUST-001", 0.0);
 
-        boolean result = paymentService.refundPayment(transactionId);
-
-        assertTrue(result);
-        verifyRefundWasRequested();
+        assertEquals(PaymentStatus.FAILED, result.status());
     }
 
     @Test
-    void refundPayment_returnsFalse_whenAlreadyRefunded() {
-        givenGatewayRefundReturns(RefundResult.ALREADY_REFUNDED);
+    void refundPayment_returnsTrue_whenGatewayConfirmsRefund() {
+        when(paymentGateway.refund("TXN-123")).thenReturn(true);
 
-        boolean result = paymentService.refundPayment(transactionId);
-
-        assertFalse(result);
-        verifyRefundWasRequested();
+        assertTrue(paymentService.refundPayment("TXN-123"));
     }
 
     @Test
-    void refundPayment_returnsFalse_whenNothingNeedsToBeRefunded() {
-        givenGatewayRefundReturns(RefundResult.NOTHING_TO_REFUND);
+    void refundPayment_returnsFalse_whenGatewayDeclines() {
+        when(paymentGateway.refund("TXN-123")).thenReturn(false);
 
-        boolean result = paymentService.refundPayment(transactionId);
-
-        assertFalse(result);
-        verifyRefundWasRequested();
-    }
-
-    private void givenGatewayRefundReturns(RefundResult refundResult) {
-        when(paymentGateway.refund(transactionId)).thenReturn(refundResult);
-    }
-
-    private void verifyRefundWasRequested() {
-        verify(paymentGateway).refund(transactionId);
+        assertFalse(paymentService.refundPayment("TXN-123"));
     }
 }

@@ -1,58 +1,97 @@
 # The Unit Question — Part 3
 
-## 🏋️ Exercice : Annulation de Commande
+## 🏋️ Exercice : Codes promo dans la création de commande
 
-**⏱️ ~20 minutes** *(ne vous inquiétez pas si vous ne finissez pas)*
+**⏱️ ~25 minutes**
 
-On voudrait permettre aux clients d'annuler une commande. Le système doit gérer le remboursement, libérer le stock, et annuler l'expédition si nécessaire.
+La `PricingService` a été mise à jour pour supporter les codes promo. Elle expose maintenant deux méthodes :
 
-### Scénario 1 : Annulation avant expédition
+- `calculateTotal(items)` — ancienne API, sans remise
+- `calculateTotal(items, discountCode)` — nouvelle API avec code promo
 
-```
-ÉTANT DONNÉ une commande confirmée
-ET un paiement effectué (transaction ID présent)
-ET pas encore expédiée (pas de tracking number)
+Les tests de `PricingService` ont déjà été écrits — consultez `PricingServiceTest` pour comprendre le comportement attendu et vous inspirer du style.
 
-QUAND le client annule sa commande
-
-ALORS le paiement est remboursé
-ET le stock est libéré
-ET le statut passe à CANCELLED
-```
-
-### Scénario 2 : Annulation avec expédition en cours
-
-```
-ÉTANT DONNÉ une commande confirmée
-ET un paiement effectué
-ET une expédition créée (tracking number présent)
-
-QUAND le client annule sa commande
-
-ALORS le paiement est remboursé
-ET le stock est libéré
-ET l'expédition est annulée
-ET le statut passe à CANCELLED
-```
-
-### Votre mission
-
-1. Regardez le code existant dans `src/main/java/service/`
-2. Regardez les tests existants — notez les helpers et builders
-3. Implémentez la feature avec ses tests
-4. Lancez les tests : `./gradlew test`
-
-### 🎯 Le but
-
-> **L'objectif N'EST PAS de finir.**
->
-> L'objectif est de **ressentir** ce qui se passe quand on ajoute une feature à cette codebase.
+`OrderService` n'est pas encore migré. C'est votre mission.
 
 ---
 
-## ⏰ Temps écoulé ?
+### 🎯 Votre mission
 
-Une fois l'exercice terminé (ou le temps écoulé), ouvrez le fichier **[reveal/bug-report.fr.md](reveal/bug-report.fr.md)**
+Migrez `OrderService` pour supporter les codes promo :
+
+1. Ajoutez `DiscountCodeRepository` comme dépendance
+2. Changez la signature de `createOrder` pour accepter un `DiscountCode` optionnel
+3. Si un code promo est fourni : vérifiez qu'il n'a pas déjà été utilisé, calculez le prix avec remise, marquez-le comme utilisé après paiement
+4. Écrivez `OrderServiceTest` en vous inspirant du style de `OrderCancellationServiceTest`
+
+Lancez les tests : `./gradlew test`
+
+---
+
+### Scénarios à implémenter dans `OrderServiceTest`
+
+#### Scénario 1 : Création sans code promo
+
+```
+ÉTANT DONNÉ une commande de 2 articles à 10€ chacun
+ET aucun code promo
+
+QUAND le client passe la commande
+
+ALORS le paiement est traité pour le montant calculé par PricingService
+ET la commande est confirmée avec une expédition
+```
+
+#### Scénario 2 : Création avec code promo valide
+
+```
+ÉTANT DONNÉ une commande avec 2 articles à 55€ chacun (sous-total : 110€)
+ET le code promo SUMMER20 (-20%)
+ET le code n'a pas encore été utilisé par ce client
+
+QUAND le client passe la commande
+
+ALORS le paiement est traité pour 105.60€
+ET le code promo est marqué comme utilisé
+ET la commande est confirmée
+```
+
+#### Scénario 3 : Code promo déjà utilisé
+
+```
+ÉTANT DONNÉ une commande avec le code promo SUMMER20
+ET ce code a déjà été utilisé par ce client
+
+QUAND le client passe la commande
+
+ALORS la commande est rejetée avec le motif "Discount code already used"
+ET aucun paiement n'est déclenché
+```
+
+#### Scénario 4 : Stock insuffisant
+
+```
+ÉTANT DONNÉ une commande dont le stock est indisponible
+
+QUAND le client passe la commande
+
+ALORS la commande est rejetée avec le motif "Insufficient stock"
+ET ni le pricing ni le paiement ne sont appelés
+```
+
+---
+
+### 💡 Conseils
+
+- Regardez `OrderCancellationServiceTest` pour le style : `@ExtendWith`, `@Mock`, `@InjectMocks`, helpers `given*` / `assert*`
+- Le builder `OrderBuilder` est disponible dans `helper/`
+- Consultez `PricingServiceTest` pour voir comment `PricingService` est testée
+
+---
+
+## ⏰ Une fois terminé
+
+Ouvrez le fichier **[reveal/bug-report.fr.md](reveal/bug-report.fr.md)**
 
 ---
 

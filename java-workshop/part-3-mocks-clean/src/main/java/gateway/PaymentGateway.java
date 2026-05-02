@@ -1,7 +1,10 @@
 package gateway;
 
-import domain.RefundResult;
+import domain.PaymentRequest;
+import domain.PaymentResult;
 
 public interface PaymentGateway {
-    RefundResult refund(String transactionId);
+    PaymentResult process(PaymentRequest request);
+
+    boolean refund(String transactionId);
 }
