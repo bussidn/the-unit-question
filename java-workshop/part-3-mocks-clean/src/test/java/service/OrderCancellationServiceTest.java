@@ -100,6 +100,16 @@ class OrderCancellationServiceTest {
         verify(orderRepository).updateStatus("ORDER-002", OrderStatus.CANCELLED);
     }
 
+    @Test
+    void cancelOrder_fails_whenOrderDoesNotExist() {
+        when(orderRepository.findById("ORDER-UNKNOWN")).thenReturn(null);
+
+        CancellationResult result = service.cancelOrder("ORDER-UNKNOWN");
+
+        assertFailure(result, "Order not found");
+        verifyNoInteractions(paymentService, stockService, shippingService);
+    }
+
     private void givenOrderExists(Order order) {
         when(orderRepository.findById(order.id())).thenReturn(order);
     }
