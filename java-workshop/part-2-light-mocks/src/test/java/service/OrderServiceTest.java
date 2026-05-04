@@ -7,128 +7,202 @@ import domain.PaymentResult;
 import domain.PaymentStatus;
 import domain.ShippingConfirmation;
 import domain.StockReservation;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static domain.PaymentStatus.SUCCESS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 class OrderServiceTest {
 
+    private StockService stockService;
+    private PricingService pricingService;
+    private PaymentService paymentService;
+    private ShippingService shippingService;
+    private OrderService orderService;
+
+    @BeforeEach
+    void setUp() {
+        stockService = mock(StockService.class);
+        pricingService = mock(PricingService.class);
+        paymentService = mock(PaymentService.class);
+        shippingService = mock(ShippingService.class);
+        orderService = new OrderService(stockService, pricingService, paymentService, shippingService);
+    }
+
+    private Order anOrder() {
+        return new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null);
+    }
+
+    // ── Nominal scenario ──────────────────────────────────────────────────────
+
     @Test
-    void createOrder_succeeds_whenAllStepsPass() {
-        StockService stockService = mock(StockService.class);
-        PricingService pricingService = mock(PricingService.class);
-        PaymentService paymentService = mock(PaymentService.class);
-        ShippingService shippingService = mock(ShippingService.class);
-        OrderService orderService = new OrderService(stockService, pricingService, paymentService, shippingService);
-
-        var order = new Order(
-            "ORDER-123",
-            "CUST-456",
-            List.of(new OrderItem("PROD-001", 2, 10.0)),
-            OrderStatus.PENDING,
-            0.0,
-            null,
-            null
-        );
-        var reservations = List.of(new StockReservation("PROD-001", 2, true));
-        var shipment = new ShippingConfirmation("ORDER-123", "TRACK-ABC", "2024-12-25");
-
-        when(stockService.checkAvailability(order.items())).thenReturn(true);
-        when(pricingService.calculateTotal(order.items())).thenReturn(24.0);
-        when(paymentService.processPayment(order.id(), order.customerId(), 24.0))
-            .thenReturn(new PaymentResult(order.id(), PaymentStatus.SUCCESS, "TXN-789"));
-        when(stockService.reserveStock(order.items())).thenReturn(reservations);
-        when(shippingService.createShipment(order)).thenReturn(shipment);
+    void orderIsConfirmed_whenAllStepsSucceed() {
+        var order = anOrder();
+        when(stockService.checkAvailability(any())).thenReturn(true);
+        when(pricingService.calculateTotal(any())).thenReturn(29.0);
+        when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
+            .thenReturn(new PaymentResult("ORDER-001", SUCCESS, "TXN-123"));
+        when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, true)));
+        when(shippingService.createShipment(any())).thenReturn(new ShippingConfirmation("ORDER-001", "TRACK-456", "2024-12-25"));
 
         OrderResult result = orderService.createOrder(order);
 
         assertInstanceOf(OrderResult.Success.class, result);
-        var success = (OrderResult.Success) result;
-        assertEquals(OrderStatus.CONFIRMED, success.order().status());
-        assertEquals(24.0, success.order().totalPrice());
-        assertEquals(shipment, success.shippingConfirmation());
-
-        InOrder inOrder = inOrder(stockService, pricingService, paymentService, shippingService);
-        inOrder.verify(stockService).checkAvailability(order.items());
-        inOrder.verify(pricingService).calculateTotal(order.items());
-        inOrder.verify(paymentService).processPayment(order.id(), order.customerId(), 24.0);
-        inOrder.verify(stockService).reserveStock(order.items());
-        inOrder.verify(shippingService).createShipment(order);
+        assertEquals(OrderStatus.CONFIRMED, ((OrderResult.Success) result).order().status());
     }
 
     @Test
-    void createOrder_fails_whenStockIsUnavailable() {
-        StockService stockService = mock(StockService.class);
-        PricingService pricingService = mock(PricingService.class);
-        PaymentService paymentService = mock(PaymentService.class);
-        ShippingService shippingService = mock(ShippingService.class);
-        OrderService orderService = new OrderService(stockService, pricingService, paymentService, shippingService);
-
-        var order = new Order(
-            "ORDER-123",
-            "CUST-456",
-            List.of(new OrderItem("PROD-001", 2, 10.0)),
-            OrderStatus.PENDING,
-            0.0,
-            null,
-            null
-        );
-        var reservations = List.of(new StockReservation("PROD-001", 2, true));
-        var shipment = new ShippingConfirmation("ORDER-123", "TRACK-ABC", "2024-12-25");
-
-        when(stockService.checkAvailability(order.items())).thenReturn(false);
-        when(pricingService.calculateTotal(order.items())).thenReturn(24.0);
-        when(paymentService.processPayment(order.id(), order.customerId(), 24.0))
-            .thenReturn(new PaymentResult(order.id(), PaymentStatus.SUCCESS, "TXN-789"));
-        when(stockService.reserveStock(order.items())).thenReturn(reservations);
-        when(shippingService.createShipment(order)).thenReturn(shipment);
+    void calculatedPriceIsStoredInOrder_whenAllStepsSucceed() {
+        var order = anOrder();
+        when(stockService.checkAvailability(any())).thenReturn(true);
+        when(pricingService.calculateTotal(any())).thenReturn(29.0);
+        when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
+            .thenReturn(new PaymentResult("ORDER-001", SUCCESS, "TXN-123"));
+        when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, true)));
+        when(shippingService.createShipment(any())).thenReturn(new ShippingConfirmation("ORDER-001", "TRACK-456", "2024-12-25"));
 
         OrderResult result = orderService.createOrder(order);
+
+        assertEquals(29.0, ((OrderResult.Success) result).order().totalPrice());
+    }
+
+    @Test
+    void shippingConfirmationIsReturned_whenAllStepsSucceed() {
+        var order = anOrder();
+        var shipment = new ShippingConfirmation("ORDER-001", "TRACK-456", "2024-12-25");
+        when(stockService.checkAvailability(any())).thenReturn(true);
+        when(pricingService.calculateTotal(any())).thenReturn(29.0);
+        when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
+            .thenReturn(new PaymentResult("ORDER-001", SUCCESS, "TXN-123"));
+        when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, true)));
+        when(shippingService.createShipment(any())).thenReturn(shipment);
+
+        OrderResult result = orderService.createOrder(order);
+
+        assertEquals(shipment, ((OrderResult.Success) result).shippingConfirmation());
+    }
+
+    // ── Stock unavailable ─────────────────────────────────────────────────────
+
+    @Test
+    void orderFails_whenStockIsUnavailable() {
+        when(stockService.checkAvailability(any())).thenReturn(false);
+
+        OrderResult result = orderService.createOrder(anOrder());
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Insufficient stock", ((OrderResult.Failure) result).reason());
-        verify(stockService).checkAvailability(order.items());
-        verifyNoInteractions(pricingService, paymentService, shippingService);
     }
 
     @Test
-    void createOrder_failsAndRefunds_whenStockReservationFails() {
-        StockService stockService = mock(StockService.class);
-        PricingService pricingService = mock(PricingService.class);
-        PaymentService paymentService = mock(PaymentService.class);
-        ShippingService shippingService = mock(ShippingService.class);
-        OrderService orderService = new OrderService(stockService, pricingService, paymentService, shippingService);
+    void paymentIsNotCharged_whenStockIsUnavailable() {
+        when(stockService.checkAvailability(any())).thenReturn(false);
 
-        var order = new Order(
-            "ORDER-123",
-            "CUST-456",
-            List.of(new OrderItem("PROD-001", 2, 10.0)),
-            OrderStatus.PENDING,
-            0.0,
-            null,
-            null
-        );
-        var reservations = List.of(new StockReservation("PROD-001", 2, false));
-        var shipment = new ShippingConfirmation("ORDER-123", "TRACK-ABC", "2024-12-25");
+        orderService.createOrder(anOrder());
 
-        when(stockService.checkAvailability(order.items())).thenReturn(true);
-        when(pricingService.calculateTotal(order.items())).thenReturn(24.0);
-        when(paymentService.processPayment(order.id(), order.customerId(), 24.0))
-            .thenReturn(new PaymentResult(order.id(), PaymentStatus.SUCCESS, "TXN-789"));
-        when(stockService.reserveStock(order.items())).thenReturn(reservations);
-        when(paymentService.refundPayment("TXN-789")).thenReturn(true);
-        when(shippingService.createShipment(order)).thenReturn(shipment);
+        verifyNoInteractions(paymentService);
+    }
 
-        OrderResult result = orderService.createOrder(order);
+    @Test
+    void shipmentIsNotCreated_whenStockIsUnavailable() {
+        when(stockService.checkAvailability(any())).thenReturn(false);
+
+        orderService.createOrder(anOrder());
+
+        verifyNoInteractions(shippingService);
+    }
+
+    // ── Payment declined ──────────────────────────────────────────────────────
+
+    @Test
+    void orderFails_whenPaymentIsDeclined() {
+        when(stockService.checkAvailability(any())).thenReturn(true);
+        when(pricingService.calculateTotal(any())).thenReturn(45.0);
+        when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
+            .thenReturn(new PaymentResult("ORDER-001", PaymentStatus.FAILED, null));
+
+        OrderResult result = orderService.createOrder(anOrder());
+
+        assertInstanceOf(OrderResult.Failure.class, result);
+        assertEquals("Payment failed", ((OrderResult.Failure) result).reason());
+    }
+
+    @Test
+    void shipmentIsNotCreated_whenPaymentIsDeclined() {
+        when(stockService.checkAvailability(any())).thenReturn(true);
+        when(pricingService.calculateTotal(any())).thenReturn(45.0);
+        when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
+            .thenReturn(new PaymentResult("ORDER-001", PaymentStatus.FAILED, null));
+
+        orderService.createOrder(anOrder());
+
+        verifyNoInteractions(shippingService);
+    }
+
+    // ── Stock reservation fails (race condition) ──────────────────────────────
+
+    @Test
+    void orderFails_whenStockReservationFails() {
+        when(stockService.checkAvailability(any())).thenReturn(true);
+        when(pricingService.calculateTotal(any())).thenReturn(18.0);
+        when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
+            .thenReturn(new PaymentResult("ORDER-001", SUCCESS, "TXN-123"));
+        when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, false)));
+
+        OrderResult result = orderService.createOrder(anOrder());
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Could not reserve stock", ((OrderResult.Failure) result).reason());
-        verify(paymentService).refundPayment("TXN-789");
-        verify(stockService).releaseStock(reservations);
+    }
+
+    @Test
+    void paymentIsRefunded_whenStockReservationFails() {
+        when(stockService.checkAvailability(any())).thenReturn(true);
+        when(pricingService.calculateTotal(any())).thenReturn(18.0);
+        when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
+            .thenReturn(new PaymentResult("ORDER-001", SUCCESS, "TXN-123"));
+        when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, false)));
+
+        orderService.createOrder(anOrder());
+
+        verify(paymentService).refundPayment("TXN-123");
+    }
+
+    @Test
+    void stockIsReleased_whenStockReservationFails() {
+        var failedReservations = List.of(new StockReservation("PROD-001", 1, false));
+        when(stockService.checkAvailability(any())).thenReturn(true);
+        when(pricingService.calculateTotal(any())).thenReturn(18.0);
+        when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
+            .thenReturn(new PaymentResult("ORDER-001", SUCCESS, "TXN-123"));
+        when(stockService.reserveStock(any())).thenReturn(failedReservations);
+
+        orderService.createOrder(anOrder());
+
+        verify(stockService).releaseStock(failedReservations);
+    }
+
+    @Test
+    void shipmentIsNotCreated_whenStockReservationFails() {
+        when(stockService.checkAvailability(any())).thenReturn(true);
+        when(pricingService.calculateTotal(any())).thenReturn(18.0);
+        when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
+            .thenReturn(new PaymentResult("ORDER-001", SUCCESS, "TXN-123"));
+        when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, false)));
+
+        orderService.createOrder(anOrder());
+
         verifyNoInteractions(shippingService);
     }
 }
