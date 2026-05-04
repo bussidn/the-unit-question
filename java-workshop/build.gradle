@@ -1,0 +1,3 @@
+// Root project — aggregates all workshop parts as composite builds.
+// Each part remains an independent Gradle project.
+
