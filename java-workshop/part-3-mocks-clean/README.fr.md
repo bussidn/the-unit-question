@@ -89,12 +89,6 @@ ET ni le pricing ni le paiement ne sont appelés
 
 ---
 
-## ⏰ Une fois terminé
-
-Ouvrez le fichier **[reveal/bug-report.fr.md](reveal/bug-report.fr.md)**
-
----
-
 ## ➡️ Suite
 
 Passez à la **[Part 4](../part-4-behavior/README.fr.md)**

@@ -89,12 +89,6 @@ AND neither pricing nor payment are called
 
 ---
 
-## ⏰ Once you're done
-
-Open the file **[reveal/bug-report.md](reveal/bug-report.md)**
-
----
-
 ## ➡️ Next
 
 Move on to **[Part 4](../part-4-behavior/README.md)**
