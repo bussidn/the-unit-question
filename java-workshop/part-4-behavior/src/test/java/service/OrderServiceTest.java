@@ -64,8 +64,10 @@ class OrderServiceTest {
         paymentGateway.willDecline();
     }
 
-    private List<StockReservation> givenStockReservationFails() {
-        var failedReservations = List.of(new StockReservation("PROD-001", 1, false));
+    private List<StockReservation> givenStockReservationFailsFor(Order order) {
+        var failedReservations = order.items().stream()
+            .map(item -> new StockReservation(item.productId(), item.quantity(), false))
+            .toList();
         mockStockService = mock(StockService.class);
         when(mockStockService.checkAvailability(any())).thenReturn(true);
         when(mockStockService.reserveStock(any())).thenReturn(failedReservations);
@@ -169,7 +171,7 @@ class OrderServiceTest {
     @Test
     void orderFails_whenStockReservationFails() {
         var order = anOrder().build();
-        givenStockReservationFails();
+        givenStockReservationFailsFor(order);
 
         OrderResult result = orderService.createOrder(order);
 
@@ -180,7 +182,7 @@ class OrderServiceTest {
     @Test
     void paymentIsRefunded_whenStockReservationFails() {
         var order = anOrder().build();
-        givenStockReservationFails();
+        givenStockReservationFailsFor(order);
 
         orderService.createOrder(order);
 
@@ -190,7 +192,7 @@ class OrderServiceTest {
     @Test
     void stockIsReleased_whenStockReservationFails() {
         var order = anOrder().build();
-        var failedReservations = givenStockReservationFails();
+        var failedReservations = givenStockReservationFailsFor(order);
 
         orderService.createOrder(order);
 
@@ -200,7 +202,7 @@ class OrderServiceTest {
     @Test
     void shipmentIsNotCreated_whenStockReservationFails() {
         var order = anOrder().build();
-        givenStockReservationFails();
+        givenStockReservationFailsFor(order);
 
         orderService.createOrder(order);
 

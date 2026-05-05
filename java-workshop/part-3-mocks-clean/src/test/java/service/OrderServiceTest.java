@@ -61,31 +61,36 @@ class OrderServiceTest {
         when(pricingService.calculateTotal(any())).thenReturn(total);
     }
 
-    private String givenPaymentSucceeds() {
+    private String givenPaymentSucceedsFor(Order order) {
+        var txnId = "TXN-" + order.id();
         when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
-            .thenReturn(new PaymentResult("ORDER-001", PaymentStatus.SUCCESS, "TXN-123"));
-        return "TXN-123";
+            .thenReturn(new PaymentResult(order.id(), PaymentStatus.SUCCESS, txnId));
+        return txnId;
     }
 
-    private void givenPaymentIsDeclined() {
+    private void givenPaymentIsDeclinedFor(Order order) {
         when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
-            .thenReturn(new PaymentResult("ORDER-001", PaymentStatus.FAILED, null));
+            .thenReturn(new PaymentResult(order.id(), PaymentStatus.FAILED, null));
     }
 
-    private List<StockReservation> givenReservationSucceeds() {
-        var reservations = List.of(new StockReservation("PROD-001", 1, true));
+    private List<StockReservation> givenReservationSucceedsFor(Order order) {
+        var reservations = order.items().stream()
+            .map(item -> new StockReservation(item.productId(), item.quantity(), true))
+            .toList();
         when(stockService.reserveStock(any())).thenReturn(reservations);
         return reservations;
     }
 
-    private List<StockReservation> givenReservationFails() {
-        var reservations = List.of(new StockReservation("PROD-001", 1, false));
+    private List<StockReservation> givenReservationFailsFor(Order order) {
+        var reservations = order.items().stream()
+            .map(item -> new StockReservation(item.productId(), item.quantity(), false))
+            .toList();
         when(stockService.reserveStock(any())).thenReturn(reservations);
         return reservations;
     }
 
-    private ShippingConfirmation givenShipmentCreated() {
-        var shipment = new ShippingConfirmation("ORDER-001", "TRACK-456", "2024-12-25");
+    private ShippingConfirmation givenShipmentCreatedFor(Order order) {
+        var shipment = new ShippingConfirmation(order.id(), "TRACK-456", "2024-12-25");
         when(shippingService.createShipment(any(Order.class))).thenReturn(shipment);
         return shipment;
     }
@@ -97,9 +102,9 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(29.0);
-        givenPaymentSucceeds();
-        givenReservationSucceeds();
-        givenShipmentCreated();
+        givenPaymentSucceedsFor(order);
+        givenReservationSucceedsFor(order);
+        givenShipmentCreatedFor(order);
 
         OrderResult result = orderService.createOrder(order);
 
@@ -112,9 +117,9 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(29.0);
-        givenPaymentSucceeds();
-        givenReservationSucceeds();
-        givenShipmentCreated();
+        givenPaymentSucceedsFor(order);
+        givenReservationSucceedsFor(order);
+        givenShipmentCreatedFor(order);
 
         OrderResult result = orderService.createOrder(order);
 
@@ -126,9 +131,9 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(29.0);
-        givenPaymentSucceeds();
-        givenReservationSucceeds();
-        ShippingConfirmation shipment = givenShipmentCreated();
+        givenPaymentSucceedsFor(order);
+        givenReservationSucceedsFor(order);
+        ShippingConfirmation shipment = givenShipmentCreatedFor(order);
 
         OrderResult result = orderService.createOrder(order);
 
@@ -175,7 +180,7 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(45.0);
-        givenPaymentIsDeclined();
+        givenPaymentIsDeclinedFor(order);
 
         OrderResult result = orderService.createOrder(order);
 
@@ -188,7 +193,7 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(45.0);
-        givenPaymentIsDeclined();
+        givenPaymentIsDeclinedFor(order);
 
         orderService.createOrder(order);
 
@@ -202,8 +207,8 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(18.0);
-        givenPaymentSucceeds();
-        givenReservationFails();
+        givenPaymentSucceedsFor(order);
+        givenReservationFailsFor(order);
 
         OrderResult result = orderService.createOrder(order);
 
@@ -216,8 +221,8 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(18.0);
-        var txnId = givenPaymentSucceeds();
-        givenReservationFails();
+        var txnId = givenPaymentSucceedsFor(order);
+        givenReservationFailsFor(order);
 
         orderService.createOrder(order);
 
@@ -229,8 +234,8 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(18.0);
-        givenPaymentSucceeds();
-        List<StockReservation> reservations = givenReservationFails();
+        givenPaymentSucceedsFor(order);
+        List<StockReservation> reservations = givenReservationFailsFor(order);
 
         orderService.createOrder(order);
 
@@ -242,8 +247,8 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(18.0);
-        givenPaymentSucceeds();
-        givenReservationFails();
+        givenPaymentSucceedsFor(order);
+        givenReservationFailsFor(order);
 
         orderService.createOrder(order);
 
