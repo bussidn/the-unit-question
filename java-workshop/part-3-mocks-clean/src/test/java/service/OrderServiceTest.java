@@ -42,11 +42,14 @@ class OrderServiceTest {
 
     // ── Given helpers ─────────────────────────────────────────────────────────
 
-    private Order anOrder() {
+    private Order anOrder(OrderItem... items) {
+        var itemList = items.length > 0
+            ? List.of(items)
+            : List.of(new OrderItem("PROD-001", 1, 20.0));
         return OrderBuilder.anOrder()
             .withId("ORDER-001")
             .withCustomerId("CUST-001")
-            .withItems(List.of(new OrderItem("PROD-001", 1, 20.0)))
+            .withItems(itemList)
             .build();
     }
 
@@ -95,13 +98,14 @@ class OrderServiceTest {
 
     @Test
     void orderIsConfirmed_whenAllStepsSucceed() {
+        var order = anOrder();
         givenStockIsAvailable();
         givenPricingCalculates(29.0);
         givenPaymentSucceeds();
         givenReservationSucceeds();
         givenShipmentCreated();
 
-        OrderResult result = orderService.createOrder(anOrder());
+        OrderResult result = orderService.createOrder(order);
 
         assertInstanceOf(OrderResult.Success.class, result);
         assertEquals(OrderStatus.CONFIRMED, ((OrderResult.Success) result).order().status());
@@ -109,26 +113,28 @@ class OrderServiceTest {
 
     @Test
     void calculatedPriceIsStoredInOrder_whenAllStepsSucceed() {
+        var order = anOrder();
         givenStockIsAvailable();
         givenPricingCalculates(29.0);
         givenPaymentSucceeds();
         givenReservationSucceeds();
         givenShipmentCreated();
 
-        OrderResult result = orderService.createOrder(anOrder());
+        OrderResult result = orderService.createOrder(order);
 
         assertEquals(29.0, ((OrderResult.Success) result).order().totalPrice());
     }
 
     @Test
     void shippingConfirmationIsReturned_whenAllStepsSucceed() {
+        var order = anOrder();
         givenStockIsAvailable();
         givenPricingCalculates(29.0);
         givenPaymentSucceeds();
         givenReservationSucceeds();
         ShippingConfirmation shipment = givenShipmentCreated();
 
-        OrderResult result = orderService.createOrder(anOrder());
+        OrderResult result = orderService.createOrder(order);
 
         assertEquals(shipment, ((OrderResult.Success) result).shippingConfirmation());
     }
@@ -137,9 +143,10 @@ class OrderServiceTest {
 
     @Test
     void orderFails_whenStockIsUnavailable() {
+        var order = anOrder();
         givenStockIsUnavailable();
 
-        OrderResult result = orderService.createOrder(anOrder());
+        OrderResult result = orderService.createOrder(order);
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Insufficient stock", ((OrderResult.Failure) result).reason());
@@ -147,18 +154,20 @@ class OrderServiceTest {
 
     @Test
     void paymentIsNotCharged_whenStockIsUnavailable() {
+        var order = anOrder();
         givenStockIsUnavailable();
 
-        orderService.createOrder(anOrder());
+        orderService.createOrder(order);
 
         verifyNoInteractions(paymentService);
     }
 
     @Test
     void shipmentIsNotCreated_whenStockIsUnavailable() {
+        var order = anOrder();
         givenStockIsUnavailable();
 
-        orderService.createOrder(anOrder());
+        orderService.createOrder(order);
 
         verifyNoInteractions(shippingService);
     }
@@ -167,11 +176,12 @@ class OrderServiceTest {
 
     @Test
     void orderFails_whenPaymentIsDeclined() {
+        var order = anOrder();
         givenStockIsAvailable();
         givenPricingCalculates(45.0);
         givenPaymentIsDeclined();
 
-        OrderResult result = orderService.createOrder(anOrder());
+        OrderResult result = orderService.createOrder(order);
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Payment failed", ((OrderResult.Failure) result).reason());
@@ -179,11 +189,12 @@ class OrderServiceTest {
 
     @Test
     void shipmentIsNotCreated_whenPaymentIsDeclined() {
+        var order = anOrder();
         givenStockIsAvailable();
         givenPricingCalculates(45.0);
         givenPaymentIsDeclined();
 
-        orderService.createOrder(anOrder());
+        orderService.createOrder(order);
 
         verifyNoInteractions(shippingService);
     }
@@ -192,12 +203,13 @@ class OrderServiceTest {
 
     @Test
     void orderFails_whenStockReservationFails() {
+        var order = anOrder();
         givenStockIsAvailable();
         givenPricingCalculates(18.0);
         givenPaymentSucceeds();
         givenReservationFails();
 
-        OrderResult result = orderService.createOrder(anOrder());
+        OrderResult result = orderService.createOrder(order);
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Could not reserve stock", ((OrderResult.Failure) result).reason());
@@ -205,36 +217,39 @@ class OrderServiceTest {
 
     @Test
     void paymentIsRefunded_whenStockReservationFails() {
+        var order = anOrder();
         givenStockIsAvailable();
         givenPricingCalculates(18.0);
         var txnId = givenPaymentSucceeds();
         givenReservationFails();
 
-        orderService.createOrder(anOrder());
+        orderService.createOrder(order);
 
         verify(paymentService).refundPayment(txnId);
     }
 
     @Test
     void stockIsReleased_whenStockReservationFails() {
+        var order = anOrder();
         givenStockIsAvailable();
         givenPricingCalculates(18.0);
         givenPaymentSucceeds();
         List<StockReservation> reservations = givenReservationFails();
 
-        orderService.createOrder(anOrder());
+        orderService.createOrder(order);
 
         verify(stockService).releaseStock(reservations);
     }
 
     @Test
     void shipmentIsNotCreated_whenStockReservationFails() {
+        var order = anOrder();
         givenStockIsAvailable();
         givenPricingCalculates(18.0);
         givenPaymentSucceeds();
         givenReservationFails();
 
-        orderService.createOrder(anOrder());
+        orderService.createOrder(order);
 
         verifyNoInteractions(shippingService);
     }

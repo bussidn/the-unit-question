@@ -3,38 +3,32 @@ package service;
 import domain.Order;
 import domain.OrderItem;
 import domain.OrderStatus;
-import domain.PaymentRequest;
-import domain.PaymentResult;
-import domain.PaymentStatus;
-import domain.ShippingConfirmation;
-import domain.ShippingRequest;
 import domain.StockReservation;
-import gateway.PaymentGateway;
-import gateway.ShippingGateway;
+import helper.InMemoryPaymentGateway;
+import helper.InMemoryShippingGateway;
 import helper.InMemoryStockRepository;
 import helper.OrderBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
-    @Mock private PaymentGateway paymentGateway;
-    @Mock private ShippingGateway shippingGateway;
-
+    private InMemoryPaymentGateway paymentGateway;
+    private InMemoryShippingGateway shippingGateway;
     private InMemoryStockRepository stockRepository;
     private OrderService orderService;
     private StockService mockStockService; // set by givenStockReservationFails()
@@ -42,44 +36,36 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         stockRepository = new InMemoryStockRepository();
+        paymentGateway = new InMemoryPaymentGateway();
+        shippingGateway = new InMemoryShippingGateway();
 
-        StockService stockService = new RepositoryStockService(stockRepository);
-        PricingService pricingService = new PricingService();
-        PaymentService paymentService = new GatewayPaymentService(paymentGateway);
-        ShippingService shippingService = new GatewayShippingService(shippingGateway);
-
-        orderService = new OrderService(stockService, pricingService, paymentService, shippingService);
+        orderService = new OrderService(
+            new RepositoryStockService(stockRepository),
+            new PricingService(),
+            new GatewayPaymentService(paymentGateway),
+            new GatewayShippingService(shippingGateway)
+        );
     }
 
     // ── Given helpers ─────────────────────────────────────────────────────────
 
-    private Order anOrder() {
+    private Order anOrder(OrderItem... items) {
+        var itemList = items.length > 0
+            ? List.of(items)
+            : List.of(new OrderItem("PROD-001", 1, 20.0));
         return OrderBuilder.anOrder()
             .withId("ORDER-001")
             .withCustomerId("CUST-001")
-            .withItems(List.of(new OrderItem("PROD-001", 1, 20.0)))
+            .withItems(itemList)
             .build();
     }
 
-    private void givenStockIsAvailable() {
-        stockRepository.withAvailableStock("PROD-001", 1);
-    }
-
-    private String givenPaymentSucceeds() {
-        when(paymentGateway.process(any(PaymentRequest.class)))
-            .thenReturn(new PaymentResult("ORDER-001", PaymentStatus.SUCCESS, "TXN-123"));
-        return "TXN-123";
+    private void givenStockIsAvailableFor(Order order) {
+        order.items().forEach(item -> stockRepository.withAvailableStock(item.productId(), item.quantity()));
     }
 
     private void givenPaymentIsDeclined() {
-        when(paymentGateway.process(any(PaymentRequest.class)))
-            .thenReturn(new PaymentResult("ORDER-001", PaymentStatus.FAILED, null));
-    }
-
-    private ShippingConfirmation givenShipmentCreated() {
-        var shipment = new ShippingConfirmation("ORDER-001", "TRACK-456", "2024-12-25");
-        when(shippingGateway.createShipment(any(ShippingRequest.class))).thenReturn(shipment);
-        return shipment;
+        paymentGateway.willDecline();
     }
 
     private List<StockReservation> givenStockReservationFails() {
@@ -96,11 +82,10 @@ class OrderServiceTest {
 
     @Test
     void orderIsConfirmed_whenAllStepsSucceed() {
-        givenStockIsAvailable();
-        givenPaymentSucceeds();
-        givenShipmentCreated();
+        var order = anOrder();
+        givenStockIsAvailableFor(order);
 
-        OrderResult result = orderService.createOrder(anOrder());
+        OrderResult result = orderService.createOrder(order);
 
         assertInstanceOf(OrderResult.Success.class, result);
         assertEquals(OrderStatus.CONFIRMED, ((OrderResult.Success) result).order().status());
@@ -108,11 +93,10 @@ class OrderServiceTest {
 
     @Test
     void calculatedPriceIsStoredInOrder_whenAllStepsSucceed() {
-        givenStockIsAvailable();
-        givenPaymentSucceeds();
-        givenShipmentCreated();
+        var order = anOrder();
+        givenStockIsAvailableFor(order);
 
-        OrderResult result = orderService.createOrder(anOrder());
+        OrderResult result = orderService.createOrder(order);
 
         double realTotal = 29.0; // subtotal=20, tax=4 (20%), shipping=5 (below 100€ threshold)
         assertEquals(realTotal, ((OrderResult.Success) result).order().totalPrice());
@@ -120,22 +104,22 @@ class OrderServiceTest {
 
     @Test
     void shippingConfirmationIsReturned_whenAllStepsSucceed() {
-        givenStockIsAvailable();
-        givenPaymentSucceeds();
-        ShippingConfirmation shipment = givenShipmentCreated();
+        var order = anOrder();
+        givenStockIsAvailableFor(order);
 
-        OrderResult result = orderService.createOrder(anOrder());
+        OrderResult result = orderService.createOrder(order);
 
-        assertEquals(shipment, ((OrderResult.Success) result).shippingConfirmation());
+        assertEquals(shippingGateway.lastConfirmation(), ((OrderResult.Success) result).shippingConfirmation());
     }
 
     // ── Stock unavailable ─────────────────────────────────────────────────────
 
     @Test
     void orderFails_whenStockIsUnavailable() {
+        var order = anOrder();
         // stockRepository is empty: no stock added
 
-        OrderResult result = orderService.createOrder(anOrder());
+        OrderResult result = orderService.createOrder(order);
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Insufficient stock", ((OrderResult.Failure) result).reason());
@@ -143,26 +127,31 @@ class OrderServiceTest {
 
     @Test
     void paymentIsNotCharged_whenStockIsUnavailable() {
-        orderService.createOrder(anOrder());
+        var order = anOrder();
 
-        verifyNoInteractions(paymentGateway);
+        orderService.createOrder(order);
+
+        assertFalse(paymentGateway.wasCharged());
     }
 
     @Test
     void shipmentIsNotCreated_whenStockIsUnavailable() {
-        orderService.createOrder(anOrder());
+        var order = anOrder();
 
-        verifyNoInteractions(shippingGateway);
+        orderService.createOrder(order);
+
+        assertFalse(shippingGateway.hasCreatedShipment());
     }
 
     // ── Payment declined ──────────────────────────────────────────────────────
 
     @Test
     void orderFails_whenPaymentIsDeclined() {
-        givenStockIsAvailable();
+        var order = anOrder();
+        givenStockIsAvailableFor(order);
         givenPaymentIsDeclined();
 
-        OrderResult result = orderService.createOrder(anOrder());
+        OrderResult result = orderService.createOrder(order);
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Payment failed", ((OrderResult.Failure) result).reason());
@@ -170,22 +159,23 @@ class OrderServiceTest {
 
     @Test
     void shipmentIsNotCreated_whenPaymentIsDeclined() {
-        givenStockIsAvailable();
+        var order = anOrder();
+        givenStockIsAvailableFor(order);
         givenPaymentIsDeclined();
 
-        orderService.createOrder(anOrder());
+        orderService.createOrder(order);
 
-        verifyNoInteractions(shippingGateway);
+        assertFalse(shippingGateway.hasCreatedShipment());
     }
 
     // ── Stock reservation fails (race condition — tested with mock StockService)
 
     @Test
     void orderFails_whenStockReservationFails() {
+        var order = anOrder();
         givenStockReservationFails();
-        givenPaymentSucceeds();
 
-        OrderResult result = orderService.createOrder(anOrder());
+        OrderResult result = orderService.createOrder(order);
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Could not reserve stock", ((OrderResult.Failure) result).reason());
@@ -193,31 +183,31 @@ class OrderServiceTest {
 
     @Test
     void paymentIsRefunded_whenStockReservationFails() {
+        var order = anOrder();
         givenStockReservationFails();
-        var txnId = givenPaymentSucceeds();
 
-        orderService.createOrder(anOrder());
+        orderService.createOrder(order);
 
-        verify(paymentGateway).refund(txnId);
+        assertTrue(paymentGateway.wasRefunded(paymentGateway.lastTransactionId()));
     }
 
     @Test
     void stockIsReleased_whenStockReservationFails() {
+        var order = anOrder();
         var failedReservations = givenStockReservationFails();
-        givenPaymentSucceeds();
 
-        orderService.createOrder(anOrder());
+        orderService.createOrder(order);
 
         verify(mockStockService).releaseStock(failedReservations);
     }
 
     @Test
     void shipmentIsNotCreated_whenStockReservationFails() {
+        var order = anOrder();
         givenStockReservationFails();
-        givenPaymentSucceeds();
 
-        orderService.createOrder(anOrder());
+        orderService.createOrder(order);
 
-        verifyNoInteractions(shippingGateway);
+        assertFalse(shippingGateway.hasCreatedShipment());
     }
 }
