@@ -42,15 +42,11 @@ class OrderServiceTest {
 
     // ── Given helpers ─────────────────────────────────────────────────────────
 
-    private Order anOrder(OrderItem... items) {
-        var itemList = items.length > 0
-            ? List.of(items)
-            : List.of(new OrderItem("PROD-001", 1, 20.0));
+    private OrderBuilder anOrder() {
         return OrderBuilder.anOrder()
             .withId("ORDER-001")
             .withCustomerId("CUST-001")
-            .withItems(itemList)
-            .build();
+            .withItems(List.of(new OrderItem("PROD-001", 1, 20.0)));
     }
 
     private void givenStockIsAvailable() {
@@ -98,7 +94,7 @@ class OrderServiceTest {
 
     @Test
     void orderIsConfirmed_whenAllStepsSucceed() {
-        var order = anOrder();
+        var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(29.0);
         givenPaymentSucceeds();
@@ -113,7 +109,7 @@ class OrderServiceTest {
 
     @Test
     void calculatedPriceIsStoredInOrder_whenAllStepsSucceed() {
-        var order = anOrder();
+        var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(29.0);
         givenPaymentSucceeds();
@@ -127,7 +123,7 @@ class OrderServiceTest {
 
     @Test
     void shippingConfirmationIsReturned_whenAllStepsSucceed() {
-        var order = anOrder();
+        var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(29.0);
         givenPaymentSucceeds();
@@ -143,7 +139,7 @@ class OrderServiceTest {
 
     @Test
     void orderFails_whenStockIsUnavailable() {
-        var order = anOrder();
+        var order = anOrder().build();
         givenStockIsUnavailable();
 
         OrderResult result = orderService.createOrder(order);
@@ -154,7 +150,7 @@ class OrderServiceTest {
 
     @Test
     void paymentIsNotCharged_whenStockIsUnavailable() {
-        var order = anOrder();
+        var order = anOrder().build();
         givenStockIsUnavailable();
 
         orderService.createOrder(order);
@@ -164,7 +160,7 @@ class OrderServiceTest {
 
     @Test
     void shipmentIsNotCreated_whenStockIsUnavailable() {
-        var order = anOrder();
+        var order = anOrder().build();
         givenStockIsUnavailable();
 
         orderService.createOrder(order);
@@ -176,7 +172,7 @@ class OrderServiceTest {
 
     @Test
     void orderFails_whenPaymentIsDeclined() {
-        var order = anOrder();
+        var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(45.0);
         givenPaymentIsDeclined();
@@ -189,7 +185,7 @@ class OrderServiceTest {
 
     @Test
     void shipmentIsNotCreated_whenPaymentIsDeclined() {
-        var order = anOrder();
+        var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(45.0);
         givenPaymentIsDeclined();
@@ -203,7 +199,7 @@ class OrderServiceTest {
 
     @Test
     void orderFails_whenStockReservationFails() {
-        var order = anOrder();
+        var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(18.0);
         givenPaymentSucceeds();
@@ -217,7 +213,7 @@ class OrderServiceTest {
 
     @Test
     void paymentIsRefunded_whenStockReservationFails() {
-        var order = anOrder();
+        var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(18.0);
         var txnId = givenPaymentSucceeds();
@@ -230,7 +226,7 @@ class OrderServiceTest {
 
     @Test
     void stockIsReleased_whenStockReservationFails() {
-        var order = anOrder();
+        var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(18.0);
         givenPaymentSucceeds();
@@ -243,7 +239,7 @@ class OrderServiceTest {
 
     @Test
     void shipmentIsNotCreated_whenStockReservationFails() {
-        var order = anOrder();
+        var order = anOrder().build();
         givenStockIsAvailable();
         givenPricingCalculates(18.0);
         givenPaymentSucceeds();
