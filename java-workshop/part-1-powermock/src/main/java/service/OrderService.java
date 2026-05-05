@@ -21,7 +21,8 @@ public class OrderService {
         PaymentService paymentService = new PaymentService();
         ShippingService shippingService = new ShippingService();
 
-        if (!stockService.checkAvailability(order.items())) {
+        List<StockReservation> reservations = stockService.reserveStock(order.items());
+        if (reservations.stream().anyMatch(reservation -> !reservation.reserved())) {
             return new OrderResult.Failure(order.reject(), "Insufficient stock");
         }
 
@@ -33,16 +34,8 @@ public class OrderService {
         );
 
         if (paymentResult.status() != PaymentStatus.SUCCESS) {
-            return new OrderResult.Failure(order.reject(), "Payment failed");
-        }
-
-        List<StockReservation> reservations = stockService.reserveStock(order.items());
-        if (reservations.stream().anyMatch(reservation -> !reservation.reserved())) {
-            if (paymentResult.transactionId() != null) {
-                paymentService.refundPayment(paymentResult.transactionId());
-            }
             stockService.releaseStock(reservations);
-            return new OrderResult.Failure(order.reject(), "Could not reserve stock");
+            return new OrderResult.Failure(order.reject(), "Payment failed");
         }
 
         ShippingConfirmation shippingConfirmation = shippingService.createShipment(order);

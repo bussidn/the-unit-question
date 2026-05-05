@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,31 +20,6 @@ class StockServiceTest {
     void setUp() {
         stockRepository = new InMemoryStockRepository();
         stockService = new RepositoryStockService(stockRepository);
-    }
-
-    @Test
-    void checkAvailability_returnsTrue_whenAllItemsAreInStock() {
-        stockRepository.withAvailableStock("PROD-001", 100)
-                       .withAvailableStock("PROD-002", 50);
-
-        var items = List.of(
-            new OrderItem("PROD-001", 5, 10.0),
-            new OrderItem("PROD-002", 3, 20.0)
-        );
-
-        assertTrue(stockService.checkAvailability(items));
-    }
-
-    @Test
-    void checkAvailability_returnsFalse_whenItemIsOutOfStock() {
-        stockRepository.withAvailableStock("PROD-001", 100);
-
-        var items = List.of(
-            new OrderItem("PROD-001", 5, 10.0),
-            new OrderItem("PROD-003", 3, 20.0)
-        );
-
-        assertFalse(stockService.checkAvailability(items));
     }
 
     @Test

@@ -16,17 +16,6 @@ public class RepositoryStockService implements StockService {
     }
 
     @Override
-    public boolean checkAvailability(List<OrderItem> items) {
-        for (OrderItem item : items) {
-            Stock stock = stockRepository.findByProductId(item.productId());
-            if (stock == null || stock.availableQuantity() < item.quantity()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
     public List<StockReservation> reserveStock(List<OrderItem> items) {
         List<StockReservation> reservations = new ArrayList<>();
 

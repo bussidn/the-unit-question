@@ -49,14 +49,6 @@ class OrderServiceTest {
             .withItems(List.of(new OrderItem("PROD-001", 1, 20.0)));
     }
 
-    private void givenStockIsAvailable() {
-        when(stockService.checkAvailability(any())).thenReturn(true);
-    }
-
-    private void givenStockIsUnavailable() {
-        when(stockService.checkAvailability(any())).thenReturn(false);
-    }
-
     private void givenPricingCalculates(double total) {
         when(pricingService.calculateTotal(any())).thenReturn(total);
     }
@@ -100,7 +92,6 @@ class OrderServiceTest {
     @Test
     void orderIsConfirmed_whenAllStepsSucceed() {
         var order = anOrder().build();
-        givenStockIsAvailable();
         givenPricingCalculates(29.0);
         givenPaymentSucceedsFor(order);
         givenReservationSucceedsFor(order);
@@ -115,7 +106,6 @@ class OrderServiceTest {
     @Test
     void calculatedPriceIsStoredInOrder_whenAllStepsSucceed() {
         var order = anOrder().build();
-        givenStockIsAvailable();
         givenPricingCalculates(29.0);
         givenPaymentSucceedsFor(order);
         givenReservationSucceedsFor(order);
@@ -129,7 +119,6 @@ class OrderServiceTest {
     @Test
     void shippingConfirmationIsReturned_whenAllStepsSucceed() {
         var order = anOrder().build();
-        givenStockIsAvailable();
         givenPricingCalculates(29.0);
         givenPaymentSucceedsFor(order);
         givenReservationSucceedsFor(order);
@@ -145,7 +134,7 @@ class OrderServiceTest {
     @Test
     void orderFails_whenStockIsUnavailable() {
         var order = anOrder().build();
-        givenStockIsUnavailable();
+        givenReservationFailsFor(order);
 
         OrderResult result = orderService.createOrder(order);
 
@@ -156,7 +145,7 @@ class OrderServiceTest {
     @Test
     void paymentIsNotCharged_whenStockIsUnavailable() {
         var order = anOrder().build();
-        givenStockIsUnavailable();
+        givenReservationFailsFor(order);
 
         orderService.createOrder(order);
 
@@ -166,7 +155,7 @@ class OrderServiceTest {
     @Test
     void shipmentIsNotCreated_whenStockIsUnavailable() {
         var order = anOrder().build();
-        givenStockIsUnavailable();
+        givenReservationFailsFor(order);
 
         orderService.createOrder(order);
 
@@ -178,7 +167,7 @@ class OrderServiceTest {
     @Test
     void orderFails_whenPaymentIsDeclined() {
         var order = anOrder().build();
-        givenStockIsAvailable();
+        givenReservationSucceedsFor(order);
         givenPricingCalculates(45.0);
         givenPaymentIsDeclinedFor(order);
 
@@ -191,7 +180,7 @@ class OrderServiceTest {
     @Test
     void shipmentIsNotCreated_whenPaymentIsDeclined() {
         var order = anOrder().build();
-        givenStockIsAvailable();
+        givenReservationSucceedsFor(order);
         givenPricingCalculates(45.0);
         givenPaymentIsDeclinedFor(order);
 
@@ -200,58 +189,15 @@ class OrderServiceTest {
         verifyNoInteractions(shippingService);
     }
 
-    // ── Stock reservation fails (race condition) ──────────────────────────────
-
     @Test
-    void orderFails_whenStockReservationFails() {
+    void stockIsReleased_whenPaymentIsDeclined() {
         var order = anOrder().build();
-        givenStockIsAvailable();
-        givenPricingCalculates(18.0);
-        givenPaymentSucceedsFor(order);
-        givenReservationFailsFor(order);
-
-        OrderResult result = orderService.createOrder(order);
-
-        assertInstanceOf(OrderResult.Failure.class, result);
-        assertEquals("Could not reserve stock", ((OrderResult.Failure) result).reason());
-    }
-
-    @Test
-    void paymentIsRefunded_whenStockReservationFails() {
-        var order = anOrder().build();
-        givenStockIsAvailable();
-        givenPricingCalculates(18.0);
-        var txnId = givenPaymentSucceedsFor(order);
-        givenReservationFailsFor(order);
-
-        orderService.createOrder(order);
-
-        verify(paymentService).refundPayment(txnId);
-    }
-
-    @Test
-    void stockIsReleased_whenStockReservationFails() {
-        var order = anOrder().build();
-        givenStockIsAvailable();
-        givenPricingCalculates(18.0);
-        givenPaymentSucceedsFor(order);
-        List<StockReservation> reservations = givenReservationFailsFor(order);
+        List<StockReservation> reservations = givenReservationSucceedsFor(order);
+        givenPricingCalculates(45.0);
+        givenPaymentIsDeclinedFor(order);
 
         orderService.createOrder(order);
 
         verify(stockService).releaseStock(reservations);
-    }
-
-    @Test
-    void shipmentIsNotCreated_whenStockReservationFails() {
-        var order = anOrder().build();
-        givenStockIsAvailable();
-        givenPricingCalculates(18.0);
-        givenPaymentSucceedsFor(order);
-        givenReservationFailsFor(order);
-
-        orderService.createOrder(order);
-
-        verifyNoInteractions(shippingService);
     }
 }

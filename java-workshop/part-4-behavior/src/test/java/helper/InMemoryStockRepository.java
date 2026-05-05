@@ -14,6 +14,10 @@ public class InMemoryStockRepository implements StockRepository {
         return this;
     }
 
+    public int availableStock(String productId) {
+        return stock.getOrDefault(productId, 0);
+    }
+
     @Override
     public Stock findByProductId(String productId) {
         return new Stock(productId, stock.getOrDefault(productId, 0));

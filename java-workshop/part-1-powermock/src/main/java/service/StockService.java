@@ -14,16 +14,6 @@ import java.util.List;
  */
 public class StockService {
 
-    public boolean checkAvailability(List<OrderItem> items) {
-        for (OrderItem item : items) {
-            Stock stock = Database.getStock(item.productId());
-            if (stock == null || stock.availableQuantity() < item.quantity()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public List<StockReservation> reserveStock(List<OrderItem> items) {
         List<StockReservation> reservations = new ArrayList<>();
 
