@@ -12,7 +12,7 @@ We'd like to allow customers to apply a discount code to their order.
 
 - `PricingService` already handles tax (20%) and shipping (5€ if subtotal < 100€)
 - The [`DiscountCode`](src/main/java/domain/DiscountCode.java) enum lists available codes with their discount percentage
-- [`DiscountCodeRepository`](src/main/java/repository/DiscountCodeRepository.java) exposes two methods: `hasBeenUsed` and `markAsUsed`
+- [`PromoCodeService`](src/main/java/service/PromoCodeService.java) handles promo code validation — `checkPromoCode(customerId, discountCode)` returns `true` if the code is available for use, and `markAsUsed` records usage
 
 ---
 
@@ -27,10 +27,10 @@ The discount applies **on the subtotal**, before tax and shipping are calculated
 ### In `OrderService`
 
 Update `createOrder` to accept an optional `DiscountCode` and:
-1. **Check** via `DiscountCodeRepository` whether the code has already been used by this customer — if so, reject the order immediately
+1. **Check** via `PromoCodeService.checkPromoCode` whether the code is available — if `checkPromoCode` returns `true`, the code can be applied; otherwise, reject the order
 2. **Register** the code usage (via `markAsUsed`) after the order is confirmed
 
-`DiscountCodeRepository` should be injected into `OrderService`.
+`PromoCodeService` should be injected into `OrderService`.
 
 ---
 

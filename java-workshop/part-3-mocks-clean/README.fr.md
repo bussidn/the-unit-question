@@ -19,9 +19,9 @@ Les tests de `PricingService` ont déjà été écrits — consultez `PricingSer
 
 Migrez `OrderService` pour supporter les codes promo :
 
-1. Ajoutez `DiscountCodeRepository` comme dépendance
+1. Ajoutez `PromoCodeService` comme dépendance
 2. Changez la signature de `createOrder` pour accepter un `DiscountCode` optionnel
-3. Si un code promo est fourni : vérifiez qu'il n'a pas déjà été utilisé, calculez le prix avec remise, marquez-le comme utilisé après paiement
+3. Si un code promo est fourni : utilisez `PromoCodeService.checkPromoCode` — si ça retourne `true`, le code est disponible et peut être appliqué ; sinon, rejetez. Calculez le prix avec remise, marquez-le comme utilisé après paiement
 4. Écrivez `OrderServiceTest` en vous inspirant du style de `OrderCancellationServiceTest`
 
 Lancez les tests : `./gradlew test`

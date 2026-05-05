@@ -27,15 +27,16 @@ Regardez `OrderCancellationServiceTest` — il a été transformé en test compo
 - Utiliser `InMemoryOrderRepository` et `InMemoryStockRepository`
 - Garder `@Mock` uniquement sur `PaymentGateway` et `ShippingGateway`
 
-`InMemoryOrderRepository` et `InMemoryStockRepository` sont disponibles dans `helper/`.
+`InMemoryOrderRepository`, `InMemoryStockRepository` et `InMemoryDiscountCodeRepository` sont disponibles dans `helper/`.
+
+`PromoCodeService` est fourni avec ses tests — utilisez `PromoCodeService.checkPromoCode(customerId, discountCode)` : s'il retourne `true`, le code est disponible.
 
 ---
 
 ## 🎯 Votre mission
 
-1. Écrivez `InMemoryDiscountCodeRepository` dans `helper/` — inspirez-vous de `InMemoryStockRepository`
-2. Migrez `OrderService` pour supporter les codes promo (même chose qu'en Part 3)
-3. Écrivez `OrderServiceTest` en style comportemental
+1. Migrez `OrderService` pour supporter les codes promo — ajoutez `PromoCodeService` comme dépendance, utilisez `checkPromoCode` pour valider, `markAsUsed` après paiement
+2. Écrivez `OrderServiceTest` en style comportemental
 
 Lancez les tests : `./gradlew test`
 
