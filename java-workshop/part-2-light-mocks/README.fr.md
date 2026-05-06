@@ -1,107 +1,83 @@
 # The Unit Question — Part 2
 
-## 🏋️ Exercice : Code Promo
+## 🏋️ Exercice : Codes promo dans la création de commande
 
-**⏱️ ~20-25 minutes**
+**⏱️ ~25 minutes**
 
-On veut permettre aux clients d'appliquer un code promo à leur commande.
+La `PricingService` a été mise à jour pour supporter les codes promo. Elle expose maintenant deux méthodes :
 
----
+- `calculateTotal(items)` — ancienne API, sans remise
+- `calculateTotal(items, discountCode)` — nouvelle API avec code promo
 
-## 💡 Ce qui existe déjà
+Les tests de `PricingService` ont déjà été écrits — consultez `PricingServiceTest` pour comprendre le comportement attendu et vous inspirer du style.
 
-- `PricingService` gère déjà les taxes (20%) et les frais de livraison (5€ si sous-total < 100€)
-- L'enum [`DiscountCode`](src/main/java/domain/DiscountCode.java) liste les codes disponibles avec leur pourcentage de réduction
-- [`PromoCodeService`](src/main/java/service/PromoCodeService.java) gère la validation des codes promo — `checkPromoCode(customerId, discountCode)` retourne `true` si le code est disponible, et `markAsUsed` enregistre l'utilisation
-
----
-
-## 🔧 Ce qu'il faut implémenter
-
-### Dans `PricingService`
-
-Ajoutez une surcharge de `calculateTotal` qui accepte un `DiscountCode` en plus de la liste d'articles.
-
-La réduction s'applique **sur le sous-total**, avant le calcul des taxes et des frais de livraison.
-
-### Dans `OrderService`
-
-Modifiez `createOrder` pour accepter un `DiscountCode` optionnel et :
-1. **Vérifier** via `PromoCodeService.checkPromoCode` si le code est disponible — si `checkPromoCode` retourne `true`, le code peut être appliqué ; sinon, rejeter la commande
-2. **Enregistrer** l'utilisation du code (via `markAsUsed`) après confirmation de la commande
-
-`PromoCodeService` doit être injecté dans `OrderService`.
+`OrderService` n'est pas encore migré. C'est votre mission.
 
 ---
 
-## ✅ Tests à mettre à jour
+### 🎯 Votre mission
 
-### `PricingServiceTest`
+Migrez `OrderService` pour supporter les codes promo :
 
-#### Scénario A — Réduction appliquée, livraison ajoutée
+1. Ajoutez `PromoCodeService` comme dépendance
+2. Changez la signature de `createOrder` pour accepter un `DiscountCode` optionnel
+3. Si un code promo est fourni : utilisez `PromoCodeService.checkPromoCode` — si ça retourne `true`, le code est disponible et peut être appliqué ; sinon, rejetez. Calculez le prix avec remise, marquez-le comme utilisé après paiement
+4. Écrivez `OrderServiceTest` en vous inspirant du style de `OrderCancellationServiceTest`
 
-```
-ÉTANT DONNÉ des articles pour 100€
-ET un code SUMMER20 (20% de réduction)
-
-ALORS le sous-total après réduction est 80€
-ET les taxes (20%) s'appliquent sur 80€ → +16€
-ET les frais de livraison s'appliquent (80€ < seuil 100€) → +5€
-ET le total est 101€
-```
-
-#### Scénario B — Réduction appliquée, livraison offerte
-
-```
-ÉTANT DONNÉ des articles pour 150€
-ET un code SUMMER20 (20% de réduction)
-
-ALORS le sous-total après réduction est 120€
-ET les taxes (20%) s'appliquent sur 120€ → +24€
-ET les frais de livraison sont offerts (120€ ≥ seuil 100€)
-ET le total est 144€
-```
+Lancez les tests : `./gradlew test`
 
 ---
 
-### `OrderServiceTest`
+### Scénarios à implémenter dans `OrderServiceTest`
 
-#### Scénario C — Code valide, commande acceptée
-
-```
-ÉTANT DONNÉ une commande avec un code promo
-ET le client n'a pas encore utilisé ce code
-
-QUAND la commande est créée
-
-ALORS la commande est confirmée
-ET le code est marqué comme utilisé pour ce client
-```
-
-#### Scénario D — Code déjà utilisé, commande rejetée
+#### Scénario 1 : Création sans code promo
 
 ```
-ÉTANT DONNÉ une commande avec un code promo
-ET le client a déjà utilisé ce code
+ÉTANT DONNÉ une commande de 2 articles à 10€ chacun
+ET aucun code promo
 
-QUAND la commande est créée
+QUAND le client passe la commande
 
-ALORS la commande est rejetée avec "Code already used"
-ET aucune autre étape n'est exécutée (stock, paiement, livraison)
+ALORS le paiement est traité pour le montant calculé par PricingService
+ET la commande est confirmée avec une expédition
+```
+
+#### Scénario 2 : Création avec code promo valide
+
+```
+ÉTANT DONNÉ une commande avec 2 articles à 55€ chacun (sous-total : 110€)
+ET le code promo SUMMER20 (-20%)
+ET le code n'a pas encore été utilisé par ce client
+
+QUAND le client passe la commande
+
+ALORS le paiement est traité pour 105.60€
+ET le code promo est marqué comme utilisé
+ET la commande est confirmée
+```
+
+#### Scénario 3 : Code promo déjà utilisé
+
+```
+ÉTANT DONNÉ une commande avec le code promo SUMMER20
+ET ce code a déjà été utilisé par ce client
+
+QUAND le client passe la commande
+
+ALORS la commande est rejetée avec le motif "Discount code already used"
+ET aucun paiement n'est déclenché
 ```
 
 ---
 
-## Votre mission
+### 💡 Conseils
 
-1. Regardez le code existant dans `PricingService` et `OrderService`
-2. Implémentez la feature
-3. Mettez à jour les tests dans `PricingServiceTest` et `OrderServiceTest`
-4. Lancez les tests
+- Regardez `OrderCancellationServiceTest` pour le style : `@ExtendWith`, `@Mock`, `@InjectMocks`, helpers `given*` / `assert*`
+- Le builder `OrderBuilder` est disponible dans `helper/`
+- Consultez `PricingServiceTest` pour voir comment `PricingService` est testée
 
 ---
 
 ## ➡️ Suite
 
-Une fois l'exercice terminé (ou le temps écoulé), passez à la **[Part 3](../part-3-mocks-clean/README.fr.md)**
-
+Passez à la **[Part 3](../part-3-mocks-clean/README.fr.md)**
