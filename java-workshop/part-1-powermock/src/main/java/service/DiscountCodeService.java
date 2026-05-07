@@ -4,17 +4,17 @@ import domain.DiscountCode;
 import infrastructure.Database;
 
 /**
- * Promo code validation service.
+ * Discount code validation service.
  * Uses Database static calls (consistent with Part 1 architecture).
  */
-public class PromoCodeService {
+public class DiscountCodeService {
 
     /**
-     * Checks a promo code for a given customer.
+     * Checks a discount code for a given customer.
      *
      * @return true if the code has already been used by this customer
      */
-    public boolean checkPromoCode(String customerId, DiscountCode discountCode) {
+    public boolean checkDiscountCode(String customerId, DiscountCode discountCode) {
         return Database.hasDiscountCodeBeenUsed(customerId, discountCode.name());
     }
 

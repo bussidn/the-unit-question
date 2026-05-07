@@ -10,34 +10,34 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class PromoCodeServiceTest {
+class DiscountCodeServiceTest {
 
     @Test
-    void checkPromoCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
+    void checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
         DiscountCodeRepository repository = mock(DiscountCodeRepository.class);
-        PromoCodeService promoCodeService = new PromoCodeService(repository);
+        DiscountCodeService discountCodeService = new DiscountCodeService(repository);
 
         when(repository.hasBeenUsed("CUST-001", DiscountCode.SUMMER20)).thenReturn(true);
 
-        assertTrue(promoCodeService.checkPromoCode("CUST-001", DiscountCode.SUMMER20));
+        assertTrue(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
     }
 
     @Test
-    void checkPromoCode_returnsFalse_whenCodeHasNotBeenUsed() {
+    void checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
         DiscountCodeRepository repository = mock(DiscountCodeRepository.class);
-        PromoCodeService promoCodeService = new PromoCodeService(repository);
+        DiscountCodeService discountCodeService = new DiscountCodeService(repository);
 
         when(repository.hasBeenUsed("CUST-001", DiscountCode.SUMMER20)).thenReturn(false);
 
-        assertFalse(promoCodeService.checkPromoCode("CUST-001", DiscountCode.SUMMER20));
+        assertFalse(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
     }
 
     @Test
     void markAsUsed_delegatesToRepository() {
         DiscountCodeRepository repository = mock(DiscountCodeRepository.class);
-        PromoCodeService promoCodeService = new PromoCodeService(repository);
+        DiscountCodeService discountCodeService = new DiscountCodeService(repository);
 
-        promoCodeService.markAsUsed("CUST-001", DiscountCode.SUMMER20);
+        discountCodeService.markAsUsed("CUST-001", DiscountCode.SUMMER20);
 
         verify(repository).markAsUsed("CUST-001", DiscountCode.SUMMER20);
     }

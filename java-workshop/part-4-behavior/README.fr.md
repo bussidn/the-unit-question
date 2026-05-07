@@ -29,13 +29,13 @@ Regardez `OrderCancellationServiceTest` — il a été transformé en test compo
 
 `InMemoryOrderRepository`, `InMemoryStockRepository` et `InMemoryDiscountCodeRepository` sont disponibles dans `helper/`.
 
-`PromoCodeService` est fourni avec ses tests — utilisez `PromoCodeService.checkPromoCode(customerId, discountCode)` : s'il retourne `true`, le code est disponible.
+`DiscountCodeService` est fourni avec ses tests — utilisez `DiscountCodeService.checkDiscountCode(customerId, discountCode)` : s'il retourne `true`, le code est disponible.
 
 ---
 
 ## 🎯 Votre mission
 
-1. Migrez `OrderService` pour supporter les codes promo — ajoutez `PromoCodeService` comme dépendance, utilisez `checkPromoCode` pour valider, `markAsUsed` après paiement
+1. Migrez `OrderService` pour supporter les codes promo — ajoutez `DiscountCodeService` comme dépendance, utilisez `checkDiscountCode` pour valider, `markAsUsed` après paiement
 2. Écrivez `OrderServiceTest` en style comportemental
 
 Lancez les tests : `./gradlew test`

@@ -8,32 +8,32 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class PromoCodeServiceTest {
+class DiscountCodeServiceTest {
 
     private InMemoryDiscountCodeRepository discountCodeRepository;
-    private PromoCodeService promoCodeService;
+    private DiscountCodeService discountCodeService;
 
     @BeforeEach
     void setUp() {
         discountCodeRepository = new InMemoryDiscountCodeRepository();
-        promoCodeService = new PromoCodeService(discountCodeRepository);
+        discountCodeService = new DiscountCodeService(discountCodeRepository);
     }
 
     @Test
-    void checkPromoCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
+    void checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
         discountCodeRepository.withUsedCode("CUST-001", DiscountCode.SUMMER20);
 
-        assertTrue(promoCodeService.checkPromoCode("CUST-001", DiscountCode.SUMMER20));
+        assertTrue(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
     }
 
     @Test
-    void checkPromoCode_returnsFalse_whenCodeHasNotBeenUsed() {
-        assertFalse(promoCodeService.checkPromoCode("CUST-001", DiscountCode.SUMMER20));
+    void checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
+        assertFalse(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
     }
 
     @Test
     void markAsUsed_makesCodeCheckedAsUsed() {
-        promoCodeService.markAsUsed("CUST-001", DiscountCode.SUMMER20);
+        discountCodeService.markAsUsed("CUST-001", DiscountCode.SUMMER20);
 
         assertTrue(discountCodeRepository.isMarkedAsUsed("CUST-001", DiscountCode.SUMMER20));
     }

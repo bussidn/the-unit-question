@@ -4,21 +4,21 @@ import domain.DiscountCode;
 import repository.DiscountCodeRepository;
 
 /**
- * Promo code validation service.
+ * Discount code validation service.
  */
-public class PromoCodeService {
+public class DiscountCodeService {
     private final DiscountCodeRepository discountCodeRepository;
 
-    public PromoCodeService(DiscountCodeRepository discountCodeRepository) {
+    public DiscountCodeService(DiscountCodeRepository discountCodeRepository) {
         this.discountCodeRepository = discountCodeRepository;
     }
 
     /**
-     * Checks a promo code for a given customer.
+     * Checks a discount code for a given customer.
      *
      * @return true if the code has already been used by this customer
      */
-    public boolean checkPromoCode(String customerId, DiscountCode discountCode) {
+    public boolean checkDiscountCode(String customerId, DiscountCode discountCode) {
         return discountCodeRepository.hasBeenUsed(customerId, discountCode);
     }
 

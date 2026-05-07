@@ -29,13 +29,13 @@ Look at `OrderCancellationServiceTest` — it has been transformed into a behavi
 
 `InMemoryOrderRepository`, `InMemoryStockRepository` and `InMemoryDiscountCodeRepository` are available in `helper/`.
 
-`PromoCodeService` is provided with its tests — use `PromoCodeService.checkPromoCode(customerId, discountCode)`: if it returns `true`, the code is available for use.
+`DiscountCodeService` is provided with its tests — use `DiscountCodeService.checkDiscountCode(customerId, discountCode)`: if it returns `true`, the code is available for use.
 
 ---
 
 ## 🎯 Your mission
 
-1. Migrate `OrderService` to support discount codes — add `PromoCodeService` as a dependency, use `checkPromoCode` to validate, `markAsUsed` after payment
+1. Migrate `OrderService` to support discount codes — add `DiscountCodeService` as a dependency, use `checkDiscountCode` to validate, `markAsUsed` after payment
 2. Write `OrderServiceTest` in behaviour test style
 
 Run the tests: `./gradlew test`
