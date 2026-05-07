@@ -9,7 +9,7 @@ La `PricingService` a été mise à jour pour supporter les codes promo. Elle ex
 - `calculateTotal(items)` — ancienne API, sans remise
 - `calculateTotal(items, discountCode)` — nouvelle API avec code promo
 
-Les tests de `PricingService` ont déjà été écrits — consultez `PricingServiceTest` pour comprendre le comportement attendu et vous inspirer du style.
+Les tests de `PricingService` ont déjà été écrits — consultez `PricingServiceTest` pour comprendre comment le pricing calcule les totaux avec les remises.
 
 `OrderService` n'est pas encore migré. C'est votre mission.
 
@@ -22,7 +22,7 @@ Migrez `OrderService` pour supporter les codes promo :
 1. Ajoutez `DiscountCodeService` comme dépendance
 2. Changez la signature de `createOrder` pour accepter un `DiscountCode` optionnel
 3. Si un code promo est fourni : utilisez `DiscountCodeService.checkDiscountCode` — si ça retourne `true`, le code est disponible et peut être appliqué ; sinon, rejetez. Calculez le prix avec remise, marquez-le comme utilisé après paiement
-4. Écrivez `OrderServiceTest` en vous inspirant du style de `OrderCancellationServiceTest`
+4. Ajoutez vos nouveaux scénarios de test dans le `OrderServiceTest` existant — suivez le style déjà en place
 
 Lancez les tests : `./gradlew test`
 
@@ -72,9 +72,9 @@ ET aucun paiement n'est déclenché
 
 ### 💡 Conseils
 
-- Regardez `OrderCancellationServiceTest` pour le style : `@ExtendWith`, `@Mock`, `@InjectMocks`, helpers `given*` / `assert*`
+- Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patterns
 - Le builder `OrderBuilder` est disponible dans `helper/`
-- Consultez `PricingServiceTest` pour voir comment `PricingService` est testée
+- Consultez `PricingServiceTest` pour comprendre comment le pricing calcule les totaux avec les remises
 
 ---
 

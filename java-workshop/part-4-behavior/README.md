@@ -22,10 +22,10 @@ For repositories, we use **fakes**: simple in-memory implementations, no databas
 
 ## What is provided
 
-Look at `OrderCancellationServiceTest` — it has been transformed into a behaviour test. It shows you how to:
+Look at the existing `OrderServiceTest` — it has been transformed into a behaviour test. It shows you how to:
 - Wire real implementations by hand in `@BeforeEach`
-- Use `InMemoryOrderRepository` and `InMemoryStockRepository`
-- Keep `@Mock` only on `PaymentGateway` and `ShippingGateway`
+- Use `InMemoryStockRepository` and in-memory gateways
+- Assert on real behaviour instead of mock interactions
 
 `InMemoryOrderRepository`, `InMemoryStockRepository` and `InMemoryDiscountCodeRepository` are available in `helper/`.
 
@@ -86,10 +86,8 @@ AND neither pricing nor payment are called
 
 ### 💡 Tips
 
-- Look at `OrderCancellationServiceTest` to see how to wire real implementations
+- Look at the existing `OrderServiceTest` to see how real implementations are wired
 - `PricingService` has no dependencies — instantiate it directly: `new PricingService()`
-- Keep `@Mock` only on `PaymentGateway` and `ShippingGateway`
-- Check `PricingServiceTest` to understand how `PricingService` behaves
 
 ---
 

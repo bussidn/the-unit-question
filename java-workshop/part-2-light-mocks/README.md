@@ -9,7 +9,7 @@
 - `calculateTotal(items)` — old API, no discount
 - `calculateTotal(items, discountCode)` — new API with discount code
 
-The tests for `PricingService` have already been written — look at `PricingServiceTest` to understand the expected behaviour and get inspired by the style.
+The tests for `PricingService` have already been written — check `PricingServiceTest` to understand how pricing calculates totals with discounts.
 
 `OrderService` has not been migrated yet. That's your mission.
 
@@ -22,7 +22,7 @@ Migrate `OrderService` to support discount codes:
 1. Add `DiscountCodeService` as a dependency
 2. Change the `createOrder` signature to accept an optional `DiscountCode`
 3. If a discount code is provided: use `DiscountCodeService.checkDiscountCode` — if it returns `true`, the code is available and can be applied; otherwise reject. Calculate the price with the discount, mark as used after payment
-4. Write `OrderServiceTest` inspired by the style of `OrderCancellationServiceTest`
+4. Add your new test scenarios to the existing `OrderServiceTest` — follow the style already in place
 
 Run the tests: `./gradlew test`
 
@@ -83,9 +83,9 @@ AND neither pricing nor payment are called
 
 ### 💡 Tips
 
-- Look at `OrderCancellationServiceTest` for style: `@ExtendWith`, `@Mock`, `@InjectMocks`, `given*` / `assert*` helpers
+- Look at the existing `OrderServiceTest` for style and follow the same patterns
 - The `OrderBuilder` is available in `helper/`
-- Check `PricingServiceTest` to see how `PricingService` behaves
+- Check `PricingServiceTest` to understand how pricing calculates totals with discounts
 
 ---
 

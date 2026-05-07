@@ -22,10 +22,10 @@ Pour les repositories, on utilise des **fakes** : des implémentations en mémoi
 
 ## Ce qui est fourni
 
-Regardez `OrderCancellationServiceTest` — il a été transformé en test comportemental. Il vous montre comment :
+Regardez le `OrderServiceTest` existant — il a été transformé en test comportemental. Il vous montre comment :
 - Câbler les vraies implémentations à la main dans `@BeforeEach`
-- Utiliser `InMemoryOrderRepository` et `InMemoryStockRepository`
-- Garder `@Mock` uniquement sur `PaymentGateway` et `ShippingGateway`
+- Utiliser `InMemoryStockRepository` et les gateways en mémoire
+- Asserter sur le comportement réel plutôt que sur les interactions de mocks
 
 `InMemoryOrderRepository`, `InMemoryStockRepository` et `InMemoryDiscountCodeRepository` sont disponibles dans `helper/`.
 
@@ -86,10 +86,8 @@ ET ni le pricing ni le paiement ne sont appelés
 
 ### 💡 Conseils
 
-- Regardez `OrderCancellationServiceTest` pour voir comment câbler les vraies implémentations
+- Regardez le `OrderServiceTest` existant pour voir comment câbler les vraies implémentations
 - `PricingService` n'a pas de dépendances — instanciez-le directement : `new PricingService()`
-- Gardez `@Mock` uniquement sur `PaymentGateway` et `ShippingGateway`
-- Consultez `PricingServiceTest` pour comprendre le comportement de `PricingService`
 
 ---
 
