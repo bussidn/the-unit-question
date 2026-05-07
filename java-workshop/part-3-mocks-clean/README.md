@@ -30,19 +30,7 @@ Run the tests: `./gradlew test`
 
 ### Scenarios to implement in `OrderServiceTest`
 
-#### Scenario 1: Order without discount code
-
-```
-GIVEN an order with 2 items at €10 each
-AND no discount code
-
-WHEN the customer places the order
-
-THEN payment is processed for the amount calculated by PricingService
-AND the order is confirmed with a shipment
-```
-
-#### Scenario 2: Order with a valid discount code
+#### Scenario 1: Order with a valid discount code
 
 ```
 GIVEN an order with 2 items at €55 each (subtotal: €110)
@@ -56,7 +44,7 @@ AND the discount code is marked as used
 AND the order is confirmed
 ```
 
-#### Scenario 3: Discount code already used
+#### Scenario 2: Discount code already used
 
 ```
 GIVEN an order with discount code SUMMER20
@@ -68,7 +56,7 @@ THEN the order is rejected with reason "Discount code already used"
 AND no payment is triggered
 ```
 
-#### Scenario 4: Insufficient stock
+#### Scenario 3: Insufficient stock
 
 ```
 GIVEN an order where stock is unavailable
