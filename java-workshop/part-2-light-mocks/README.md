@@ -1,107 +1,95 @@
 # The Unit Question — Part 2
 
-## 🏋️ Exercise: Discount Code
+## 🏋️ Exercise: Discount codes in order creation
 
-**⏱️ ~20-25 minutes**
+**⏱️ ~25 minutes**
 
-We'd like to allow customers to apply a discount code to their order.
+`PricingService` has been updated to support discount codes. It now exposes two methods:
 
----
+- `calculateTotal(items)` — old API, no discount
+- `calculateTotal(items, discountCode)` — new API with discount code
 
-## 💡 What already exists
+The tests for `PricingService` have already been written — look at `PricingServiceTest` to understand the expected behaviour and get inspired by the style.
 
-- `PricingService` already handles tax (20%) and shipping (5€ if subtotal < 100€)
-- The [`DiscountCode`](src/main/java/domain/DiscountCode.java) enum lists available codes with their discount percentage
-- [`PromoCodeService`](src/main/java/service/PromoCodeService.java) handles promo code validation — `checkPromoCode(customerId, discountCode)` returns `true` if the code is available for use, and `markAsUsed` records usage
-
----
-
-## 🔧 What to implement
-
-### In `PricingService`
-
-Add an overload of `calculateTotal` that accepts a `DiscountCode` in addition to the list of items.
-
-The discount applies **on the subtotal**, before tax and shipping are calculated.
-
-### In `OrderService`
-
-Update `createOrder` to accept an optional `DiscountCode` and:
-1. **Check** via `PromoCodeService.checkPromoCode` whether the code is available — if `checkPromoCode` returns `true`, the code can be applied; otherwise, reject the order
-2. **Register** the code usage (via `markAsUsed`) after the order is confirmed
-
-`PromoCodeService` should be injected into `OrderService`.
+`OrderService` has not been migrated yet. That's your mission.
 
 ---
 
-## ✅ Tests to update
+### 🎯 Your mission
 
-### `PricingServiceTest`
+Migrate `OrderService` to support discount codes:
 
-#### Scenario A — Discount applied, shipping added
+1. Add `PromoCodeService` as a dependency
+2. Change the `createOrder` signature to accept an optional `DiscountCode`
+3. If a discount code is provided: use `PromoCodeService.checkPromoCode` — if it returns `true`, the code is available and can be applied; otherwise reject. Calculate the price with the discount, mark as used after payment
+4. Write `OrderServiceTest` inspired by the style of `OrderCancellationServiceTest`
 
-```
-GIVEN items worth 100€
-AND a SUMMER20 code (20% off)
-
-THEN the discounted subtotal is 80€
-AND tax (20%) applies on 80€ → +16€
-AND shipping applies (80€ < 100€ threshold) → +5€
-AND the total is 101€
-```
-
-#### Scenario B — Discount applied, free shipping
-
-```
-GIVEN items worth 150€
-AND a SUMMER20 code (20% off)
-
-THEN the discounted subtotal is 120€
-AND tax (20%) applies on 120€ → +24€
-AND shipping is free (120€ ≥ 100€ threshold)
-AND the total is 144€
-```
+Run the tests: `./gradlew test`
 
 ---
 
-### `OrderServiceTest`
+### Scenarios to implement in `OrderServiceTest`
 
-#### Scenario C — Valid code, order accepted
-
-```
-GIVEN an order with a discount code
-AND the customer has not used this code yet
-
-WHEN the order is created
-
-THEN the order is confirmed
-AND the code is marked as used for this customer
-```
-
-#### Scenario D — Already used code, order rejected
+#### Scenario 1: Order without discount code
 
 ```
-GIVEN an order with a discount code
-AND the customer has already used this code
+GIVEN an order with 2 items at €10 each
+AND no discount code
 
-WHEN the order is created
+WHEN the customer places the order
 
-THEN the order is rejected with "Code already used"
-AND no further step is executed (stock, payment, shipping)
+THEN payment is processed for the amount calculated by PricingService
+AND the order is confirmed with a shipment
+```
+
+#### Scenario 2: Order with a valid discount code
+
+```
+GIVEN an order with 2 items at €55 each (subtotal: €110)
+AND discount code SUMMER20 (-20%)
+AND the code has not yet been used by this customer
+
+WHEN the customer places the order
+
+THEN payment is processed for €105.60
+AND the discount code is marked as used
+AND the order is confirmed
+```
+
+#### Scenario 3: Discount code already used
+
+```
+GIVEN an order with discount code SUMMER20
+AND this code has already been used by this customer
+
+WHEN the customer places the order
+
+THEN the order is rejected with reason "Discount code already used"
+AND no payment is triggered
+```
+
+#### Scenario 4: Insufficient stock
+
+```
+GIVEN an order where stock is unavailable
+
+WHEN the customer places the order
+
+THEN the order is rejected with reason "Insufficient stock"
+AND neither pricing nor payment are called
 ```
 
 ---
 
-## Your mission
+### 💡 Tips
 
-1. Look at the existing code in `PricingService` and `OrderService`
-2. Implement the feature
-3. Update the tests in `PricingServiceTest` and `OrderServiceTest`
-4. Run the tests
+- Look at `OrderCancellationServiceTest` for style: `@ExtendWith`, `@Mock`, `@InjectMocks`, `given*` / `assert*` helpers
+- The `OrderBuilder` is available in `helper/`
+- Check `PricingServiceTest` to see how `PricingService` behaves
 
 ---
 
 ## ➡️ Next
 
-Once done (or time's up), move on to **[Part 3](../part-3-mocks-clean/README.md)**
+Move on to **[Part 3](../part-3-mocks-clean/README.md)**
 

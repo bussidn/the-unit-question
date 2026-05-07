@@ -1,5 +1,6 @@
 package service;
 
+import domain.DiscountCode;
 import domain.OrderItem;
 import org.junit.jupiter.api.Test;
 
@@ -9,67 +10,48 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PricingServiceTest {
 
+    private final PricingService pricingService = new PricingService();
+
+    // ─── Sans code promo ─────────────────────────────────────────────────────
+
     @Test
-    void calculateTotal_includesTaxAndShipping_whenSubtotalIsBelowThreshold() {
-        var pricingService = new PricingService();
-
-        var items = List.of(new OrderItem("PROD-001", 2, 10.0));
-
-        // subtotal = 20.0, tax = 4.0, shipping = 5.00
-        double result = pricingService.calculateTotal(items);
-
-        assertEquals(29.00, result);
+    void calculateTotal_withNoDiscount_appliesShippingWhenSubtotalBelowThreshold() {
+        var items = List.of(new OrderItem("PROD-001", 1, 20.0));
+        // sous-total = 20, TVA = 4, livraison = 5 → 29.0
+        assertEquals(29.0, pricingService.calculateTotal(items), 0.01);
     }
 
     @Test
-    void calculateTotal_includesTaxAndNoShipping_whenSubtotalIsExactlyAtThreshold() {
-        var pricingService = new PricingService();
+    void calculateTotal_withNoDiscount_noShippingWhenSubtotalAtOrAboveThreshold() {
+        var items = List.of(new OrderItem("PROD-001", 5, 20.0));
+        // sous-total = 100, TVA = 20, livraison = 0 → 120.0
+        assertEquals(120.0, pricingService.calculateTotal(items), 0.01);
+    }
 
-        var items = List.of(new OrderItem("PROD-001", 2, 50.0));
+    // ─── Avec code promo ─────────────────────────────────────────────────────
 
-        // subtotal = 100.0, tax = 20.0, shipping = 0.0
-        double result = pricingService.calculateTotal(items);
-
-        assertEquals(120.0, result);
+    @Test
+    void calculateTotal_withDiscount_thresholdAppliedOnDiscountedSubtotal() {
+        var items = List.of(new OrderItem("PROD-001", 2, 55.0));
+        // sous-total brut = 110, après SUMMER20 (-20%) = 88
+        // 88 < 100 → livraison = 5, TVA = 17.60 → total = 110.60
+        assertEquals(110.60, pricingService.calculateTotal(items, DiscountCode.SUMMER20), 0.01);
     }
 
     @Test
-    void calculateTotal_includesTaxAndNoShipping_whenSubtotalIsAboveThreshold() {
-        var pricingService = new PricingService();
-
-        var items = List.of(new OrderItem("PROD-001", 3, 50.0));
-
-        // subtotal = 150.0, tax = 30.0, shipping = 0.0
-        double result = pricingService.calculateTotal(items);
-
-        assertEquals(180.0, result);
+    void calculateTotal_withDiscount_noShippingWhenDiscountedSubtotalAboveThreshold() {
+        var items = List.of(new OrderItem("PROD-001", 3, 70.0));
+        // sous-total brut = 210, après SUMMER20 (-20%) = 168
+        // 168 >= 100 → livraison = 0, TVA = 33.60 → total = 201.60
+        assertEquals(201.60, pricingService.calculateTotal(items, DiscountCode.SUMMER20), 0.01);
     }
 
     @Test
-    void calculateTotal_includesOnlyShipping_whenItemListIsEmpty() {
-        var pricingService = new PricingService();
-
-        var items = List.<OrderItem>of();
-
-        // subtotal = 0.0, tax = 0.0, shipping = 5.00
-        double result = pricingService.calculateTotal(items);
-
-        assertEquals(5.00, result);
-    }
-
-    @Test
-    void calculateTotal_sumsAllItems_whenMultipleItemsAreProvided() {
-        var pricingService = new PricingService();
-
-        var items = List.of(
-            new OrderItem("PROD-001", 2, 10.0),
-            new OrderItem("PROD-002", 1, 20.0)
-        );
-
-        // subtotal = 40.0, tax = 8.0, shipping = 5.00
-        double result = pricingService.calculateTotal(items);
-
-        assertEquals(53.00, result);
+    void calculateTotal_withONCE50_halvesPriceAndAppliesShipping() {
+        var items = List.of(new OrderItem("PROD-001", 2, 55.0));
+        // sous-total brut = 110, après ONCE50 (-50%) = 55
+        // 55 < 100 → livraison = 5, TVA = 11 → total = 71.0
+        assertEquals(71.0, pricingService.calculateTotal(items, DiscountCode.ONCE50), 0.01);
     }
 }
 
