@@ -17,7 +17,7 @@ class DiscountCodeServiceTest {
         DiscountCodeRepository repository = mock(DiscountCodeRepository.class);
         DiscountCodeService discountCodeService = new DiscountCodeService(repository);
 
-        when(repository.hasBeenUsed("CUST-001", DiscountCode.SUMMER20)).thenReturn(true);
+        when(repository.checkDiscountCode("CUST-001", DiscountCode.SUMMER20)).thenReturn(true);
 
         assertTrue(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
     }
@@ -27,7 +27,7 @@ class DiscountCodeServiceTest {
         DiscountCodeRepository repository = mock(DiscountCodeRepository.class);
         DiscountCodeService discountCodeService = new DiscountCodeService(repository);
 
-        when(repository.hasBeenUsed("CUST-001", DiscountCode.SUMMER20)).thenReturn(false);
+        when(repository.checkDiscountCode("CUST-001", DiscountCode.SUMMER20)).thenReturn(false);
 
         assertFalse(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
     }

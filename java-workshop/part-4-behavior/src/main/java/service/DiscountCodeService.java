@@ -19,7 +19,7 @@ public class DiscountCodeService {
      * @return true if the code has already been used by this customer
      */
     public boolean checkDiscountCode(String customerId, DiscountCode discountCode) {
-        return discountCodeRepository.hasBeenUsed(customerId, discountCode);
+        return discountCodeRepository.checkDiscountCode(customerId, discountCode);
     }
 
     public void markAsUsed(String customerId, DiscountCode discountCode) {

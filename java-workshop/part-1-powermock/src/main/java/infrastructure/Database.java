@@ -53,12 +53,12 @@ public final class Database {
         }
     }
 
-    public static boolean hasDiscountCodeBeenUsed(String customerId, String discountCode) {
+    public static boolean checkDiscountCode(String customerId, String discountCode) {
         var codes = usedDiscountCodes.get(customerId);
         return codes != null && codes.contains(discountCode);
     }
 
-    public static void markDiscountCodeAsUsed(String customerId, String discountCode) {
+    public static void markAsUsed(String customerId, String discountCode) {
         usedDiscountCodes.computeIfAbsent(customerId, k -> new HashSet<>()).add(discountCode);
     }
 }

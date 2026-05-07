@@ -19,7 +19,7 @@ public class InMemoryDiscountCodeRepository implements DiscountCodeRepository {
     }
 
     @Override
-    public boolean hasBeenUsed(String customerId, DiscountCode discountCode) {
+    public boolean checkDiscountCode(String customerId, DiscountCode discountCode) {
         return usedCodes.contains(key(customerId, discountCode));
     }
 

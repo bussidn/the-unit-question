@@ -24,14 +24,14 @@ class DiscountCodeServiceTest {
 
     @Test
     void checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
-        when(discountCodeRepository.hasBeenUsed("CUST-001", DiscountCode.SUMMER20)).thenReturn(true);
+        when(discountCodeRepository.checkDiscountCode("CUST-001", DiscountCode.SUMMER20)).thenReturn(true);
 
         assertTrue(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
     }
 
     @Test
     void checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
-        when(discountCodeRepository.hasBeenUsed("CUST-001", DiscountCode.SUMMER20)).thenReturn(false);
+        when(discountCodeRepository.checkDiscountCode("CUST-001", DiscountCode.SUMMER20)).thenReturn(false);
 
         assertFalse(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
     }

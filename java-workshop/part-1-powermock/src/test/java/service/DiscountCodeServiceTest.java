@@ -29,7 +29,7 @@ class DiscountCodeServiceTest {
 
     @Test
     void checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
-        mockedDatabase.when(() -> Database.hasDiscountCodeBeenUsed("CUST-001", "SUMMER20"))
+        mockedDatabase.when(() -> Database.checkDiscountCode("CUST-001", "SUMMER20"))
             .thenReturn(true);
 
         assertTrue(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
@@ -37,7 +37,7 @@ class DiscountCodeServiceTest {
 
     @Test
     void checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
-        mockedDatabase.when(() -> Database.hasDiscountCodeBeenUsed("CUST-001", "SUMMER20"))
+        mockedDatabase.when(() -> Database.checkDiscountCode("CUST-001", "SUMMER20"))
             .thenReturn(false);
 
         assertFalse(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
@@ -47,7 +47,7 @@ class DiscountCodeServiceTest {
     void markAsUsed_delegatesToDatabase() {
         discountCodeService.markAsUsed("CUST-001", DiscountCode.SUMMER20);
 
-        mockedDatabase.verify(() -> Database.markDiscountCodeAsUsed("CUST-001", "SUMMER20"));
+        mockedDatabase.verify(() -> Database.markAsUsed("CUST-001", "SUMMER20"));
     }
 }
 

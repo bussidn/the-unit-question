@@ -15,11 +15,11 @@ public class DiscountCodeService {
      * @return true if the code has already been used by this customer
      */
     public boolean checkDiscountCode(String customerId, DiscountCode discountCode) {
-        return Database.hasDiscountCodeBeenUsed(customerId, discountCode.name());
+        return Database.checkDiscountCode(customerId, discountCode.name());
     }
 
     public void markAsUsed(String customerId, DiscountCode discountCode) {
-        Database.markDiscountCodeAsUsed(customerId, discountCode.name());
+        Database.markAsUsed(customerId, discountCode.name());
     }
 }
 
