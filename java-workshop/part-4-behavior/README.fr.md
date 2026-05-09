@@ -70,18 +70,6 @@ QUAND le client passe la commande
 ALORS la commande est rejetée avec le motif "Discount code already used"
 ET aucun paiement n'est déclenché
 ```
-
-#### Scénario 3 : Stock insuffisant
-
-```
-ÉTANT DONNÉ une commande dont le stock est indisponible
-
-QUAND le client passe la commande
-
-ALORS la commande est rejetée avec le motif "Insufficient stock"
-ET ni le pricing ni le paiement ne sont appelés
-```
-
 ---
 
 ### 💡 Conseils

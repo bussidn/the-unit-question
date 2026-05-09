@@ -53,18 +53,6 @@ WHEN the customer places the order
 THEN the order is rejected with reason "Discount code already used"
 AND no payment is triggered
 ```
-
-#### Scenario 3: Insufficient stock
-
-```
-GIVEN an order where stock is unavailable
-
-WHEN the customer places the order
-
-THEN the order is rejected with reason "Insufficient stock"
-AND neither pricing nor payment are called
-```
-
 ---
 
 ### 💡 Tips
