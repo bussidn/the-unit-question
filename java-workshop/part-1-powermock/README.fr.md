@@ -71,19 +71,7 @@ Lancer les tests : `./gradlew test`
 
 ### Scénarios à implémenter dans `OrderServiceTest`
 
-#### Scénario 1 : Commande sans code de réduction
-
-```
-ÉTANT DONNÉ une commande avec 2 articles à 10€ chacun
-ET pas de code de réduction
-
-QUAND le client valide la commande
-
-ALORS le paiement est effectué pour le montant calculé par PricingService
-ET la commande est confirmée avec une expédition
-```
-
-#### Scénario 2 : Commande avec un code de réduction valide
+#### Scénario 1 : Commande avec un code de réduction valide
 
 ```
 ÉTANT DONNÉ une commande avec 2 articles à 55€ chacun (sous-total : 110€)
@@ -97,7 +85,7 @@ ET le code de réduction est marqué comme utilisé
 ET la commande est confirmée
 ```
 
-#### Scénario 3 : Code de réduction déjà utilisé
+#### Scénario 2 : Code de réduction déjà utilisé
 
 ```
 ÉTANT DONNÉ une commande avec le code de réduction SUMMER20
@@ -109,7 +97,7 @@ ALORS la commande est rejetée avec la raison "Discount code already used"
 ET aucun paiement n'est déclenché
 ```
 
-#### Scénario 4 : Stock insuffisant
+#### Scénario 3 : Stock insuffisant
 
 ```
 ÉTANT DONNÉ une commande où le stock est indisponible
