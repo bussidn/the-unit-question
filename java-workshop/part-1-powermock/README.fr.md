@@ -41,55 +41,101 @@ Vous devriez voir `BUILD SUCCESSFUL`. Si c'est le cas, vous êtes prêt !
 
 ---
 
-## 🏋️ Exercice : Implémenter l'envoi d'email
+## 🏋️ Exercice : Codes de réduction dans la création de commande
 
-**⏱️ ~15 minutes** *(ne vous inquiétez pas si vous ne finissez pas)*
+**⏱️ ~25 minutes**
 
-On voudrait que le client reçoive un email de confirmation après avoir passé sa commande.
+`PricingService` a été mis à jour pour supporter les codes de réduction. Il expose maintenant deux méthodes :
 
-**Actuellement, l'objet `Order` ne contient pas l'adresse email du client.** Vous devrez l'ajouter pour pouvoir envoyer la confirmation.
+- `calculateTotal(items)` — ancienne API, sans réduction
+- `calculateTotal(items, discountCode)` — nouvelle API avec code de réduction
 
-L'email doit contenir l'identifiant de la commande (`id`) et le montant total. Si la commande échoue, aucun email n'est envoyé.
+Les tests de `PricingService` ont déjà été écrits — consultez `PricingServiceTest` pour comprendre comment le pricing calcule les totaux avec les remises.
 
-### Scénario 1 : Commande réussie
+`OrderService` n'a pas encore été migré. C'est votre mission.
+
+---
+
+### 🎯 Votre mission
+
+Migrer `OrderService` pour supporter les codes de réduction :
+
+1. Ajouter `DiscountCodeService` comme dépendance (l'instancier dans `createOrder`, comme les autres services)
+2. Modifier la signature de `createOrder` pour accepter un `DiscountCode` optionnel
+3. Si un code de réduction est fourni : utiliser `DiscountCodeService.checkDiscountCode` — s'il retourne `true`, le code est disponible et peut être appliqué ; sinon rejeter. Calculer le prix avec la réduction, marquer comme utilisé après le paiement
+4. Ajouter vos nouveaux scénarios de test au `OrderServiceTest` existant — suivez le style déjà en place
+
+Lancer les tests : `./gradlew test`
+
+---
+
+### Scénarios à implémenter dans `OrderServiceTest`
+
+#### Scénario 1 : Commande sans code de réduction
 
 ```
-ÉTANT DONNÉ un client avec l'email "alice@example.com"
-ET un panier contenant 2 articles pour un total de 49.99€
-ET le stock est disponible
-ET le paiement est accepté
+ÉTANT DONNÉ une commande avec 2 articles à 10€ chacun
+ET pas de code de réduction
 
-QUAND le client valide sa commande
+QUAND le client valide la commande
 
-ALORS la commande est créée avec succès
-ET un email est envoyé à "alice@example.com"
-ET l'email contient "Commande ORDER-123 confirmée : 49.99€"
+ALORS le paiement est effectué pour le montant calculé par PricingService
+ET la commande est confirmée avec une expédition
 ```
 
-### Scénario 2 : Paiement refusé
+#### Scénario 2 : Commande avec un code de réduction valide
 
 ```
-ÉTANT DONNÉ un client avec l'email "bob@example.com"
-ET un panier contenant 1 article
-ET le stock est disponible
-ET le paiement est refusé
+ÉTANT DONNÉ une commande avec 2 articles à 55€ chacun (sous-total : 110€)
+ET le code de réduction SUMMER20 (-20%)
+ET le code n'a pas encore été utilisé par ce client
 
-QUAND le client valide sa commande
+QUAND le client valide la commande
 
-ALORS la commande échoue
-ET aucun email n'est envoyé
+ALORS le paiement est effectué pour 105.60€
+ET le code de réduction est marqué comme utilisé
+ET la commande est confirmée
 ```
 
-### Votre mission
+#### Scénario 3 : Code de réduction déjà utilisé
 
-1. Regardez le code existant dans `src/main/java/service/OrderService.java`
-2. Un `EmailService` est déjà fourni — utilisez-le pour envoyer l'email
-3. Lancez les tests
+```
+ÉTANT DONNÉ une commande avec le code de réduction SUMMER20
+ET ce code a déjà été utilisé par ce client
 
-> 💡 **Indice** : Pour mocker un constructeur dans vos tests, utilisez :
-> ```java
-> MockedConstruction<EmailService> mockedEmail = mockConstruction(EmailService.class)
-> ```
+QUAND le client valide la commande
+
+ALORS la commande est rejetée avec la raison "Discount code already used"
+ET aucun paiement n'est déclenché
+```
+
+#### Scénario 4 : Stock insuffisant
+
+```
+ÉTANT DONNÉ une commande où le stock est indisponible
+
+QUAND le client valide la commande
+
+ALORS la commande est rejetée avec la raison "Insufficient stock"
+ET ni le pricing ni le paiement ne sont appelés
+```
+
+---
+
+### 💡 Conseils
+
+- Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patterns
+- Consultez `PricingServiceTest` pour comprendre comment le pricing calcule les totaux avec les remises
+- Pour mocker un constructeur dans vos tests, utilisez :
+  ```java
+  MockedConstruction<DiscountCodeService> mocked = mockConstruction(DiscountCodeService.class, (mock, ctx) -> {
+      when(mock.checkDiscountCode(any(), any())).thenReturn(false);
+  });
+  ```
+- Pour mocker les méthodes statiques de `Database` :
+  ```java
+  MockedStatic<Database> mockedDb = mockStatic(Database.class);
+  ```
 
 ### 🎯 Le but
 

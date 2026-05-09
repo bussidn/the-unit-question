@@ -41,55 +41,101 @@ You should see `BUILD SUCCESSFUL`. If so, you're ready!
 
 ---
 
-## 🏋️ Exercise: Implement email sending
+## 🏋️ Exercise: Discount codes in order creation
 
-**⏱️ ~15 minutes** *(don't worry if you don't finish)*
+**⏱️ ~25 minutes**
 
-We'd like the customer to receive a confirmation email after placing their order.
+`PricingService` has been updated to support discount codes. It now exposes two methods:
 
-**Currently, the `Order` object does not contain the customer's email address.** You'll need to add it to send the confirmation.
+- `calculateTotal(items)` — old API, no discount
+- `calculateTotal(items, discountCode)` — new API with discount code
 
-The email should contain the order identifier (`id`) and the total amount. If the order fails, no email should be sent.
+The tests for `PricingService` have already been written — check `PricingServiceTest` to understand how pricing calculates totals with discounts.
 
-### Scenario 1: Successful order
+`OrderService` has not been migrated yet. That's your mission.
+
+---
+
+### 🎯 Your mission
+
+Migrate `OrderService` to support discount codes:
+
+1. Add `DiscountCodeService` as a dependency (instantiate it inside `createOrder`, like the other services)
+2. Change the `createOrder` signature to accept an optional `DiscountCode`
+3. If a discount code is provided: use `DiscountCodeService.checkDiscountCode` — if it returns `true`, the code is available and can be applied; otherwise reject. Calculate the price with the discount, mark as used after payment
+4. Add your new test scenarios to the existing `OrderServiceTest` — follow the style already in place
+
+Run the tests: `./gradlew test`
+
+---
+
+### Scenarios to implement in `OrderServiceTest`
+
+#### Scenario 1: Order without discount code
 
 ```
-GIVEN a customer with email "alice@example.com"
-AND a cart with 2 items totaling 49.99€
-AND stock is available
-AND payment is accepted
+GIVEN an order with 2 items at €10 each
+AND no discount code
 
 WHEN the customer places the order
 
-THEN the order is created successfully
-AND an email is sent to "alice@example.com"
-AND the email contains "Order ORDER-123 confirmed: 49.99€"
+THEN payment is processed for the amount calculated by PricingService
+AND the order is confirmed with a shipment
 ```
 
-### Scenario 2: Payment declined
+#### Scenario 2: Order with a valid discount code
 
 ```
-GIVEN a customer with email "bob@example.com"
-AND a cart with 1 item
-AND stock is available
-AND payment is declined
+GIVEN an order with 2 items at €55 each (subtotal: €110)
+AND discount code SUMMER20 (-20%)
+AND the code has not yet been used by this customer
 
 WHEN the customer places the order
 
-THEN the order fails
-AND no email is sent
+THEN payment is processed for €105.60
+AND the discount code is marked as used
+AND the order is confirmed
 ```
 
-### Your mission
+#### Scenario 3: Discount code already used
 
-1. Look at the existing code in `src/main/java/service/OrderService.java`
-2. An `EmailService` is already provided — use it to send the email
-3. Run the tests
+```
+GIVEN an order with discount code SUMMER20
+AND this code has already been used by this customer
 
-> 💡 **Hint**: To mock a constructor in your tests, use:
-> ```java
-> MockedConstruction<EmailService> mockedEmail = mockConstruction(EmailService.class)
-> ```
+WHEN the customer places the order
+
+THEN the order is rejected with reason "Discount code already used"
+AND no payment is triggered
+```
+
+#### Scenario 4: Insufficient stock
+
+```
+GIVEN an order where stock is unavailable
+
+WHEN the customer places the order
+
+THEN the order is rejected with reason "Insufficient stock"
+AND neither pricing nor payment are called
+```
+
+---
+
+### 💡 Tips
+
+- Look at the existing `OrderServiceTest` for style and follow the same patterns
+- Check `PricingServiceTest` to understand how pricing calculates totals with discounts
+- To mock a constructor in your tests, use:
+  ```java
+  MockedConstruction<DiscountCodeService> mocked = mockConstruction(DiscountCodeService.class, (mock, ctx) -> {
+      when(mock.checkDiscountCode(any(), any())).thenReturn(false);
+  });
+  ```
+- To mock `Database` static methods:
+  ```java
+  MockedStatic<Database> mockedDb = mockStatic(Database.class);
+  ```
 
 ### 🎯 The point
 

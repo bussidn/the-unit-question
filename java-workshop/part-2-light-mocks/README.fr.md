@@ -73,7 +73,6 @@ ET aucun paiement n'est déclenché
 ### 💡 Conseils
 
 - Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patterns
-- Le builder `OrderBuilder` est disponible dans `helper/`
 - Consultez `PricingServiceTest` pour comprendre comment le pricing calcule les totaux avec les remises
 
 ---

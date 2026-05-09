@@ -84,7 +84,6 @@ AND neither pricing nor payment are called
 ### 💡 Tips
 
 - Look at the existing `OrderServiceTest` for style and follow the same patterns
-- The `OrderBuilder` is available in `helper/`
 - Check `PricingServiceTest` to understand how pricing calculates totals with discounts
 
 ---

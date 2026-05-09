@@ -14,7 +14,9 @@ The workshop is built around a single business domain: **a small online shop**. 
 
 The goal is not to discover a new domain in every exercise, but instead to **stay in a stable functional world** so you can better feel the impact of your testing choices.
 
-In each language, the workshop unfolds in **4 parts that are meant to be completed in order**. Each part presents production code **very close to the previous one**, which participants will explore. At each step, you'll be asked to **implement a new feature in the existing code** and observe how that changes the way you test.
+In each language, the workshop unfolds in **4 parts that are meant to be completed in order**. Each part asks you to implement **the same feature** — but with a different testing toolbox. This way, you can directly compare how each approach affects the way you write, read and maintain tests.
+
+> 💡 **Hint**: The production code is the same across all parts. Once you've implemented the feature in one part, you can copy your production code to the next one and focus solely on the testing approach.
 
 Detailed instructions, business scenarios, and the feature to implement are provided in each part's `README`.
 
