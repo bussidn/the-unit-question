@@ -45,10 +45,12 @@ You should see `BUILD SUCCESSFUL`. If so, you're ready!
 
 **⏱️ ~25 minutes**
 
-`PricingService` has been updated to support discount codes. It now exposes two methods:
+A `DiscountCodeService` has been added to the codebase. It exposes two methods:
 
-- `calculateTotal(items)` — old API, no discount
-- `calculateTotal(items, discountCode)` — new API with discount code
+- **`checkDiscountCode(customerId, discountCode)`** — returns `true` if the code is available for this customer
+- **`markAsUsed(customerId, discountCode)`** — marks the code as used for this customer
+
+`PricingService` has also been updated with a new overload: `calculateTotal(items, discountCode)` that applies the discount to the price.
 
 `OrderService` has not been migrated yet. That's your mission.
 

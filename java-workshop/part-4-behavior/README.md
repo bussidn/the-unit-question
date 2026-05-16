@@ -31,7 +31,12 @@ Look at the existing `OrderServiceTest` — it has been transformed into a behav
 
 `InMemoryOrderRepository`, `InMemoryStockRepository` and `InMemoryDiscountCodeRepository` are available in `helper/`.
 
-`DiscountCodeService` is provided with its tests — use `DiscountCodeService.checkDiscountCode(customerId, discountCode)`: if it returns `true`, the code is available for use.
+`DiscountCodeService` is provided with its tests. It exposes two methods:
+
+- **`checkDiscountCode(customerId, discountCode)`** — returns `true` if the code is available for this customer
+- **`markAsUsed(customerId, discountCode)`** — marks the code as used for this customer
+
+`PricingService` has also been updated with a new overload: `calculateTotal(items, discountCode)` that applies the discount to the price.
 
 ---
 
