@@ -51,7 +51,7 @@ class OrderServiceTest {
         when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, true)));
         when(shippingService.createShipment(any())).thenReturn(new ShippingConfirmation("ORDER-001", "TRACK-456", "2024-12-25"));
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         assertInstanceOf(OrderResult.Success.class, result);
         assertEquals(OrderStatus.CONFIRMED, ((OrderResult.Success) result).order().status());
@@ -66,7 +66,7 @@ class OrderServiceTest {
         when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, true)));
         when(shippingService.createShipment(any())).thenReturn(new ShippingConfirmation("ORDER-001", "TRACK-456", "2024-12-25"));
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         assertEquals(29.0, ((OrderResult.Success) result).order().totalPrice());
     }
@@ -81,7 +81,7 @@ class OrderServiceTest {
         when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, true)));
         when(shippingService.createShipment(any())).thenReturn(shipment);
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         assertEquals(shipment, ((OrderResult.Success) result).shippingConfirmation());
     }
@@ -92,7 +92,7 @@ class OrderServiceTest {
     void orderFails_whenStockIsUnavailable() {
         when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, false)));
 
-        OrderResult result = orderService.createOrder(new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null));
+        OrderResult result = orderService.placeOrder(new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null));
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Insufficient stock", ((OrderResult.Failure) result).reason());
@@ -102,7 +102,7 @@ class OrderServiceTest {
     void paymentIsNotCharged_whenStockIsUnavailable() {
         when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, false)));
 
-        orderService.createOrder(new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null));
+        orderService.placeOrder(new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null));
 
         verifyNoInteractions(paymentService);
     }
@@ -111,7 +111,7 @@ class OrderServiceTest {
     void shipmentIsNotCreated_whenStockIsUnavailable() {
         when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, false)));
 
-        orderService.createOrder(new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null));
+        orderService.placeOrder(new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null));
 
         verifyNoInteractions(shippingService);
     }
@@ -125,7 +125,7 @@ class OrderServiceTest {
         when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
             .thenReturn(new PaymentResult("ORDER-001", PaymentStatus.FAILED, null));
 
-        OrderResult result = orderService.createOrder(new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null));
+        OrderResult result = orderService.placeOrder(new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null));
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Payment failed", ((OrderResult.Failure) result).reason());
@@ -138,7 +138,7 @@ class OrderServiceTest {
         when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
             .thenReturn(new PaymentResult("ORDER-001", PaymentStatus.FAILED, null));
 
-        orderService.createOrder(new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null));
+        orderService.placeOrder(new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null));
 
         verifyNoInteractions(shippingService);
     }
@@ -150,7 +150,7 @@ class OrderServiceTest {
         when(paymentService.processPayment(anyString(), anyString(), anyDouble()))
             .thenReturn(new PaymentResult("ORDER-001", PaymentStatus.FAILED, null));
 
-        orderService.createOrder(new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null));
+        orderService.placeOrder(new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null));
 
         verify(stockService).releaseStock(any());
     }

@@ -97,7 +97,7 @@ class OrderServiceTest {
         givenReservationSucceedsFor(order);
         givenShipmentCreatedFor(order);
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         assertInstanceOf(OrderResult.Success.class, result);
         assertEquals(OrderStatus.CONFIRMED, ((OrderResult.Success) result).order().status());
@@ -111,7 +111,7 @@ class OrderServiceTest {
         givenReservationSucceedsFor(order);
         givenShipmentCreatedFor(order);
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         assertEquals(29.0, ((OrderResult.Success) result).order().totalPrice());
     }
@@ -124,7 +124,7 @@ class OrderServiceTest {
         givenReservationSucceedsFor(order);
         ShippingConfirmation shipment = givenShipmentCreatedFor(order);
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         assertEquals(shipment, ((OrderResult.Success) result).shippingConfirmation());
     }
@@ -136,7 +136,7 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenReservationFailsFor(order);
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Insufficient stock", ((OrderResult.Failure) result).reason());
@@ -147,7 +147,7 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenReservationFailsFor(order);
 
-        orderService.createOrder(order);
+        orderService.placeOrder(order);
 
         verifyNoInteractions(paymentService);
     }
@@ -157,7 +157,7 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenReservationFailsFor(order);
 
-        orderService.createOrder(order);
+        orderService.placeOrder(order);
 
         verifyNoInteractions(shippingService);
     }
@@ -171,7 +171,7 @@ class OrderServiceTest {
         givenPricingCalculates(45.0);
         givenPaymentIsDeclinedFor(order);
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Payment failed", ((OrderResult.Failure) result).reason());
@@ -184,7 +184,7 @@ class OrderServiceTest {
         givenPricingCalculates(45.0);
         givenPaymentIsDeclinedFor(order);
 
-        orderService.createOrder(order);
+        orderService.placeOrder(order);
 
         verifyNoInteractions(shippingService);
     }
@@ -196,7 +196,7 @@ class OrderServiceTest {
         givenPricingCalculates(45.0);
         givenPaymentIsDeclinedFor(order);
 
-        orderService.createOrder(order);
+        orderService.placeOrder(order);
 
         verify(stockService).releaseStock(reservations);
     }

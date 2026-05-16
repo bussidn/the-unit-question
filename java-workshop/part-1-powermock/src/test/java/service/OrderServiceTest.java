@@ -1,26 +1,39 @@
 package service;
 
-import domain.*;
+import domain.Order;
+import domain.OrderItem;
+import domain.OrderStatus;
+import domain.PaymentResult;
+import domain.PaymentStatus;
+import domain.ShippingConfirmation;
+import domain.StockReservation;
 import infrastructure.Database;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedConstruction;
-import org.mockito.MockedStatic;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyDouble;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * THE POWERMOCK NIGHTMARE
- *
+ * <p>
  * To test OrderService in isolation, we need to mock:
  * - StockService constructor
  * - PricingService constructor
  * - PaymentService constructor
  * - ShippingService constructor
  * - Database static methods
- *
+ * <p>
  * This is madness. But this is what "unit testing" means
  * when you take "isolation" to its extreme.
  */
@@ -40,19 +53,19 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (var _mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 2, true))));
-             var mockedPricing = mockConstruction(PricingService.class,
+             var _mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(24.0));
-             var mockedPayment = mockConstruction(PaymentService.class,
+             var _mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-123", PaymentStatus.SUCCESS, "TXN-789")));
-             var mockedShipping = mockConstruction(ShippingService.class,
+             var _mockedShipping = mockConstruction(ShippingService.class,
                  (mock, ctx) -> when(mock.createShipment(any()))
                      .thenReturn(new ShippingConfirmation("ORDER-123", "TRACK-ABC", "2024-12-25")));
-             var mockedDatabase = mockStatic(Database.class)) {
+             var _mockedDatabase = mockStatic(Database.class)) {
 
-            OrderResult result = new OrderService().createOrder(order);
+            OrderResult result = new OrderService().placeOrder(order);
 
             assertInstanceOf(OrderResult.Success.class, result);
             assertEquals(OrderStatus.CONFIRMED, ((OrderResult.Success) result).order().status());
@@ -71,19 +84,19 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (var _mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("ITEM-A", 3, true))));
-             var mockedPricing = mockConstruction(PricingService.class,
+             var _mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(order.items())).thenReturn(45.0));
              var mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), eq(45.0)))
                      .thenReturn(new PaymentResult("ORDER-001", PaymentStatus.SUCCESS, "TXN-001")));
-             var mockedShipping = mockConstruction(ShippingService.class,
+             var _mockedShipping = mockConstruction(ShippingService.class,
                  (mock, ctx) -> when(mock.createShipment(any()))
                      .thenReturn(new ShippingConfirmation("ORDER-001", "TRACK-001", "2024-12-25")));
-             var mockedDatabase = mockStatic(Database.class)) {
+             var _mockedDatabase = mockStatic(Database.class)) {
 
-            new OrderService().createOrder(order);
+            new OrderService().placeOrder(order);
 
             verify(mockedPayment.constructed().getFirst()).processPayment(any(), any(), eq(45.0));
         }
@@ -101,19 +114,19 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (var _mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("ITEM-B", 1, true))));
-             var mockedPricing = mockConstruction(PricingService.class,
+             var _mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(20.0));
              var mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), eq("CUSTOMER-JOHN-DOE"), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-002", PaymentStatus.SUCCESS, "TXN-002")));
-             var mockedShipping = mockConstruction(ShippingService.class,
+             var _mockedShipping = mockConstruction(ShippingService.class,
                  (mock, ctx) -> when(mock.createShipment(any()))
                      .thenReturn(new ShippingConfirmation("ORDER-002", "TRACK-002", "2024-12-25")));
-             var mockedDatabase = mockStatic(Database.class)) {
+             var _mockedDatabase = mockStatic(Database.class)) {
 
-            new OrderService().createOrder(order);
+            new OrderService().placeOrder(order);
 
             verify(mockedPayment.constructed().getFirst()).processPayment(any(), eq("CUSTOMER-JOHN-DOE"), anyDouble());
         }
@@ -131,19 +144,19 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (var _mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("ITEM-C", 1, true))));
-             var mockedPricing = mockConstruction(PricingService.class,
+             var _mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(10.0));
-             var mockedPayment = mockConstruction(PaymentService.class,
+             var _mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-003", PaymentStatus.SUCCESS, "TRANSACTION-XYZ-789")));
-             var mockedShipping = mockConstruction(ShippingService.class,
+             var _mockedShipping = mockConstruction(ShippingService.class,
                  (mock, ctx) -> when(mock.createShipment(any()))
                      .thenReturn(new ShippingConfirmation("ORDER-003", "TRACK-003", "2024-12-25")));
-             var mockedDatabase = mockStatic(Database.class)) {
+             var _mockedDatabase = mockStatic(Database.class)) {
 
-            OrderResult result = new OrderService().createOrder(order);
+            OrderResult result = new OrderService().placeOrder(order);
 
             var success = (OrderResult.Success) result;
             assertEquals("TRANSACTION-XYZ-789", success.order().transactionId());
@@ -174,7 +187,7 @@ class OrderServiceTest {
                      .thenReturn(new ShippingConfirmation("ORDER-004", "TRACKING-NUMBER-ABC123", "2024-12-25")));
              var mockedDatabase = mockStatic(Database.class)) {
 
-            OrderResult result = new OrderService().createOrder(order);
+            OrderResult result = new OrderService().placeOrder(order);
 
             var success = (OrderResult.Success) result;
             assertEquals("TRACKING-NUMBER-ABC123", success.order().trackingNumber());
@@ -205,7 +218,7 @@ class OrderServiceTest {
                      .thenReturn(new ShippingConfirmation("ORDER-005", "TRACK-005", "2024-12-25")));
              var mockedDatabase = mockStatic(Database.class)) {
 
-            new OrderService().createOrder(order);
+            new OrderService().placeOrder(order);
 
             mockedDatabase.verify(() -> Database.saveOrder(argThat((Order saved) ->
                 saved.id().equals("ORDER-005")
@@ -249,7 +262,7 @@ class OrderServiceTest {
                      .thenReturn(new ShippingConfirmation("ORDER-006", "TRACK-006", "2024-12-25")));
              var mockedDatabase = mockStatic(Database.class)) {
 
-            new OrderService().createOrder(order);
+            new OrderService().placeOrder(order);
 
             verify(mockedStock.constructed().getFirst()).reserveStock(items);
         }
@@ -276,7 +289,7 @@ class OrderServiceTest {
              var mockedShipping = mockConstruction(ShippingService.class);
              var mockedDatabase = mockStatic(Database.class)) {
 
-            OrderResult result = new OrderService().createOrder(order);
+            OrderResult result = new OrderService().placeOrder(order);
 
             assertInstanceOf(OrderResult.Failure.class, result);
             assertEquals("Insufficient stock", ((OrderResult.Failure) result).reason());
@@ -302,7 +315,7 @@ class OrderServiceTest {
              var mockedShipping = mockConstruction(ShippingService.class);
              var mockedDatabase = mockStatic(Database.class)) {
 
-            new OrderService().createOrder(order);
+            new OrderService().placeOrder(order);
 
             verifyNoInteractions(mockedPayment.constructed().getFirst());
         }
@@ -327,7 +340,7 @@ class OrderServiceTest {
              var mockedShipping = mockConstruction(ShippingService.class);
              var mockedDatabase = mockStatic(Database.class)) {
 
-            new OrderService().createOrder(order);
+            new OrderService().placeOrder(order);
 
             verifyNoInteractions(mockedShipping.constructed().getFirst());
         }
@@ -352,7 +365,7 @@ class OrderServiceTest {
              var mockedShipping = mockConstruction(ShippingService.class);
              var mockedDatabase = mockStatic(Database.class)) {
 
-            new OrderService().createOrder(order);
+            new OrderService().placeOrder(order);
 
             mockedDatabase.verifyNoInteractions();
         }
@@ -382,7 +395,7 @@ class OrderServiceTest {
              var mockedShipping = mockConstruction(ShippingService.class);
              var mockedDatabase = mockStatic(Database.class)) {
 
-            OrderResult result = new OrderService().createOrder(order);
+            OrderResult result = new OrderService().placeOrder(order);
 
             assertInstanceOf(OrderResult.Failure.class, result);
             assertEquals("Payment failed", ((OrderResult.Failure) result).reason());
@@ -401,9 +414,9 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class, (mock, ctx) -> {
-                when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-OK", 2, true)));
-            });
+        try (var mockedStock = mockConstruction(StockService.class, (mock, ctx) ->
+                when(mock.reserveStock(any()))
+                        .thenReturn(List.of(new StockReservation("PROD-OK", 2, true))));
              var mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(100.0));
              var mockedPayment = mockConstruction(PaymentService.class,
@@ -412,7 +425,7 @@ class OrderServiceTest {
              var mockedShipping = mockConstruction(ShippingService.class);
              var mockedDatabase = mockStatic(Database.class)) {
 
-            new OrderService().createOrder(order);
+            new OrderService().placeOrder(order);
 
             verify(mockedStock.constructed().getFirst()).releaseStock(any());
         }
@@ -440,7 +453,7 @@ class OrderServiceTest {
              var mockedShipping = mockConstruction(ShippingService.class);
              var mockedDatabase = mockStatic(Database.class)) {
 
-            new OrderService().createOrder(order);
+            new OrderService().placeOrder(order);
 
             verifyNoInteractions(mockedShipping.constructed().getFirst());
         }
@@ -468,7 +481,7 @@ class OrderServiceTest {
              var mockedShipping = mockConstruction(ShippingService.class);
              var mockedDatabase = mockStatic(Database.class)) {
 
-            new OrderService().createOrder(order);
+            new OrderService().placeOrder(order);
 
             mockedDatabase.verifyNoInteractions();
         }

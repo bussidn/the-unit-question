@@ -26,7 +26,7 @@ public class OrderService {
         this.shippingService = shippingService;
     }
 
-    public OrderResult createOrder(Order order) {
+    public OrderResult placeOrder(Order order) {
         List<StockReservation> reservations = stockService.reserveStock(order.items());
         if (reservations.stream().anyMatch(reservation -> !reservation.reserved())) {
             return new OrderResult.Failure(order.reject(), "Insufficient stock");

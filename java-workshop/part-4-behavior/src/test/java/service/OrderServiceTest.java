@@ -61,7 +61,7 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenStockIsAvailableFor(order);
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         assertInstanceOf(OrderResult.Success.class, result);
         assertEquals(OrderStatus.CONFIRMED, ((OrderResult.Success) result).order().status());
@@ -72,7 +72,7 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenStockIsAvailableFor(order);
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         double realTotal = 29.0; // subtotal=20, tax=4 (20%), shipping=5 (below 100€ threshold)
         assertEquals(realTotal, ((OrderResult.Success) result).order().totalPrice());
@@ -83,7 +83,7 @@ class OrderServiceTest {
         var order = anOrder().build();
         givenStockIsAvailableFor(order);
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         assertEquals(shippingGateway.lastConfirmation(), ((OrderResult.Success) result).shippingConfirmation());
     }
@@ -95,7 +95,7 @@ class OrderServiceTest {
         var order = anOrder().build();
         // stockRepository is empty: no stock added
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Insufficient stock", ((OrderResult.Failure) result).reason());
@@ -105,7 +105,7 @@ class OrderServiceTest {
     void paymentIsNotCharged_whenStockIsUnavailable() {
         var order = anOrder().build();
 
-        orderService.createOrder(order);
+        orderService.placeOrder(order);
 
         assertFalse(paymentGateway.wasCharged());
     }
@@ -114,7 +114,7 @@ class OrderServiceTest {
     void shipmentIsNotCreated_whenStockIsUnavailable() {
         var order = anOrder().build();
 
-        orderService.createOrder(order);
+        orderService.placeOrder(order);
 
         assertFalse(shippingGateway.hasCreatedShipment());
     }
@@ -127,7 +127,7 @@ class OrderServiceTest {
         givenStockIsAvailableFor(order);
         givenPaymentIsDeclined();
 
-        OrderResult result = orderService.createOrder(order);
+        OrderResult result = orderService.placeOrder(order);
 
         assertInstanceOf(OrderResult.Failure.class, result);
         assertEquals("Payment failed", ((OrderResult.Failure) result).reason());
@@ -139,7 +139,7 @@ class OrderServiceTest {
         givenStockIsAvailableFor(order);
         givenPaymentIsDeclined();
 
-        orderService.createOrder(order);
+        orderService.placeOrder(order);
 
         assertFalse(shippingGateway.hasCreatedShipment());
     }
@@ -150,7 +150,7 @@ class OrderServiceTest {
         givenStockIsAvailableFor(order);
         givenPaymentIsDeclined();
 
-        orderService.createOrder(order);
+        orderService.placeOrder(order);
 
         order.items().forEach(item ->
             assertEquals(item.quantity(), stockRepository.availableStock(item.productId())));

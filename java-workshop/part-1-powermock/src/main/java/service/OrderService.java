@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class OrderService {
 
-    public OrderResult createOrder(Order order) {
+    public OrderResult placeOrder(Order order) {
         StockService stockService = new StockService();
         PricingService pricingService = new PricingService();
         PaymentService paymentService = new PaymentService();
