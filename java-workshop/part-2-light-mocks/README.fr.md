@@ -15,12 +15,12 @@ La `PricingService` a été mise à jour pour supporter les codes promo. Elle ex
 
 ### 🎯 Votre mission
 
-Migrez `OrderService` pour supporter les codes promo :
+`OrderService.placeOrder` doit supporter les codes promo.
 
-1. Ajoutez `DiscountCodeService` comme dépendance
-2. Changez la signature de `createOrder` pour accepter un `DiscountCode` optionnel
-3. Si un code promo est fourni : utilisez `DiscountCodeService.checkDiscountCode` — si ça retourne `true`, le code est disponible et peut être appliqué ; sinon, rejetez. Calculez le prix avec remise, marquez-le comme utilisé après paiement
-4. Ajoutez vos nouveaux scénarios de test dans le `OrderServiceTest` existant — suivez le style déjà en place
+- Ajoutez `DiscountCodeService` comme dépendance
+- Changez la signature de `createOrder` pour accepter un `DiscountCode` optionnel
+- Si un code promo est fourni : utilisez `DiscountCodeService.checkDiscountCode` — si ça retourne `true`, le code est disponible et peut être appliqué ; sinon, rejetez. Calculez le prix avec remise, marquez-le comme utilisé après paiement
+- Ajoutez vos nouveaux scénarios de test dans le `OrderServiceTest` existant — suivez le style déjà en place
 
 Lancez les tests : `./gradlew test`
 

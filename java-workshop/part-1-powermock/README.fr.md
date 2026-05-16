@@ -56,12 +56,12 @@ Vous devriez voir `BUILD SUCCESSFUL`. Si c'est le cas, vous êtes prêt !
 
 ### 🎯 Votre mission
 
-Migrer `OrderService` pour supporter les codes de réduction :
+`OrderService.placeOrder` doit supporter les codes de réduction.
 
-1. Ajouter `DiscountCodeService` comme dépendance (l'instancier dans `createOrder`, comme les autres services)
-2. Modifier la signature de `createOrder` pour accepter un `DiscountCode` optionnel
-3. Si un code de réduction est fourni : utiliser `DiscountCodeService.checkDiscountCode` — s'il retourne `true`, le code est disponible et peut être appliqué ; sinon rejeter. Calculer le prix avec la réduction, marquer comme utilisé après le paiement
-4. Ajouter vos nouveaux scénarios de test au `OrderServiceTest` existant — suivez le style déjà en place
+- Ajouter `DiscountCodeService` comme dépendance (l'instancier dans `createOrder`, comme les autres services)
+- Modifier la signature de `createOrder` pour accepter un `DiscountCode` optionnel
+- Si un code de réduction est fourni : utiliser `DiscountCodeService.checkDiscountCode` — s'il retourne `true`, le code est disponible et peut être appliqué ; sinon rejeter. Calculer le prix avec la réduction, marquer comme utilisé après le paiement
+- Ajouter vos nouveaux scénarios de test au `OrderServiceTest` existant — suivez le style déjà en place
 
 Lancer les tests : `./gradlew test`
 

@@ -35,8 +35,10 @@ Regardez le `OrderServiceTest` existant — il a été transformé en test compo
 
 ## 🎯 Votre mission
 
-1. Migrez `OrderService` pour supporter les codes promo — ajoutez `DiscountCodeService` comme dépendance, utilisez `checkDiscountCode` pour valider, `markAsUsed` après paiement
-2. Écrivez `OrderServiceTest` en style comportemental
+`OrderService.placeOrder` doit supporter les codes promo.
+
+- Ajoutez `DiscountCodeService` comme dépendance, utilisez `checkDiscountCode` pour valider, `markAsUsed` après paiement
+- Écrivez `OrderServiceTest` en style comportemental
 
 Lancez les tests : `./gradlew test`
 

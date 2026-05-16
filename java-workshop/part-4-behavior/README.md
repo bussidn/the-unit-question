@@ -42,8 +42,11 @@ Look at the existing `OrderServiceTest` — it has been transformed into a behav
 
 ## 🎯 Your mission
 
-1. Migrate `OrderService` to support discount codes — add a nullable `discountCode` field to the `Order` record (the `DiscountCode` enum is already provided in `domain/`), add `DiscountCodeService` as a dependency, use `checkDiscountCode` to validate, `markAsUsed` after payment
-2. Write `OrderServiceTest` in behaviour test style
+`OrderService.placeOrder` needs to support discount codes.
+
+- Add a nullable `discountCode` field to the `Order` record (the `DiscountCode` enum is already provided in `domain/`)
+- Add `DiscountCodeService` as a dependency, use `checkDiscountCode` to validate, `markAsUsed` after payment
+- Write `OrderServiceTest` in behaviour test style
 
 Run the tests: `./gradlew test`
 
