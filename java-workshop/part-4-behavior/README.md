@@ -1,4 +1,4 @@
-# The Unit Question — Part 4
+# The Unit Question — Part 4: Behaviour tests
 
 ## 🏋️ Exercise: Discount codes in order creation
 
@@ -10,13 +10,15 @@ The difference is in the tests.
 
 ---
 
-## What changes
+## 🔄 What changed since Part 3
 
 In previous parts, every collaborator of `OrderService` was mocked. Each mock silently encoded an assumption about what `PricingService`, `StockService`, etc. would do.
 
 In Part 4, we remove those assumptions. Tests use **real implementations** of internal services. Only **external gateways** remain mocked — they represent third-party systems we don't control.
 
 For repositories, we use **fakes**: simple in-memory implementations, no database.
+
+The `OrderBuilder` is still available — it carries over from Part 3 and works the same way here.
 
 ---
 
@@ -35,7 +37,7 @@ Look at the existing `OrderServiceTest` — it has been transformed into a behav
 
 ## 🎯 Your mission
 
-1. Migrate `OrderService` to support discount codes — add `DiscountCodeService` as a dependency, use `checkDiscountCode` to validate, `markAsUsed` after payment
+1. Migrate `OrderService` to support discount codes — add `DiscountCodeService` as a dependency, change the `placeOrder` signature to accept an optional `DiscountCode`, use `checkDiscountCode` to validate, `markAsUsed` after payment
 2. Write `OrderServiceTest` in behaviour test style
 
 Run the tests: `./gradlew test`
@@ -70,6 +72,7 @@ WHEN the customer places the order
 THEN the order is rejected with reason "Discount code already used"
 AND no payment is triggered
 ```
+
 ---
 
 ### 💡 Tips

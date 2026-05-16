@@ -1,6 +1,19 @@
-# The Unit Question — Part 3
+# The Unit Question — Part 3: Clean mocks
 
-## 🏋️ Exercise: Discount codes in order creation
+## 🔄 What changed since Part 2
+
+The **production code is identical to Part 2** — same `OrderService`, same dependencies, same behaviour.
+
+What changed is how the tests are written:
+
+- Mockito is now integrated via `@ExtendWith(MockitoExtension.class)` and `@Mock` field annotations. There are no more manual `mock()` calls inside `@BeforeEach` — Mockito creates and injects the mocks automatically before each test.
+- An `OrderBuilder` is now available in `helper/` to make test data setup more readable and intention-revealing.
+
+Open the existing `OrderServiceTest` and compare it side-by-side with Part 2's version. Can you spot every difference? That comparison is half the learning here.
+
+---
+
+## 🏋️ Exercise: Discount codes in `placeOrder`
 
 **⏱️ ~25 minutes**
 
@@ -9,7 +22,7 @@
 - `calculateTotal(items)` — old API, no discount
 - `calculateTotal(items, discountCode)` — new API with discount code
 
-`OrderService` has not been migrated yet. That's your mission.
+`OrderService.placeOrder` has not been migrated yet. That's your mission.
 
 ---
 
@@ -18,7 +31,7 @@
 Migrate `OrderService` to support discount codes:
 
 1. Add `DiscountCodeService` as a dependency
-2. Change the `createOrder` signature to accept an optional `DiscountCode`
+2. Change the `placeOrder` signature to accept an optional `DiscountCode`
 3. If a discount code is provided: use `DiscountCodeService.checkDiscountCode` — if it returns `true`, the code is available and can be applied; otherwise reject. Calculate the price with the discount, mark as used after payment
 4. Add your new test scenarios to the existing `OrderServiceTest` — follow the style already in place
 
@@ -53,12 +66,13 @@ WHEN the customer places the order
 THEN the order is rejected with reason "Discount code already used"
 AND no payment is triggered
 ```
+
 ---
 
 ### 💡 Tips
 
 - Look at the existing `OrderServiceTest` for style and follow the same patterns
-- The `OrderBuilder` is available in `helper/`
+- Use `OrderBuilder` (in `helper/`) to build test orders — it keeps the GIVEN block focused on what matters
 
 ---
 

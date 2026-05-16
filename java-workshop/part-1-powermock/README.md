@@ -58,8 +58,8 @@ You should see `BUILD SUCCESSFUL`. If so, you're ready!
 
 Migrate `OrderService` to support discount codes:
 
-1. Add `DiscountCodeService` as a dependency (instantiate it inside `createOrder`, like the other services)
-2. Change the `createOrder` signature to accept an optional `DiscountCode`
+1. Add `DiscountCodeService` as a dependency (instantiate it inside `placeOrder`, like the other services)
+2. Change the `placeOrder` signature to accept an optional `DiscountCode`
 3. If a discount code is provided: use `DiscountCodeService.checkDiscountCode` — if it returns `true`, the code is available and can be applied; otherwise reject. Calculate the price with the discount, mark as used after payment
 4. Add your new test scenarios to the existing `OrderServiceTest` — follow the style already in place
 

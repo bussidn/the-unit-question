@@ -1,4 +1,38 @@
-# The Unit Question — Part 2
+# The Unit Question — Part 2: Constructor injection
+
+## 🔄 What changed since Part 1
+
+In Part 1, `OrderService` instantiated all its collaborators (`StockService`, `PricingService`, etc.) directly inside `placeOrder`. Testing that code required **PowerMock-style hacks**: `mockConstruction()` to intercept `new SomeService()` calls, and `mockStatic()` to stub out static helpers.
+
+In Part 2, those same services are now **injected via constructor**:
+
+```java
+public OrderService(
+    StockService stockService,
+    PricingService pricingService,
+    PaymentService paymentService,
+    ShippingService shippingService
+) { ... }
+```
+
+That one structural change is enough to make the hacks disappear entirely. Tests can now use plain **`mock()`** calls and pass fakes straight into the constructor:
+
+```java
+@BeforeEach
+void setUp() {
+    stockService    = mock(StockService.class);
+    pricingService  = mock(PricingService.class);
+    paymentService  = mock(PaymentService.class);
+    shippingService = mock(ShippingService.class);
+    orderService    = new OrderService(stockService, pricingService, paymentService, shippingService);
+}
+```
+
+No `mockConstruction()`. No `mockStatic()`. No try-with-resources wrapping every test.
+
+The production logic inside `placeOrder` does **exactly the same thing** as in Part 1 — the only difference is where the dependencies come from. Have a look at the existing `OrderServiceTest` to see how much simpler the test style has become before you start the exercise.
+
+---
 
 ## 🏋️ Exercise: Discount codes in order creation
 
@@ -17,8 +51,8 @@
 
 Migrate `OrderService` to support discount codes:
 
-1. Add `DiscountCodeService` as a dependency
-2. Change the `createOrder` signature to accept an optional `DiscountCode`
+1. Add `DiscountCodeService` as a constructor dependency
+2. Change the `placeOrder` signature to accept an optional `DiscountCode`
 3. If a discount code is provided: use `DiscountCodeService.checkDiscountCode` — if it returns `true`, the code is available and can be applied; otherwise reject. Calculate the price with the discount, mark as used after payment
 4. Add your new test scenarios to the existing `OrderServiceTest` — follow the style already in place
 
@@ -53,6 +87,7 @@ WHEN the customer places the order
 THEN the order is rejected with reason "Discount code already used"
 AND no payment is triggered
 ```
+
 ---
 
 ### 💡 Tips
