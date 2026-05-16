@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyDouble;
 import static org.mockito.Mockito.argThat;
@@ -53,13 +54,17 @@ class OrderServiceTest {
             null
         );
 
-        try (var _mockedStock = mockConstruction(StockService.class,
+        try (// stock is available for all items
+             var _mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 2, true))));
+             // total price is 24.0
              var _mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(24.0));
+             // payment succeeds
              var _mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-123", PaymentStatus.SUCCESS, "TXN-789")));
+             // shipment is created
              var _mockedShipping = mockConstruction(ShippingService.class,
                  (mock, ctx) -> when(mock.createShipment(any()))
                      .thenReturn(new ShippingConfirmation("ORDER-123", "TRACK-ABC", "2024-12-25")));
@@ -84,13 +89,17 @@ class OrderServiceTest {
             null
         );
 
-        try (var _mockedStock = mockConstruction(StockService.class,
+        try (// stock is available for all items
+             var _mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("ITEM-A", 3, true))));
+             // total price is 45.0
              var _mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(order.items())).thenReturn(45.0));
+             // payment succeeds when charged 45.0
              var mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), eq(45.0)))
                      .thenReturn(new PaymentResult("ORDER-001", PaymentStatus.SUCCESS, "TXN-001")));
+             // shipment is created
              var _mockedShipping = mockConstruction(ShippingService.class,
                  (mock, ctx) -> when(mock.createShipment(any()))
                      .thenReturn(new ShippingConfirmation("ORDER-001", "TRACK-001", "2024-12-25")));
@@ -114,13 +123,17 @@ class OrderServiceTest {
             null
         );
 
-        try (var _mockedStock = mockConstruction(StockService.class,
+        try (// stock is available for all items
+             var _mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("ITEM-B", 1, true))));
+             // total price is 20.0
              var _mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(20.0));
+             // payment succeeds for this specific customer
              var mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), eq("CUSTOMER-JOHN-DOE"), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-002", PaymentStatus.SUCCESS, "TXN-002")));
+             // shipment is created
              var _mockedShipping = mockConstruction(ShippingService.class,
                  (mock, ctx) -> when(mock.createShipment(any()))
                      .thenReturn(new ShippingConfirmation("ORDER-002", "TRACK-002", "2024-12-25")));
@@ -144,13 +157,17 @@ class OrderServiceTest {
             null
         );
 
-        try (var _mockedStock = mockConstruction(StockService.class,
+        try (// stock is available for all items
+             var _mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("ITEM-C", 1, true))));
+             // total price is 10.0
              var _mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(10.0));
+             // payment succeeds with a specific transaction id
              var _mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-003", PaymentStatus.SUCCESS, "TRANSACTION-XYZ-789")));
+             // shipment is created
              var _mockedShipping = mockConstruction(ShippingService.class,
                  (mock, ctx) -> when(mock.createShipment(any()))
                      .thenReturn(new ShippingConfirmation("ORDER-003", "TRACK-003", "2024-12-25")));
@@ -175,13 +192,17 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (// stock is available for all items
+             var mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("ITEM-D", 2, true))));
+             // total price is 10.0
              var mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(10.0));
+             // payment succeeds
              var mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-004", PaymentStatus.SUCCESS, "TXN-004")));
+             // shipment is created with a specific tracking number
              var mockedShipping = mockConstruction(ShippingService.class,
                  (mock, ctx) -> when(mock.createShipment(any()))
                      .thenReturn(new ShippingConfirmation("ORDER-004", "TRACKING-NUMBER-ABC123", "2024-12-25")));
@@ -206,13 +227,17 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (// stock is available for all items
+             var mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("ITEM-E", 1, true))));
+             // total price is 100.0
              var mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(100.0));
+             // payment succeeds
              var mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-005", PaymentStatus.SUCCESS, "TXN-005")));
+             // shipment is created
              var mockedShipping = mockConstruction(ShippingService.class,
                  (mock, ctx) -> when(mock.createShipment(any()))
                      .thenReturn(new ShippingConfirmation("ORDER-005", "TRACK-005", "2024-12-25")));
@@ -246,17 +271,21 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (// stock is available for all 3 products
+             var mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(
                      new StockReservation("PROD-A", 2, true),
                      new StockReservation("PROD-B", 1, true),
                      new StockReservation("PROD-C", 5, true)
                  )));
+             // total price is 65.0
              var mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(65.0));
+             // payment succeeds
              var mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-006", PaymentStatus.SUCCESS, "TXN-006")));
+             // shipment is created
              var mockedShipping = mockConstruction(ShippingService.class,
                  (mock, ctx) -> when(mock.createShipment(any()))
                      .thenReturn(new ShippingConfirmation("ORDER-006", "TRACK-006", "2024-12-25")));
@@ -282,7 +311,8 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (// stock is NOT available
+             var mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("OUT-OF-STOCK", 10, false))));
              var mockedPricing = mockConstruction(PricingService.class);
              var mockedPayment = mockConstruction(PaymentService.class);
@@ -308,7 +338,8 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (// stock is NOT available
+             var mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("OUT-OF-STOCK", 5, false))));
              var mockedPricing = mockConstruction(PricingService.class);
              var mockedPayment = mockConstruction(PaymentService.class);
@@ -333,7 +364,8 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (// stock is NOT available
+             var mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("OUT-OF-STOCK", 3, false))));
              var mockedPricing = mockConstruction(PricingService.class);
              var mockedPayment = mockConstruction(PaymentService.class);
@@ -358,7 +390,8 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (// stock is NOT available
+             var mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("OUT-OF-STOCK", 1, false))));
              var mockedPricing = mockConstruction(PricingService.class);
              var mockedPayment = mockConstruction(PaymentService.class);
@@ -385,10 +418,13 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (// stock is available for all items
+             var mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-OK", 1, true))));
+             // total price is 100.0
              var mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(100.0));
+             // payment is declined
              var mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-200", PaymentStatus.FAILED, null)));
@@ -414,11 +450,14 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class, (mock, ctx) ->
+        try (// stock is available for all items
+             var mockedStock = mockConstruction(StockService.class, (mock, ctx) ->
                 when(mock.reserveStock(any()))
                         .thenReturn(List.of(new StockReservation("PROD-OK", 2, true))));
+             // total price is 100.0
              var mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(100.0));
+             // payment is declined
              var mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-201", PaymentStatus.FAILED, null)));
@@ -443,10 +482,13 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (// stock is available for all items
+             var mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-OK", 1, true))));
+             // total price is 75.0
              var mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(75.0));
+             // payment is declined
              var mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-202", PaymentStatus.FAILED, null)));
@@ -471,10 +513,13 @@ class OrderServiceTest {
             null
         );
 
-        try (var mockedStock = mockConstruction(StockService.class,
+        try (// stock is available for all items
+             var mockedStock = mockConstruction(StockService.class,
                  (mock, ctx) -> when(mock.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-OK", 1, true))));
+             // total price is 25.0
              var mockedPricing = mockConstruction(PricingService.class,
                  (mock, ctx) -> when(mock.calculateTotal(any())).thenReturn(25.0));
+             // payment is declined
              var mockedPayment = mockConstruction(PaymentService.class,
                  (mock, ctx) -> when(mock.processPayment(any(), any(), anyDouble()))
                      .thenReturn(new PaymentResult("ORDER-203", PaymentStatus.FAILED, null)));
@@ -485,6 +530,56 @@ class OrderServiceTest {
 
             mockedDatabase.verifyNoInteractions();
         }
+    }
+
+    // ========== DISCOUNT CODE ==========
+    // TODO: Implement the two scenarios below.
+    //       Follow the same pattern as the tests above:
+    //       1. Build the order
+    //       2. Open a try-with-resources block with mockConstruction / mockStatic for each service
+    //       3. Call placeOrder (you'll need to update its signature to accept a DiscountCode)
+    //       4. Assert the result
+    //
+    //       You will also need to add a mockConstruction for DiscountCodeService.
+    //       Hint:
+    //         var mockedDiscount = mockConstruction(DiscountCodeService.class,
+    //             (mock, ctx) -> when(mock.checkDiscountCode(any(), any())).thenReturn(...));
+
+    @Test
+    void orderIsConfirmed_whenDiscountCodeIsValid() {
+        // GIVEN an order with 2 items at €55 each (subtotal: €110)
+        // AND discount code SUMMER20 (-20%)
+        // AND the code has not yet been used by this customer
+
+        // WHEN the customer places the order
+
+        // THEN payment is processed for €105.60
+        // AND the discount code is marked as used
+        // AND the order is confirmed
+        //
+        // Expected assertions:
+        //   assertInstanceOf(OrderResult.Success.class, result);
+        //   assertEquals(OrderStatus.CONFIRMED, ((OrderResult.Success) result).order().status());
+        //   assertEquals(105.60, ((OrderResult.Success) result).order().totalPrice());
+
+        fail("TODO: implement scenario 'order with a valid discount code'");
+    }
+
+    @Test
+    void orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
+        // GIVEN an order with discount code SUMMER20
+        // AND this code has already been used by this customer
+
+        // WHEN the customer places the order
+
+        // THEN the order is rejected with reason "Discount code already used"
+        // AND no payment is triggered
+        //
+        // Expected assertions:
+        //   assertInstanceOf(OrderResult.Failure.class, result);
+        //   assertEquals("Discount code already used", ((OrderResult.Failure) result).reason());
+
+        fail("TODO: implement scenario 'discount code already used'");
     }
 
 }

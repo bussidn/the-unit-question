@@ -15,6 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class OrderServiceTest {
 
@@ -154,5 +155,53 @@ class OrderServiceTest {
 
         order.items().forEach(item ->
             assertEquals(item.quantity(), stockRepository.availableStock(item.productId())));
+    }
+
+    // ── Discount code ─────────────────────────────────────────────────────────
+    // TODO: Implement the two scenarios below.
+    //       Follow the same pattern as the tests above:
+    //       1. Create an InMemoryDiscountCodeRepository (already provided in helpers)
+    //       2. Wire a DiscountCodeService into OrderService via the constructor
+    //       3. Use given helpers to set up the discount code state
+    //       4. Update placeOrder to accept a DiscountCode parameter
+    //       5. Assert the result using real values (no mocks!)
+
+    @Test
+    void orderIsConfirmed_whenDiscountCodeIsValid() {
+        // GIVEN an order with 2 items at €55 each (subtotal: €110)
+        // AND discount code SUMMER20 (-20%)
+        // AND the code has not yet been used by this customer
+        // AND sufficient stock
+
+        // WHEN the customer places the order
+
+        // THEN payment is processed for €105.60
+        // AND the discount code is marked as used
+        // AND the order is confirmed
+        //
+        // Expected assertions:
+        //   assertInstanceOf(OrderResult.Success.class, result);
+        //   assertEquals(OrderStatus.CONFIRMED, ((OrderResult.Success) result).order().status());
+        //   assertEquals(105.60, ((OrderResult.Success) result).order().totalPrice());
+
+        fail("TODO: implement scenario 'order with a valid discount code'");
+    }
+
+    @Test
+    void orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
+        // GIVEN an order with discount code SUMMER20
+        // AND this code has already been used by this customer
+
+        // WHEN the customer places the order
+
+        // THEN the order is rejected with reason "Discount code already used"
+        // AND no payment is triggered
+        //
+        // Expected assertions:
+        //   assertInstanceOf(OrderResult.Failure.class, result);
+        //   assertEquals("Discount code already used", ((OrderResult.Failure) result).reason());
+        //   assertFalse(paymentGateway.wasCharged());
+
+        fail("TODO: implement scenario 'discount code already used'");
     }
 }
