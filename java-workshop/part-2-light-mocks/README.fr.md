@@ -9,8 +9,6 @@ La `PricingService` a été mise à jour pour supporter les codes promo. Elle ex
 - `calculateTotal(items)` — ancienne API, sans remise
 - `calculateTotal(items, discountCode)` — nouvelle API avec code promo
 
-Les tests de `PricingService` ont déjà été écrits — consultez `PricingServiceTest` pour comprendre comment le pricing calcule les totaux avec les remises.
-
 `OrderService` n'est pas encore migré. C'est votre mission.
 
 ---
@@ -61,7 +59,6 @@ ET aucun paiement n'est déclenché
 ### 💡 Conseils
 
 - Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patterns
-- Consultez `PricingServiceTest` pour comprendre comment le pricing calcule les totaux avec les remises
 
 ---
 

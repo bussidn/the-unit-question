@@ -50,8 +50,6 @@ You should see `BUILD SUCCESSFUL`. If so, you're ready!
 - `calculateTotal(items)` — old API, no discount
 - `calculateTotal(items, discountCode)` — new API with discount code
 
-The tests for `PricingService` have already been written — check `PricingServiceTest` to understand how pricing calculates totals with discounts.
-
 `OrderService` has not been migrated yet. That's your mission.
 
 ---
@@ -101,7 +99,6 @@ AND no payment is triggered
 ### 💡 Tips
 
 - Look at the existing `OrderServiceTest` for style and follow the same patterns
-- Check `PricingServiceTest` to understand how pricing calculates totals with discounts
 - To mock a constructor in your tests, use:
   ```java
   MockedConstruction<DiscountCodeService> mocked = mockConstruction(DiscountCodeService.class, (mock, ctx) -> {
