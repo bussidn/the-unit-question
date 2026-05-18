@@ -1,4 +1,4 @@
-# The Unit Question — Part 4
+# The Unit Question — Part 4 : Tests comportementaux
 
 ## 🏋️ Exercice : Codes promo dans la création de commande
 
@@ -10,13 +10,15 @@ La différence est dans les tests.
 
 ---
 
-## Ce qui change
+## 🔄 Ce qui a changé depuis la Part 3
 
-Dans les étapes précédentes, les collaborateurs de `OrderService` étaient tous mockés. Chaque mock encodait une hypothèse sur ce que ferait `PricingService`, `StockService`, etc. silencieusement.
+Dans les parties précédentes, tous les collaborateurs de `OrderService` étaient mockés. Chaque mock encodait silencieusement une hypothèse sur ce que feraient `PricingService`, `StockService`, etc.
 
 En Part 4, on supprime ces hypothèses. Les tests utilisent **les vraies implémentations** des services internes. Seuls les **gateways externes** restent mockés — ils représentent des systèmes tiers qu'on ne contrôle pas.
 
 Pour les repositories, on utilise des **fakes** : des implémentations en mémoire simples, sans base de données.
+
+Le `OrderBuilder` est toujours disponible — il est repris de la Part 3 et fonctionne de la même manière ici.
 
 ---
 
@@ -29,7 +31,12 @@ Regardez le `OrderServiceTest` existant — il a été transformé en test compo
 
 `InMemoryOrderRepository`, `InMemoryStockRepository` et `InMemoryDiscountCodeRepository` sont disponibles dans `helper/`.
 
-`DiscountCodeService` est fourni avec ses tests — utilisez `DiscountCodeService.checkDiscountCode(customerId, discountCode)` : s'il retourne `true`, le code est disponible.
+`DiscountCodeService` est fourni avec ses tests. Il expose deux méthodes :
+
+- **`checkDiscountCode(customerId, discountCode)`** — retourne `true` si le code est disponible pour ce client
+- **`markAsUsed(customerId, discountCode)`** — marque le code comme utilisé pour ce client
+
+`PricingService` a aussi été mis à jour avec une nouvelle surcharge : `calculateTotal(items, discountCode)` qui applique la réduction au prix.
 
 ---
 
@@ -37,8 +44,9 @@ Regardez le `OrderServiceTest` existant — il a été transformé en test compo
 
 `OrderService.placeOrder` doit supporter les codes promo.
 
-- Ajoutez `DiscountCodeService` comme dépendance, utilisez `checkDiscountCode` pour valider, `markAsUsed` après paiement
-- Écrivez `OrderServiceTest` en style comportemental
+- Ajouter un champ nullable `discountCode` au record `Order` (l'enum `DiscountCode` est déjà fourni dans `domain/`)
+- Ajouter `DiscountCodeService` comme dépendance, utiliser `checkDiscountCode` pour valider, `markAsUsed` après paiement
+- Écrire `OrderServiceTest` en style comportemental
 
 Lancez les tests : `./gradlew test`
 

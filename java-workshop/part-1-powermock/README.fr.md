@@ -45,10 +45,12 @@ Vous devriez voir `BUILD SUCCESSFUL`. Si c'est le cas, vous êtes prêt !
 
 **⏱️ ~25 minutes**
 
-`PricingService` a été mis à jour pour supporter les codes de réduction. Il expose maintenant deux méthodes :
+Un `DiscountCodeService` a été ajouté à la codebase. Il expose deux méthodes :
 
-- `calculateTotal(items)` — ancienne API, sans réduction
-- `calculateTotal(items, discountCode)` — nouvelle API avec code de réduction
+- **`checkDiscountCode(customerId, discountCode)`** — retourne `true` si le code est disponible pour ce client
+- **`markAsUsed(customerId, discountCode)`** — marque le code comme utilisé pour ce client
+
+`PricingService` a aussi été mis à jour avec une nouvelle surcharge : `calculateTotal(items, discountCode)` qui applique la réduction au prix.
 
 `OrderService` n'a pas encore été migré. C'est votre mission.
 
@@ -58,8 +60,8 @@ Vous devriez voir `BUILD SUCCESSFUL`. Si c'est le cas, vous êtes prêt !
 
 `OrderService.placeOrder` doit supporter les codes de réduction.
 
-- Ajouter `DiscountCodeService` comme dépendance (l'instancier dans `createOrder`, comme les autres services)
-- Modifier la signature de `createOrder` pour accepter un `DiscountCode` optionnel
+- Ajouter `DiscountCodeService` comme dépendance (l'instancier dans `placeOrder`, comme les autres services)
+- Ajouter un champ `discountCode` au record `Order` — il doit être nullable (l'enum `DiscountCode` est déjà fourni dans `domain/`). La signature `placeOrder(Order)` reste inchangée
 - Si un code de réduction est fourni : utiliser `DiscountCodeService.checkDiscountCode` — s'il retourne `true`, le code est disponible et peut être appliqué ; sinon rejeter. Calculer le prix avec la réduction, marquer comme utilisé après le paiement
 - Ajouter vos nouveaux scénarios de test au `OrderServiceTest` existant — suivez le style déjà en place
 
