@@ -1,53 +1,48 @@
 package service;
 
 import domain.DiscountCode;
-import infrastructure.Database;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import infrastructure.DatabaseDiscountCodeRepository;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class DiscountCodeServiceTest {
 
-    private DiscountCodeService discountCodeService;
-    private MockedStatic<Database> mockedDatabase;
-
-    @BeforeEach
-    void setUp() {
-        mockedDatabase = mockStatic(Database.class);
-        discountCodeService = new DiscountCodeService();
-    }
-
-    @AfterEach
-    void tearDown() {
-        mockedDatabase.close();
-    }
-
     @Test
     void checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
-        mockedDatabase.when(() -> Database.checkDiscountCode("CUST-001", "SUMMER20"))
-            .thenReturn(true);
+        try (var mockedRepo = mockConstruction(DatabaseDiscountCodeRepository.class,
+                (mock, ctx) -> when(mock.checkDiscountCode("CUST-001", DiscountCode.SUMMER20)).thenReturn(true))) {
 
-        assertTrue(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
+            var discountCodeService = new DiscountCodeService();
+
+            assertTrue(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
+        }
     }
 
     @Test
     void checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
-        mockedDatabase.when(() -> Database.checkDiscountCode("CUST-001", "SUMMER20"))
-            .thenReturn(false);
+        try (var mockedRepo = mockConstruction(DatabaseDiscountCodeRepository.class,
+                (mock, ctx) -> when(mock.checkDiscountCode("CUST-001", DiscountCode.SUMMER20)).thenReturn(false))) {
 
-        assertFalse(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
+            var discountCodeService = new DiscountCodeService();
+
+            assertFalse(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
+        }
     }
 
     @Test
-    void markAsUsed_delegatesToDatabase() {
-        discountCodeService.markAsUsed("CUST-001", DiscountCode.SUMMER20);
+    void markAsUsed_delegatesToRepository() {
+        try (var mockedRepo = mockConstruction(DatabaseDiscountCodeRepository.class)) {
 
-        mockedDatabase.verify(() -> Database.markAsUsed("CUST-001", "SUMMER20"));
+            var discountCodeService = new DiscountCodeService();
+            discountCodeService.markAsUsed("CUST-001", DiscountCode.SUMMER20);
+
+            verify(mockedRepo.constructed().getFirst()).markAsUsed("CUST-001", DiscountCode.SUMMER20);
+        }
     }
 }
 

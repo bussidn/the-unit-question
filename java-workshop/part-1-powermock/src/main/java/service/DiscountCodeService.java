@@ -1,13 +1,21 @@
 package service;
 
 import domain.DiscountCode;
-import infrastructure.Database;
+import infrastructure.DatabaseDiscountCodeRepository;
+import repository.DiscountCodeRepository;
 
 /**
  * Discount code validation service.
- * Uses Database static calls (consistent with Part 1 architecture).
+ * Instantiates its own repository (consistent with Part 1 architecture).
  */
 public class DiscountCodeService {
+
+    private final DiscountCodeRepository repository;
+
+    public DiscountCodeService() {
+        // Instantiates repository directly - requires real database connection
+        this.repository = new DatabaseDiscountCodeRepository();
+    }
 
     /**
      * Checks a discount code for a given customer.
@@ -15,11 +23,11 @@ public class DiscountCodeService {
      * @return true if the code has already been used by this customer
      */
     public boolean checkDiscountCode(String customerId, DiscountCode discountCode) {
-        return Database.checkDiscountCode(customerId, discountCode.name());
+        return repository.checkDiscountCode(customerId, discountCode);
     }
 
     public void markAsUsed(String customerId, DiscountCode discountCode) {
-        Database.markAsUsed(customerId, discountCode.name());
+        repository.markAsUsed(customerId, discountCode);
     }
 }
 

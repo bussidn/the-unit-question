@@ -8,6 +8,7 @@ import domain.PaymentStatus;
 import domain.ShippingConfirmation;
 import domain.StockReservation;
 import infrastructure.Database;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -40,7 +41,57 @@ import static org.mockito.Mockito.when;
  */
 class OrderServiceTest {
 
-    // ========== SUCCESS SCENARIOS ==========
+    // ========== DISCOUNT CODE ==========
+    // TODO: Implement the scenarios below, following the steps in the README.
+    //       Follow the same pattern as the tests above:
+    //       1. Build the order
+    //       2. Open a try-with-resources block with mockConstruction / mockStatic for each service
+    //       3. Call placeOrder
+    //       4. Assert the result
+    //
+    //       You will also need to add a mockConstruction for DiscountCodeService.
+    //       Hint:
+    //         var mockedDiscount = mockConstruction(DiscountCodeService.class,
+    //             (mock, ctx) -> when(mock.checkDiscountCode(any(), any())).thenReturn(...));
+
+    // --- Step 1: Guard clause — reject if discount code is already used ---
+
+    @Disabled
+    @Test
+    void orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
+        // GIVEN an order with discount code SUMMER20
+        // AND this code has already been used by this customer
+
+        // WHEN the customer places the order
+
+        // THEN the order is rejected with reason "Discount code already used"
+        // AND no payment is triggered
+
+        fail("TODO: implement scenario 'discount code already used'");
+    }
+
+    // --- Step 2: Apply discount — calculate total with discount code ---
+
+    @Disabled
+    @Test
+    void orderIsConfirmed_whenDiscountCodeIsValid() {
+        // GIVEN an order with 2 items at €55 each (subtotal: €110)
+        // AND discount code SUMMER20 (-20%)
+        // AND the code has not yet been used by this customer
+
+        // WHEN the customer places the order
+
+        // THEN payment is processed for €105.60
+        // AND the order is confirmed
+
+        fail("TODO: implement scenario 'order with a valid discount code'");
+    }
+
+    // --- Step 3: Mark as used — after payment, mark the discount code as used ---
+    // Update the test above to also verify that markAsUsed is called on DiscountCodeService.
+    // Hint: verify(mockedDiscount.constructed().getFirst()).markAsUsed(customerId, discountCode);
+
+    // ========== EXISTING TESTS (for reference) ========================================
 
     @Test
     void orderIsConfirmed_whenAllStepsSucceed() {
@@ -530,56 +581,6 @@ class OrderServiceTest {
 
             mockedDatabase.verifyNoInteractions();
         }
-    }
-
-    // ========== DISCOUNT CODE ==========
-    // TODO: Implement the two scenarios below.
-    //       Follow the same pattern as the tests above:
-    //       1. Build the order
-    //       2. Open a try-with-resources block with mockConstruction / mockStatic for each service
-    //       3. Call placeOrder (you'll need to update its signature to accept a DiscountCode)
-    //       4. Assert the result
-    //
-    //       You will also need to add a mockConstruction for DiscountCodeService.
-    //       Hint:
-    //         var mockedDiscount = mockConstruction(DiscountCodeService.class,
-    //             (mock, ctx) -> when(mock.checkDiscountCode(any(), any())).thenReturn(...));
-
-    @Test
-    void orderIsConfirmed_whenDiscountCodeIsValid() {
-        // GIVEN an order with 2 items at €55 each (subtotal: €110)
-        // AND discount code SUMMER20 (-20%)
-        // AND the code has not yet been used by this customer
-
-        // WHEN the customer places the order
-
-        // THEN payment is processed for €105.60
-        // AND the discount code is marked as used
-        // AND the order is confirmed
-        //
-        // Expected assertions:
-        //   assertInstanceOf(OrderResult.Success.class, result);
-        //   assertEquals(OrderStatus.CONFIRMED, ((OrderResult.Success) result).order().status());
-        //   assertEquals(105.60, ((OrderResult.Success) result).order().totalPrice());
-
-        fail("TODO: implement scenario 'order with a valid discount code'");
-    }
-
-    @Test
-    void orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
-        // GIVEN an order with discount code SUMMER20
-        // AND this code has already been used by this customer
-
-        // WHEN the customer places the order
-
-        // THEN the order is rejected with reason "Discount code already used"
-        // AND no payment is triggered
-        //
-        // Expected assertions:
-        //   assertInstanceOf(OrderResult.Failure.class, result);
-        //   assertEquals("Discount code already used", ((OrderResult.Failure) result).reason());
-
-        fail("TODO: implement scenario 'discount code already used'");
     }
 
 }

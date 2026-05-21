@@ -53,10 +53,6 @@ Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patte
 >     when(mock.someMethod(any())).thenReturn(...);
 > });
 > ```
-> Pour mocker les méthodes statiques de `Database` :
-> ```java
-> MockedStatic<Database> mockedDb = mockStatic(Database.class);
-> ```
 
 ---
 
