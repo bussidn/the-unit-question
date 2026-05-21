@@ -41,51 +41,34 @@ Vous devriez voir `BUILD SUCCESSFUL`. Si c'est le cas, vous êtes prêt !
 
 ---
 
-## 🏋️ Exercice : Codes de réduction dans la création de commande
+## 🏋️ Exercice (~15 min)
 
-**⏱️ ~25 minutes**
+`OrderService.placeOrder` ne supporte pas encore les codes de réduction. Votre mission : ajouter cette feature étape par étape, en écrivant les tests au fur et à mesure.
 
-Un `DiscountCodeService` a été ajouté à la codebase. Il expose deux méthodes :
+Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patterns.
 
-- **`checkDiscountCode(customerId, discountCode)`** — retourne `true` si le code est disponible pour ce client
-- **`markAsUsed(customerId, discountCode)`** — marque le code comme utilisé pour ce client
-
-`PricingService` a aussi été mis à jour avec une nouvelle surcharge : `calculateTotal(items, discountCode)` qui applique la réduction au prix.
-
-`OrderService` n'a pas encore été migré. C'est votre mission.
-
----
-
-### 🎯 Votre mission
-
-`OrderService.placeOrder` doit supporter les codes de réduction.
-
-- Ajouter `DiscountCodeService` comme dépendance (l'instancier dans `placeOrder`, comme les autres services)
-- Ajouter un champ `discountCode` au record `Order` — il doit être nullable (l'enum `DiscountCode` est déjà fourni dans `domain/`). La signature `placeOrder(Order)` reste inchangée
-- Si un code de réduction est fourni : utiliser `DiscountCodeService.checkDiscountCode` — s'il retourne `true`, le code est disponible et peut être appliqué ; sinon rejeter. Calculer le prix avec la réduction, marquer comme utilisé après le paiement
-- Ajouter vos nouveaux scénarios de test au `OrderServiceTest` existant — suivez le style déjà en place
-
-Lancer les tests : `./gradlew test`
+> 💡 Pour mocker un constructeur dans vos tests, utilisez :
+> ```java
+> MockedConstruction<SomeService> mocked = mockConstruction(SomeService.class, (mock, ctx) -> {
+>     when(mock.someMethod(any())).thenReturn(...);
+> });
+> ```
+> Pour mocker les méthodes statiques de `Database` :
+> ```java
+> MockedStatic<Database> mockedDb = mockStatic(Database.class);
+> ```
 
 ---
 
-### Scénarios à implémenter dans `OrderServiceTest`
+### Étape 1 — Rejeter les codes de réduction déjà utilisés
 
-#### Scénario 1 : Commande avec un code de réduction valide
+Ajoutez un champ nullable `discountCode` au record `Order` (l'enum `DiscountCode` est déjà dans `domain/`). La signature `placeOrder(Order)` reste inchangée.
 
-```
-ÉTANT DONNÉ une commande avec 2 articles à 55€ chacun (sous-total : 110€)
-ET le code de réduction SUMMER20 (-20%)
-ET le code n'a pas encore été utilisé par ce client
+Un `DiscountCodeService` est disponible dans la codebase. Câblez-le comme nouvelle dépendance. Il fournit `checkDiscountCode(customerId, discountCode)` — retourne `true` si le code est disponible pour ce client.
 
-QUAND le client valide la commande
+Dans `placeOrder` : si un code de réduction est présent et **non disponible**, rejetez la commande.
 
-ALORS le paiement est effectué pour 105.60€
-ET le code de réduction est marqué comme utilisé
-ET la commande est confirmée
-```
-
-#### Scénario 2 : Code de réduction déjà utilisé
+**Test à écrire :**
 
 ```
 ÉTANT DONNÉ une commande avec le code de réduction SUMMER20
@@ -96,21 +79,41 @@ QUAND le client valide la commande
 ALORS la commande est rejetée avec la raison "Discount code already used"
 ET aucun paiement n'est déclenché
 ```
+
+Lancez : `./gradlew test` ✅
+
 ---
 
-### 💡 Conseils
+### Étape 2 — Appliquer la réduction au prix
 
-- Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patterns
-- Pour mocker un constructeur dans vos tests, utilisez :
-  ```java
-  MockedConstruction<DiscountCodeService> mocked = mockConstruction(DiscountCodeService.class, (mock, ctx) -> {
-      when(mock.checkDiscountCode(any(), any())).thenReturn(false);
-  });
-  ```
-- Pour mocker les méthodes statiques de `Database` :
-  ```java
-  MockedStatic<Database> mockedDb = mockStatic(Database.class);
-  ```
+Si le code de réduction est présent et disponible, utilisez `PricingService.calculateTotal(items, discountCode)` à la place de l'appel existant.
+
+**Test à écrire :**
+
+```
+ÉTANT DONNÉ une commande avec 2 articles à 55€ chacun (sous-total : 110€)
+ET le code de réduction SUMMER20 (-20%)
+ET le code n'a pas encore été utilisé par ce client
+
+QUAND le client valide la commande
+
+ALORS le paiement est effectué pour 105.60€
+ET la commande est confirmée
+```
+
+Lancez : `./gradlew test` ✅
+
+---
+
+### Étape 3 — Marquer le code comme utilisé après paiement
+
+Après un paiement réussi, appelez `DiscountCodeService.markAsUsed(customerId, discountCode)`.
+
+**Mettez à jour votre test précédent** pour asserter que le code est marqué comme utilisé.
+
+Lancez : `./gradlew test` ✅
+
+---
 
 ### 🎯 Le but
 

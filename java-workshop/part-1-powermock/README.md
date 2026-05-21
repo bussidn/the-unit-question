@@ -10,7 +10,7 @@ Everyone talks about "unit tests", but nobody agrees on what a "unit" is.
 - Should we mock everything? Nothing? Something in between?
 - Why do some test suites break with every refactoring while others survive major changes?
 
-**This workshop makes you experience different testing approaches** through hands-on exercises. You'll feel the friction of each strategy and discover which one works best for you.
+**This workshj'aop makes you experience different testing approaches** through hands-on exercises. You'll feel the friction of each strategy and discover which one works best for you.
 
 4 parts, each with a different approach. You'll implement features and experience firsthand the pros and cons of each strategy.
 
@@ -41,51 +41,34 @@ You should see `BUILD SUCCESSFUL`. If so, you're ready!
 
 ---
 
-## 🏋️ Exercise: Discount codes in order creation
+## 🏋️ Exercise (~15 min)
 
-**⏱️ ~25 minutes**
+`OrderService.placeOrder` does not support discount codes yet. Your job is to add this feature step by step, writing tests as you go.
 
-A `DiscountCodeService` has been added to the codebase. It exposes two methods:
+Look at the existing `OrderServiceTest` for style and follow the same patterns.
 
-- **`checkDiscountCode(customerId, discountCode)`** — returns `true` if the code is available for this customer
-- **`markAsUsed(customerId, discountCode)`** — marks the code as used for this customer
-
-`PricingService` has also been updated with a new overload: `calculateTotal(items, discountCode)` that applies the discount to the price.
-
-`OrderService` has not been migrated yet. That's your mission.
-
----
-
-### 🎯 Your mission
-
-`OrderService.placeOrder` needs to support discount codes.
-
-- Add `DiscountCodeService` as a dependency (instantiate it inside `placeOrder`, like the other services)
-- Add a `discountCode` field to the `Order` record — it should be nullable (the `DiscountCode` enum is already provided in `domain/`). The `placeOrder(Order)` signature stays the same
-- If a discount code is provided: use `DiscountCodeService.checkDiscountCode` — if it returns `true`, the code is available and can be applied; otherwise reject. Calculate the price with the discount, mark as used after payment
-- Add your new test scenarios to the existing `OrderServiceTest` — follow the style already in place
-
-Run the tests: `./gradlew test`
+> 💡 To mock a constructor in your tests, use:
+> ```java
+> MockedConstruction<SomeService> mocked = mockConstruction(SomeService.class, (mock, ctx) -> {
+>     when(mock.someMethod(any())).thenReturn(...);
+> });
+> ```
+> To mock `Database` static methods:
+> ```java
+> MockedStatic<Database> mockedDb = mockStatic(Database.class);
+> ```
 
 ---
 
-### Scenarios to implement in `OrderServiceTest`
+### Step 1 — Reject already-used discount codes
 
-#### Scenario 1: Order with a valid discount code
+Add a nullable `discountCode` field to the `Order` record (the `DiscountCode` enum is already in `domain/`). The `placeOrder(Order)` signature stays the same.
 
-```
-GIVEN an order with 2 items at €55 each (subtotal: €110)
-AND discount code SUMMER20 (-20%)
-AND the code has not yet been used by this customer
+A `DiscountCodeService` is available in the codebase. Wire it as a new dependency. It provides `checkDiscountCode(customerId, discountCode)` — returns `true` if the code is available for this customer.
 
-WHEN the customer places the order
+In `placeOrder`: if a discount code is present and **not available**, reject the order.
 
-THEN payment is processed for €105.60
-AND the discount code is marked as used
-AND the order is confirmed
-```
-
-#### Scenario 2: Discount code already used
+**Test to write:**
 
 ```
 GIVEN an order with discount code SUMMER20
@@ -96,21 +79,41 @@ WHEN the customer places the order
 THEN the order is rejected with reason "Discount code already used"
 AND no payment is triggered
 ```
+
+Run: `./gradlew test` ✅
+
 ---
 
-### 💡 Tips
+### Step 2 — Apply the discount to the price
 
-- Look at the existing `OrderServiceTest` for style and follow the same patterns
-- To mock a constructor in your tests, use:
-  ```java
-  MockedConstruction<DiscountCodeService> mocked = mockConstruction(DiscountCodeService.class, (mock, ctx) -> {
-      when(mock.checkDiscountCode(any(), any())).thenReturn(false);
-  });
-  ```
-- To mock `Database` static methods:
-  ```java
-  MockedStatic<Database> mockedDb = mockStatic(Database.class);
-  ```
+If the discount code is present and available, use `PricingService.calculateTotal(items, discountCode)` instead of the existing call.
+
+**Test to write:**
+
+```
+GIVEN an order with 2 items at €55 each (subtotal: €110)
+AND discount code SUMMER20 (-20%)
+AND the code has not yet been used by this customer
+
+WHEN the customer places the order
+
+THEN payment is processed for €105.60
+AND the order is confirmed
+```
+
+Run: `./gradlew test` ✅
+
+---
+
+### Step 3 — Mark the code as used after payment
+
+After successful payment, call `DiscountCodeService.markAsUsed(customerId, discountCode)`.
+
+**Update your previous test** to assert the code is marked as used.
+
+Run: `./gradlew test` ✅
+
+---
 
 ### 🎯 The point
 

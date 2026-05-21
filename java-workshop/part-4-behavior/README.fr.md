@@ -1,8 +1,6 @@
 # The Unit Question — Part 4 : Tests comportementaux
 
-## 🏋️ Exercice : Codes promo dans la création de commande
-
-**⏱️ ~25 minutes**
+## 🏋️ Exercice (~25 min)
 
 Même exercice que la Part 3 — même feature, même code de production à migrer.
 
@@ -42,44 +40,63 @@ Regardez le `OrderServiceTest` existant — il a été transformé en test compo
 
 ## 🎯 Votre mission
 
-`OrderService.placeOrder` doit supporter les codes promo.
+`OrderService.placeOrder` ne supporte pas encore les codes de réduction. Votre mission : ajouter cette feature étape par étape, en écrivant les tests au fur et à mesure.
 
-- Ajouter un champ nullable `discountCode` au record `Order` (l'enum `DiscountCode` est déjà fourni dans `domain/`)
-- Ajouter `DiscountCodeService` comme dépendance, utiliser `checkDiscountCode` pour valider, `markAsUsed` après paiement
-- Écrire `OrderServiceTest` en style comportemental
-
-Lancez les tests : `./gradlew test`
+Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patterns.
 
 ---
 
-### Scénarios à implémenter dans `OrderServiceTest`
+### Étape 1 — Rejeter les codes de réduction déjà utilisés
 
-#### Scénario 1 : Création avec code promo valide
+Ajoutez un champ nullable `discountCode` au record `Order` (l'enum `DiscountCode` est déjà dans `domain/`). La signature `placeOrder(Order)` reste inchangée.
+
+Ajoutez `DiscountCodeService` comme dépendance. Dans `placeOrder` : si un code de réduction est présent et **non disponible**, rejetez la commande.
+
+**Test à écrire :**
+
+```
+ÉTANT DONNÉ une commande avec le code de réduction SUMMER20
+ET ce code a déjà été utilisé par ce client
+
+QUAND le client valide la commande
+
+ALORS la commande est rejetée avec la raison "Discount code already used"
+ET aucun paiement n'est déclenché
+```
+
+Lancez : `./gradlew test` ✅
+
+---
+
+### Étape 2 — Appliquer la réduction au prix
+
+Si le code de réduction est présent et disponible, utilisez `PricingService.calculateTotal(items, discountCode)` à la place de l'appel existant.
+
+**Test à écrire :**
 
 ```
 ÉTANT DONNÉ une commande avec 2 articles à 55€ chacun (sous-total : 110€)
-ET le code promo SUMMER20 (-20%)
+ET le code de réduction SUMMER20 (-20%)
 ET le code n'a pas encore été utilisé par ce client
-ET un stock suffisant
 
-QUAND le client passe la commande
+QUAND le client valide la commande
 
-ALORS le paiement est traité pour 105.60€
-ET le code promo est marqué comme utilisé
+ALORS le paiement est effectué pour 105.60€
 ET la commande est confirmée
 ```
 
-#### Scénario 2 : Code promo déjà utilisé
+Lancez : `./gradlew test` ✅
 
-```
-ÉTANT DONNÉ une commande avec le code promo SUMMER20
-ET ce code a déjà été utilisé par ce client
+---
 
-QUAND le client passe la commande
+### Étape 3 — Marquer le code comme utilisé après paiement
 
-ALORS la commande est rejetée avec le motif "Discount code already used"
-ET aucun paiement n'est déclenché
-```
+Après un paiement réussi, appelez `DiscountCodeService.markAsUsed(customerId, discountCode)`.
+
+**Mettez à jour votre test précédent** pour asserter que le code est marqué comme utilisé.
+
+Lancez : `./gradlew test` ✅
+
 ---
 
 ### 💡 Conseils

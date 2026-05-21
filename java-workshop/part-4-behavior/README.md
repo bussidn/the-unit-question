@@ -1,8 +1,6 @@
 # The Unit Question — Part 4: Behaviour tests
 
-## 🏋️ Exercise: Discount codes in order creation
-
-**⏱️ ~25 minutes**
+## 🏋️ Exercise (~25 min)
 
 Same exercise as Part 3 — same feature, same production code to migrate.
 
@@ -42,34 +40,19 @@ Look at the existing `OrderServiceTest` — it has been transformed into a behav
 
 ## 🎯 Your mission
 
-`OrderService.placeOrder` needs to support discount codes.
+`OrderService.placeOrder` does not support discount codes yet. Your job is to add this feature step by step, writing tests as you go.
 
-- Add a nullable `discountCode` field to the `Order` record (the `DiscountCode` enum is already provided in `domain/`)
-- Add `DiscountCodeService` as a dependency, use `checkDiscountCode` to validate, `markAsUsed` after payment
-- Write `OrderServiceTest` in behaviour test style
-
-Run the tests: `./gradlew test`
+Look at the existing `OrderServiceTest` for style and follow the same patterns.
 
 ---
 
-### Scenarios to implement in `OrderServiceTest`
+### Step 1 — Reject already-used discount codes
 
-#### Scenario 1: Order with a valid discount code
+Add a nullable `discountCode` field to the `Order` record (the `DiscountCode` enum is already in `domain/`). The `placeOrder(Order)` signature stays the same.
 
-```
-GIVEN an order with 2 items at €55 each (subtotal: €110)
-AND discount code SUMMER20 (-20%)
-AND the code has not yet been used by this customer
-AND sufficient stock
+Add `DiscountCodeService` as a dependency. In `placeOrder`: if a discount code is present and **not available**, reject the order.
 
-WHEN the customer places the order
-
-THEN payment is processed for €105.60
-AND the discount code is marked as used
-AND the order is confirmed
-```
-
-#### Scenario 2: Discount code already used
+**Test to write:**
 
 ```
 GIVEN an order with discount code SUMMER20
@@ -80,6 +63,39 @@ WHEN the customer places the order
 THEN the order is rejected with reason "Discount code already used"
 AND no payment is triggered
 ```
+
+Run: `./gradlew test` ✅
+
+---
+
+### Step 2 — Apply the discount to the price
+
+If the discount code is present and available, use `PricingService.calculateTotal(items, discountCode)` instead of the existing call.
+
+**Test to write:**
+
+```
+GIVEN an order with 2 items at €55 each (subtotal: €110)
+AND discount code SUMMER20 (-20%)
+AND the code has not yet been used by this customer
+
+WHEN the customer places the order
+
+THEN payment is processed for €105.60
+AND the order is confirmed
+```
+
+Run: `./gradlew test` ✅
+
+---
+
+### Step 3 — Mark the code as used after payment
+
+After successful payment, call `DiscountCodeService.markAsUsed(customerId, discountCode)`.
+
+**Update your previous test** to assert the code is marked as used.
+
+Run: `./gradlew test` ✅
 
 ---
 

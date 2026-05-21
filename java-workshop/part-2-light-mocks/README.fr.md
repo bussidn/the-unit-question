@@ -34,67 +34,66 @@ La logique métier dans `placeOrder` fait **exactement la même chose** qu'en Pa
 
 ---
 
-## 🏋️ Exercice : Codes promo dans la création de commande
+## 🏋️ Exercice (~25 min)
 
-**⏱️ ~25 minutes**
+`OrderService.placeOrder` ne supporte pas encore les codes de réduction. Votre mission : ajouter cette feature étape par étape, en écrivant les tests au fur et à mesure.
 
-Un `DiscountCodeService` a été ajouté à la codebase. Il expose deux méthodes :
-
-- **`checkDiscountCode(customerId, discountCode)`** — retourne `true` si le code est disponible pour ce client
-- **`markAsUsed(customerId, discountCode)`** — marque le code comme utilisé pour ce client
-
-`PricingService` a aussi été mis à jour avec une nouvelle surcharge : `calculateTotal(items, discountCode)` qui applique la réduction au prix.
-
-`OrderService` n'est pas encore migré. C'est votre mission.
+Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patterns.
 
 ---
 
-### 🎯 Votre mission
+### Étape 1 — Rejeter les codes de réduction déjà utilisés
 
-`OrderService.placeOrder` doit supporter les codes promo.
+Ajoutez un champ nullable `discountCode` au record `Order` (l'enum `DiscountCode` est déjà dans `domain/`). La signature `placeOrder(Order)` reste inchangée.
 
-- Ajouter `DiscountCodeService` comme dépendance du constructeur
-- Ajouter un champ `discountCode` au record `Order` — il doit être nullable (l'enum `DiscountCode` est déjà fourni dans `domain/`). La signature `placeOrder(Order)` reste inchangée
-- Si un code promo est fourni : utiliser `DiscountCodeService.checkDiscountCode` — si ça retourne `true`, le code est disponible et peut être appliqué ; sinon, rejetez. Calculez le prix avec remise, marquez-le comme utilisé après paiement
-- Ajoutez vos nouveaux scénarios de test dans le `OrderServiceTest` existant — suivez le style déjà en place
+Un `DiscountCodeService` est disponible dans la codebase. Ajoutez-le comme dépendance du constructeur. Il fournit `checkDiscountCode(customerId, discountCode)` — retourne `true` si le code est disponible pour ce client.
 
-Lancez les tests : `./gradlew test`
+Dans `placeOrder` : si un code de réduction est présent et **non disponible**, rejetez la commande.
 
----
-
-### Scénarios à implémenter dans `OrderServiceTest`
-
-#### Scénario 1 : Création avec code promo valide
+**Test à écrire :**
 
 ```
-ÉTANT DONNÉ une commande avec 2 articles à 55€ chacun (sous-total : 110€)
-ET le code promo SUMMER20 (-20%)
-ET le code n'a pas encore été utilisé par ce client
-
-QUAND le client passe la commande
-
-ALORS le paiement est traité pour 105.60€
-ET le code promo est marqué comme utilisé
-ET la commande est confirmée
-```
-
-#### Scénario 2 : Code promo déjà utilisé
-
-```
-ÉTANT DONNÉ une commande avec le code promo SUMMER20
+ÉTANT DONNÉ une commande avec le code de réduction SUMMER20
 ET ce code a déjà été utilisé par ce client
 
-QUAND le client passe la commande
+QUAND le client valide la commande
 
-ALORS la commande est rejetée avec le motif "Discount code already used"
+ALORS la commande est rejetée avec la raison "Discount code already used"
 ET aucun paiement n'est déclenché
 ```
 
+Lancez : `./gradlew test` ✅
+
 ---
 
-### 💡 Conseils
+### Étape 2 — Appliquer la réduction au prix
 
-- Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patterns
+Si le code de réduction est présent et disponible, utilisez `PricingService.calculateTotal(items, discountCode)` à la place de l'appel existant.
+
+**Test à écrire :**
+
+```
+ÉTANT DONNÉ une commande avec 2 articles à 55€ chacun (sous-total : 110€)
+ET le code de réduction SUMMER20 (-20%)
+ET le code n'a pas encore été utilisé par ce client
+
+QUAND le client valide la commande
+
+ALORS le paiement est effectué pour 105.60€
+ET la commande est confirmée
+```
+
+Lancez : `./gradlew test` ✅
+
+---
+
+### Étape 3 — Marquer le code comme utilisé après paiement
+
+Après un paiement réussi, appelez `DiscountCodeService.markAsUsed(customerId, discountCode)`.
+
+**Mettez à jour votre test précédent** pour asserter que le code est marqué comme utilisé.
+
+Lancez : `./gradlew test` ✅
 
 ---
 
