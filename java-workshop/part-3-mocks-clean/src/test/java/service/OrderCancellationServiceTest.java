@@ -53,7 +53,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_succeeds_whenAllStepsPass() {
+    void p3_cancelOrder_succeeds_whenAllStepsPass() {
         givenOrderExists(confirmedOrder);
         givenRefundSucceeds();
         givenShipmentCancelled();
@@ -68,7 +68,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_fails_whenRefundFails() {
+    void p3_cancelOrder_fails_whenRefundFails() {
         givenOrderExists(confirmedOrder);
         givenRefundFails();
 
@@ -81,7 +81,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_skipsShipmentCancellation_whenOrderHasNoTrackingNumber() {
+    void p3_cancelOrder_skipsShipmentCancellation_whenOrderHasNoTrackingNumber() {
         Order orderWithoutShipment = OrderBuilder.confirmed()
             .withId("ORDER-002")
             .withTransaction("TXN-456")
@@ -101,7 +101,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_fails_whenOrderDoesNotExist() {
+    void p3_cancelOrder_fails_whenOrderDoesNotExist() {
         when(orderRepository.findById("ORDER-UNKNOWN")).thenReturn(null);
 
         CancellationResult result = service.cancelOrder("ORDER-UNKNOWN");

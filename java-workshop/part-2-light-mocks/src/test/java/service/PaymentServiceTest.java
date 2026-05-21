@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
 class PaymentServiceTest {
 
     @Test
-    void processPayment_returnsSuccess_whenGatewaySucceeds() {
+    void p2_processPayment_returnsSuccess_whenGatewaySucceeds() {
         PaymentGateway paymentGateway = mock(PaymentGateway.class);
         GatewayPaymentService paymentService = new GatewayPaymentService(paymentGateway);
 
@@ -34,7 +34,7 @@ class PaymentServiceTest {
     }
 
     @Test
-    void processPayment_returnsFailure_forZeroAmount_withoutCallingGateway() {
+    void p2_processPayment_returnsFailure_forZeroAmount_withoutCallingGateway() {
         PaymentGateway paymentGateway = mock(PaymentGateway.class);
         GatewayPaymentService paymentService = new GatewayPaymentService(paymentGateway);
 
@@ -49,7 +49,7 @@ class PaymentServiceTest {
     }
 
     @Test
-    void processPayment_returnsFailure_whenGatewayFails() {
+    void p2_processPayment_returnsFailure_whenGatewayFails() {
         PaymentGateway paymentGateway = mock(PaymentGateway.class);
         GatewayPaymentService paymentService = new GatewayPaymentService(paymentGateway);
 
@@ -63,7 +63,7 @@ class PaymentServiceTest {
     }
 
     @Test
-    void refundPayment_delegatesToGateway() {
+    void p2_refundPayment_delegatesToGateway() {
         PaymentGateway paymentGateway = mock(PaymentGateway.class);
         GatewayPaymentService paymentService = new GatewayPaymentService(paymentGateway);
 

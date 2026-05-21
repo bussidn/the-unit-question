@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 class OrderCancellationServiceTest {
 
     @Test
-    void cancelOrder_refundsPayment_whenOrderExists() {
+    void p2_cancelOrder_refundsPayment_whenOrderExists() {
         OrderRepository orderRepository = mock(OrderRepository.class);
         PaymentService paymentService = mock(PaymentService.class);
         StockService stockService = mock(StockService.class);
@@ -53,7 +53,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_cancelsShipment_whenTrackingNumberExists() {
+    void p2_cancelOrder_cancelsShipment_whenTrackingNumberExists() {
         OrderRepository orderRepository = mock(OrderRepository.class);
         PaymentService paymentService = mock(PaymentService.class);
         StockService stockService = mock(StockService.class);
@@ -84,7 +84,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_fails_whenRefundFails() {
+    void p2_cancelOrder_fails_whenRefundFails() {
         OrderRepository orderRepository = mock(OrderRepository.class);
         PaymentService paymentService = mock(PaymentService.class);
         StockService stockService = mock(StockService.class);
@@ -115,7 +115,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_fails_whenOrderDoesNotExist() {
+    void p2_cancelOrder_fails_whenOrderDoesNotExist() {
         OrderRepository orderRepository = mock(OrderRepository.class);
         PaymentService paymentService = mock(PaymentService.class);
         StockService stockService = mock(StockService.class);

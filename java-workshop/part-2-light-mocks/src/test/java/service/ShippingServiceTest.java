@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 class ShippingServiceTest {
 
     @Test
-    void createShipment_callsGatewayAndReturnsConfirmation() {
+    void p2_createShipment_callsGatewayAndReturnsConfirmation() {
         ShippingGateway shippingGateway = mock(ShippingGateway.class);
         GatewayShippingService shippingService = new GatewayShippingService(shippingGateway);
 
@@ -47,7 +47,7 @@ class ShippingServiceTest {
     }
 
     @Test
-    void cancelShipment_callsGatewayAndReturnsResult() {
+    void p2_cancelShipment_callsGatewayAndReturnsResult() {
         ShippingGateway shippingGateway = mock(ShippingGateway.class);
         GatewayShippingService shippingService = new GatewayShippingService(shippingGateway);
 

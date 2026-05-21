@@ -31,7 +31,7 @@ class PaymentServiceTest {
     }
 
     @Test
-    void processPayment_returnsSuccess_whenGatewayAcceptsPayment() {
+    void p4_processPayment_returnsSuccess_whenGatewayAcceptsPayment() {
         when(paymentGateway.process(any(PaymentRequest.class)))
             .thenReturn(new PaymentResult("ORDER-001", PaymentStatus.SUCCESS, "TXN-123"));
 
@@ -42,7 +42,7 @@ class PaymentServiceTest {
     }
 
     @Test
-    void processPayment_returnsFailed_whenAmountIsZero() {
+    void p4_processPayment_returnsFailed_whenAmountIsZero() {
         var result = paymentService.processPayment("ORDER-001", "CUST-001", 0.0);
 
         assertEquals(PaymentStatus.FAILED, result.status());
@@ -50,14 +50,14 @@ class PaymentServiceTest {
     }
 
     @Test
-    void refundPayment_returnsTrue_whenGatewayConfirmsRefund() {
+    void p4_refundPayment_returnsTrue_whenGatewayConfirmsRefund() {
         when(paymentGateway.refund("TXN-123")).thenReturn(true);
 
         assertTrue(paymentService.refundPayment("TXN-123"));
     }
 
     @Test
-    void refundPayment_returnsFalse_whenGatewayDeclines() {
+    void p4_refundPayment_returnsFalse_whenGatewayDeclines() {
         when(paymentGateway.refund("TXN-123")).thenReturn(false);
 
         assertFalse(paymentService.refundPayment("TXN-123"));

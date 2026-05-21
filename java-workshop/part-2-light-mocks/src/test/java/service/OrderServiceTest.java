@@ -54,7 +54,7 @@ class OrderServiceTest {
 
     @Disabled
     @Test
-    void orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
+    void p2_orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
         // GIVEN an order with discount code SUMMER20
         // AND this code has already been used by this customer
 
@@ -70,7 +70,7 @@ class OrderServiceTest {
 
     @Disabled
     @Test
-    void orderIsConfirmed_whenDiscountCodeIsValid() {
+    void p2_orderIsConfirmed_whenDiscountCodeIsValid() {
         // GIVEN an order with 2 items at €55 each (subtotal: €110)
         // AND discount code SUMMER20 (-20%)
         // AND the code has not yet been used by this customer
@@ -90,7 +90,7 @@ class OrderServiceTest {
     // ── Existing tests (for reference) ─────────────────────────────────────────
 
     @Test
-    void orderIsConfirmed_whenAllStepsSucceed() {
+    void p2_orderIsConfirmed_whenAllStepsSucceed() {
         var order = new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null);
         // total price is 29.0
         when(pricingService.calculateTotal(any())).thenReturn(29.0);
@@ -109,7 +109,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void calculatedPriceIsStoredInOrder_whenAllStepsSucceed() {
+    void p2_calculatedPriceIsStoredInOrder_whenAllStepsSucceed() {
         var order = new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null);
         // total price is 29.0
         when(pricingService.calculateTotal(any())).thenReturn(29.0);
@@ -127,7 +127,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void shippingConfirmationIsReturned_whenAllStepsSucceed() {
+    void p2_shippingConfirmationIsReturned_whenAllStepsSucceed() {
         var order = new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.PENDING, 0.0, null, null);
         var shipment = new ShippingConfirmation("ORDER-001", "TRACK-456", "2024-12-25");
         // total price is 29.0
@@ -148,7 +148,7 @@ class OrderServiceTest {
     // ── Stock unavailable ─────────────────────────────────────────────────────
 
     @Test
-    void orderFails_whenStockIsUnavailable() {
+    void p2_orderFails_whenStockIsUnavailable() {
         // stock is NOT available
         when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, false)));
 
@@ -159,7 +159,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void paymentIsNotCharged_whenStockIsUnavailable() {
+    void p2_paymentIsNotCharged_whenStockIsUnavailable() {
         // stock is NOT available
         when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, false)));
 
@@ -169,7 +169,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void shipmentIsNotCreated_whenStockIsUnavailable() {
+    void p2_shipmentIsNotCreated_whenStockIsUnavailable() {
         // stock is NOT available
         when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, false)));
 
@@ -181,7 +181,7 @@ class OrderServiceTest {
     // ── Payment declined ──────────────────────────────────────────────────────
 
     @Test
-    void orderFails_whenPaymentIsDeclined() {
+    void p2_orderFails_whenPaymentIsDeclined() {
         // stock is available for all items
         when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, true)));
         // total price is 45.0
@@ -197,7 +197,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void shipmentIsNotCreated_whenPaymentIsDeclined() {
+    void p2_shipmentIsNotCreated_whenPaymentIsDeclined() {
         // stock is available for all items
         when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, true)));
         // total price is 45.0
@@ -212,7 +212,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void stockIsReleased_whenPaymentIsDeclined() {
+    void p2_stockIsReleased_whenPaymentIsDeclined() {
         // stock is available for all items
         when(stockService.reserveStock(any())).thenReturn(List.of(new StockReservation("PROD-001", 1, true)));
         // total price is 45.0

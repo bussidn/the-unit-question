@@ -31,7 +31,7 @@ class PaymentServiceTest {
     }
 
     @Test
-    void processPayment_returnsSuccess_whenGatewaySucceeds() {
+    void p1_processPayment_returnsSuccess_whenGatewaySucceeds() {
         // Given
         String orderId = "ORDER-123";
         String customerId = "CUST-456";
@@ -52,7 +52,7 @@ class PaymentServiceTest {
     }
 
     @Test
-    void processPayment_returnsFailure_forZeroAmount_withoutCallingGateway() {
+    void p1_processPayment_returnsFailure_forZeroAmount_withoutCallingGateway() {
         // Given
         String orderId = "ORDER-123";
         String customerId = "CUST-456";
@@ -67,7 +67,7 @@ class PaymentServiceTest {
     }
 
     @Test
-    void processPayment_returnsFailure_whenGatewayFails() {
+    void p1_processPayment_returnsFailure_whenGatewayFails() {
         // Given
         String orderId = "ORDER-123";
         String customerId = "CUST-456";
@@ -84,7 +84,7 @@ class PaymentServiceTest {
     }
 
     @Test
-    void refundPayment_returnsTrue_whenGatewayRefundSucceeds() {
+    void p1_refundPayment_returnsTrue_whenGatewayRefundSucceeds() {
         String transactionId = "TXN-789";
 
         mockedGateway.when(() -> PaymentGateway.refund(transactionId)).thenReturn(true);
@@ -96,7 +96,7 @@ class PaymentServiceTest {
     }
 
     @Test
-    void refundPayment_returnsFalse_whenPaymentWasAlreadyRefunded() {
+    void p1_refundPayment_returnsFalse_whenPaymentWasAlreadyRefunded() {
         String transactionId = "TXN-789";
 
         mockedGateway.when(() -> PaymentGateway.refund(transactionId)).thenReturn(false);

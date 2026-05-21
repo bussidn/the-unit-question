@@ -23,21 +23,21 @@ class DiscountCodeServiceTest {
     private DiscountCodeService discountCodeService;
 
     @Test
-    void checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
+    void p3_checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
         when(discountCodeRepository.checkDiscountCode("CUST-001", DiscountCode.SUMMER20)).thenReturn(true);
 
         assertTrue(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
     }
 
     @Test
-    void checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
+    void p3_checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
         when(discountCodeRepository.checkDiscountCode("CUST-001", DiscountCode.SUMMER20)).thenReturn(false);
 
         assertFalse(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
     }
 
     @Test
-    void markAsUsed_delegatesToRepository() {
+    void p3_markAsUsed_delegatesToRepository() {
         discountCodeService.markAsUsed("CUST-001", DiscountCode.SUMMER20);
 
         verify(discountCodeRepository).markAsUsed("CUST-001", DiscountCode.SUMMER20);

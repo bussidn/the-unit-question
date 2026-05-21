@@ -30,7 +30,7 @@ class ShippingServiceTest {
     }
 
     @Test
-    void createShipment_returnsGatewayConfirmation() {
+    void p4_createShipment_returnsGatewayConfirmation() {
         var order = OrderBuilder.confirmed().withId("ORDER-001").build();
         var confirmation = new ShippingConfirmation("ORDER-001", "TRACK-123", "2025-12-25");
         when(shippingGateway.createShipment(any())).thenReturn(confirmation);
@@ -42,7 +42,7 @@ class ShippingServiceTest {
     }
 
     @Test
-    void cancelShipment_delegatesToGateway() {
+    void p4_cancelShipment_delegatesToGateway() {
         when(shippingGateway.cancelShipment(anyString())).thenReturn(true);
 
         assertTrue(shippingService.cancelShipment("TRACK-123"));

@@ -26,7 +26,7 @@ class PaymentServiceTest {
     private GatewayPaymentService paymentService;
 
     @Test
-    void processPayment_returnsSuccess_whenGatewayAcceptsPayment() {
+    void p3_processPayment_returnsSuccess_whenGatewayAcceptsPayment() {
         var gatewayResponse = new PaymentResult("ORDER-001", PaymentStatus.SUCCESS, "TXN-123");
         when(paymentGateway.process(any(PaymentRequest.class))).thenReturn(gatewayResponse);
 
@@ -37,21 +37,21 @@ class PaymentServiceTest {
     }
 
     @Test
-    void processPayment_returnsFailed_whenAmountIsZero() {
+    void p3_processPayment_returnsFailed_whenAmountIsZero() {
         var result = paymentService.processPayment("ORDER-001", "CUST-001", 0.0);
 
         assertEquals(PaymentStatus.FAILED, result.status());
     }
 
     @Test
-    void refundPayment_returnsTrue_whenGatewayConfirmsRefund() {
+    void p3_refundPayment_returnsTrue_whenGatewayConfirmsRefund() {
         when(paymentGateway.refund("TXN-123")).thenReturn(true);
 
         assertTrue(paymentService.refundPayment("TXN-123"));
     }
 
     @Test
-    void refundPayment_returnsFalse_whenGatewayDeclines() {
+    void p3_refundPayment_returnsFalse_whenGatewayDeclines() {
         when(paymentGateway.refund("TXN-123")).thenReturn(false);
 
         assertFalse(paymentService.refundPayment("TXN-123"));

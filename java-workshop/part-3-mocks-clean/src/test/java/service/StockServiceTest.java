@@ -28,7 +28,7 @@ class StockServiceTest {
     private RepositoryStockService stockService;
 
     @Test
-    void reserveStock_updatesRepositoryAndReturnsReservations() {
+    void p3_reserveStock_updatesRepositoryAndReturnsReservations() {
         when(stockRepository.findByProductId("PROD-001")).thenReturn(new Stock("PROD-001", 100));
 
         List<StockReservation> result = stockService.reserveStock(List.of(new OrderItem("PROD-001", 5, 10.0)));
@@ -39,7 +39,7 @@ class StockServiceTest {
     }
 
     @Test
-    void releaseStock_restoresQuantity_forSuccessfulReservations() {
+    void p3_releaseStock_restoresQuantity_forSuccessfulReservations() {
         when(stockRepository.findByProductId("PROD-001")).thenReturn(new Stock("PROD-001", 90));
 
         stockService.releaseStock(List.of(

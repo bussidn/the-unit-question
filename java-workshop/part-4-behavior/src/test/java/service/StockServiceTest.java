@@ -23,7 +23,7 @@ class StockServiceTest {
     }
 
     @Test
-    void reserveStock_updatesStockAndReturnsReservations() {
+    void p4_reserveStock_updatesStockAndReturnsReservations() {
         stockRepository.withAvailableStock("PROD-001", 100);
 
         List<StockReservation> result = stockService.reserveStock(List.of(new OrderItem("PROD-001", 5, 10.0)));
@@ -34,7 +34,7 @@ class StockServiceTest {
     }
 
     @Test
-    void releaseStock_restoresQuantity_forSuccessfulReservations() {
+    void p4_releaseStock_restoresQuantity_forSuccessfulReservations() {
         stockRepository.withAvailableStock("PROD-001", 90);
 
         stockService.releaseStock(List.of(

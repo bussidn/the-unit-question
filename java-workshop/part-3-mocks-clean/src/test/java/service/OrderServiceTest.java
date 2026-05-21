@@ -101,7 +101,7 @@ class OrderServiceTest {
 
     @Disabled
     @Test
-    void orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
+    void p3_orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
         // GIVEN an order with discount code SUMMER20
         // AND this code has already been used by this customer
 
@@ -117,7 +117,7 @@ class OrderServiceTest {
 
     @Disabled
     @Test
-    void orderIsConfirmed_whenDiscountCodeIsValid() {
+    void p3_orderIsConfirmed_whenDiscountCodeIsValid() {
         // GIVEN an order with 2 items at €55 each (subtotal: €110)
         // AND discount code SUMMER20 (-20%)
         // AND the code has not yet been used by this customer
@@ -137,7 +137,7 @@ class OrderServiceTest {
     // ── Existing tests (for reference) ─────────────────────────────────────────
 
     @Test
-    void orderIsConfirmed_whenAllStepsSucceed() {
+    void p3_orderIsConfirmed_whenAllStepsSucceed() {
         var order = anOrder().build();
         givenPricingCalculates(29.0);
         givenPaymentSucceedsFor(order);
@@ -151,7 +151,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void calculatedPriceIsStoredInOrder_whenAllStepsSucceed() {
+    void p3_calculatedPriceIsStoredInOrder_whenAllStepsSucceed() {
         var order = anOrder().build();
         givenPricingCalculates(29.0);
         givenPaymentSucceedsFor(order);
@@ -164,7 +164,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void shippingConfirmationIsReturned_whenAllStepsSucceed() {
+    void p3_shippingConfirmationIsReturned_whenAllStepsSucceed() {
         var order = anOrder().build();
         givenPricingCalculates(29.0);
         givenPaymentSucceedsFor(order);
@@ -179,7 +179,7 @@ class OrderServiceTest {
     // ── Stock unavailable ─────────────────────────────────────────────────────
 
     @Test
-    void orderFails_whenStockIsUnavailable() {
+    void p3_orderFails_whenStockIsUnavailable() {
         var order = anOrder().build();
         givenReservationFailsFor(order);
 
@@ -190,7 +190,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void paymentIsNotCharged_whenStockIsUnavailable() {
+    void p3_paymentIsNotCharged_whenStockIsUnavailable() {
         var order = anOrder().build();
         givenReservationFailsFor(order);
 
@@ -200,7 +200,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void shipmentIsNotCreated_whenStockIsUnavailable() {
+    void p3_shipmentIsNotCreated_whenStockIsUnavailable() {
         var order = anOrder().build();
         givenReservationFailsFor(order);
 
@@ -212,7 +212,7 @@ class OrderServiceTest {
     // ── Payment declined ──────────────────────────────────────────────────────
 
     @Test
-    void orderFails_whenPaymentIsDeclined() {
+    void p3_orderFails_whenPaymentIsDeclined() {
         var order = anOrder().build();
         givenReservationSucceedsFor(order);
         givenPricingCalculates(45.0);
@@ -225,7 +225,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void shipmentIsNotCreated_whenPaymentIsDeclined() {
+    void p3_shipmentIsNotCreated_whenPaymentIsDeclined() {
         var order = anOrder().build();
         givenReservationSucceedsFor(order);
         givenPricingCalculates(45.0);
@@ -237,7 +237,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void stockIsReleased_whenPaymentIsDeclined() {
+    void p3_stockIsReleased_whenPaymentIsDeclined() {
         var order = anOrder().build();
         List<StockReservation> reservations = givenReservationSucceedsFor(order);
         givenPricingCalculates(45.0);

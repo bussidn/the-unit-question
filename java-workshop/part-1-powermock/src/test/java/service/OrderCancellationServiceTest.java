@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class OrderCancellationServiceTest {
 
     @Test
-    void cancelOrder_succeeds_whenOrderExists() {
+    void p1_cancelOrder_succeeds_whenOrderExists() {
         var order = new Order(
             "ORDER-123",
             "CUST-456",
@@ -54,7 +54,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_fails_whenOrderIsMissing() {
+    void p1_cancelOrder_fails_whenOrderIsMissing() {
         try (MockedStatic<OrderRepository> mockedRepository = mockStatic(OrderRepository.class);
              MockedConstruction<PaymentService> mockedPayment = mockConstruction(PaymentService.class);
              MockedConstruction<StockService> mockedStock = mockConstruction(StockService.class);
@@ -78,7 +78,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_fails_whenRefundFails() {
+    void p1_cancelOrder_fails_whenRefundFails() {
         var order = new Order(
             "ORDER-123",
             "CUST-456",

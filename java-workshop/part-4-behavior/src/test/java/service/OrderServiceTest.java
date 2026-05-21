@@ -69,7 +69,7 @@ class OrderServiceTest {
 
     @Disabled
     @Test
-    void orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
+    void p4_orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
         // GIVEN an order with discount code SUMMER20
         // AND this code has already been used by this customer
 
@@ -85,7 +85,7 @@ class OrderServiceTest {
 
     @Disabled
     @Test
-    void orderIsConfirmed_whenDiscountCodeIsValid() {
+    void p4_orderIsConfirmed_whenDiscountCodeIsValid() {
         // GIVEN an order with 2 items at €55 each (subtotal: €110)
         // AND discount code SUMMER20 (-20%)
         // AND the code has not yet been used by this customer
@@ -106,7 +106,7 @@ class OrderServiceTest {
     // ── Existing tests (for reference) ─────────────────────────────────────────
 
     @Test
-    void orderIsConfirmed_whenAllStepsSucceed() {
+    void p4_orderIsConfirmed_whenAllStepsSucceed() {
         var order = anOrder().build();
         givenStockIsAvailableFor(order);
 
@@ -117,7 +117,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void calculatedPriceIsStoredInOrder_whenAllStepsSucceed() {
+    void p4_calculatedPriceIsStoredInOrder_whenAllStepsSucceed() {
         var order = anOrder().build();
         givenStockIsAvailableFor(order);
 
@@ -128,7 +128,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void shippingConfirmationIsReturned_whenAllStepsSucceed() {
+    void p4_shippingConfirmationIsReturned_whenAllStepsSucceed() {
         var order = anOrder().build();
         givenStockIsAvailableFor(order);
 
@@ -140,7 +140,7 @@ class OrderServiceTest {
     // ── Stock unavailable ─────────────────────────────────────────────────────
 
     @Test
-    void orderFails_whenStockIsUnavailable() {
+    void p4_orderFails_whenStockIsUnavailable() {
         var order = anOrder().build();
         // stockRepository is empty: no stock added
 
@@ -151,7 +151,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void paymentIsNotCharged_whenStockIsUnavailable() {
+    void p4_paymentIsNotCharged_whenStockIsUnavailable() {
         var order = anOrder().build();
 
         orderService.placeOrder(order);
@@ -160,7 +160,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void shipmentIsNotCreated_whenStockIsUnavailable() {
+    void p4_shipmentIsNotCreated_whenStockIsUnavailable() {
         var order = anOrder().build();
 
         orderService.placeOrder(order);
@@ -171,7 +171,7 @@ class OrderServiceTest {
     // ── Payment declined ──────────────────────────────────────────────────────
 
     @Test
-    void orderFails_whenPaymentIsDeclined() {
+    void p4_orderFails_whenPaymentIsDeclined() {
         var order = anOrder().build();
         givenStockIsAvailableFor(order);
         givenPaymentIsDeclined();
@@ -183,7 +183,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void shipmentIsNotCreated_whenPaymentIsDeclined() {
+    void p4_shipmentIsNotCreated_whenPaymentIsDeclined() {
         var order = anOrder().build();
         givenStockIsAvailableFor(order);
         givenPaymentIsDeclined();
@@ -194,7 +194,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void stockIsReleased_whenPaymentIsDeclined() {
+    void p4_stockIsReleased_whenPaymentIsDeclined() {
         var order = anOrder().build();
         givenStockIsAvailableFor(order);
         givenPaymentIsDeclined();

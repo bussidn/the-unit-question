@@ -20,19 +20,19 @@ class DiscountCodeServiceTest {
     }
 
     @Test
-    void checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
+    void p4_checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
         discountCodeRepository.withUsedCode("CUST-001", DiscountCode.SUMMER20);
 
         assertTrue(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
     }
 
     @Test
-    void checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
+    void p4_checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
         assertFalse(discountCodeService.checkDiscountCode("CUST-001", DiscountCode.SUMMER20));
     }
 
     @Test
-    void markAsUsed_makesCodeCheckedAsUsed() {
+    void p4_markAsUsed_makesCodeCheckedAsUsed() {
         discountCodeService.markAsUsed("CUST-001", DiscountCode.SUMMER20);
 
         assertTrue(discountCodeRepository.isMarkedAsUsed("CUST-001", DiscountCode.SUMMER20));

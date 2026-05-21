@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 class DiscountCodeServiceTest {
 
     @Test
-    void checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
+    void p2_checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
         DiscountCodeRepository repository = mock(DiscountCodeRepository.class);
         DiscountCodeService discountCodeService = new DiscountCodeService(repository);
 
@@ -23,7 +23,7 @@ class DiscountCodeServiceTest {
     }
 
     @Test
-    void checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
+    void p2_checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
         DiscountCodeRepository repository = mock(DiscountCodeRepository.class);
         DiscountCodeService discountCodeService = new DiscountCodeService(repository);
 
@@ -33,7 +33,7 @@ class DiscountCodeServiceTest {
     }
 
     @Test
-    void markAsUsed_delegatesToRepository() {
+    void p2_markAsUsed_delegatesToRepository() {
         DiscountCodeRepository repository = mock(DiscountCodeRepository.class);
         DiscountCodeService discountCodeService = new DiscountCodeService(repository);
 

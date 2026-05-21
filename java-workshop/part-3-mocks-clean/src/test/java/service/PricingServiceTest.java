@@ -15,14 +15,14 @@ class PricingServiceTest {
     // ─── Sans code promo ─────────────────────────────────────────────────────
 
     @Test
-    void calculateTotal_withNoDiscount_appliesShippingWhenSubtotalBelowThreshold() {
+    void p3_calculateTotal_withNoDiscount_appliesShippingWhenSubtotalBelowThreshold() {
         var items = List.of(new OrderItem("PROD-001", 1, 20.0));
         // sous-total = 20, TVA = 4, livraison = 5 → 29.0
         assertEquals(29.0, pricingService.calculateTotal(items), 0.01);
     }
 
     @Test
-    void calculateTotal_withNoDiscount_noShippingWhenSubtotalAtOrAboveThreshold() {
+    void p3_calculateTotal_withNoDiscount_noShippingWhenSubtotalAtOrAboveThreshold() {
         var items = List.of(new OrderItem("PROD-001", 5, 20.0));
         // sous-total = 100, TVA = 20, livraison = 0 → 120.0
         assertEquals(120.0, pricingService.calculateTotal(items), 0.01);
@@ -31,7 +31,7 @@ class PricingServiceTest {
     // ─── Avec code promo ─────────────────────────────────────────────────────
 
     @Test
-    void calculateTotal_withDiscount_thresholdAppliedOnDiscountedSubtotal() {
+    void p3_calculateTotal_withDiscount_thresholdAppliedOnDiscountedSubtotal() {
         var items = List.of(new OrderItem("PROD-001", 2, 55.0));
         // sous-total brut = 110, après SUMMER20 (-20%) = 88
         // 88 < 100 → livraison = 5, TVA = 17.60 → total = 110.60
@@ -39,7 +39,7 @@ class PricingServiceTest {
     }
 
     @Test
-    void calculateTotal_withDiscount_noShippingWhenDiscountedSubtotalAboveThreshold() {
+    void p3_calculateTotal_withDiscount_noShippingWhenDiscountedSubtotalAboveThreshold() {
         var items = List.of(new OrderItem("PROD-001", 3, 70.0));
         // sous-total brut = 210, après SUMMER20 (-20%) = 168
         // 168 >= 100 → livraison = 0, TVA = 33.60 → total = 201.60
@@ -47,7 +47,7 @@ class PricingServiceTest {
     }
 
     @Test
-    void calculateTotal_withONCE50_halvesPriceAndAppliesShipping() {
+    void p3_calculateTotal_withONCE50_halvesPriceAndAppliesShipping() {
         var items = List.of(new OrderItem("PROD-001", 2, 55.0));
         // sous-total brut = 110, après ONCE50 (-50%) = 55
         // 55 < 100 → livraison = 5, TVA = 11 → total = 71.0

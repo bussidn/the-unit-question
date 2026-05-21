@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 class DiscountCodeServiceTest {
 
     @Test
-    void checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
+    void p1_checkDiscountCode_returnsTrue_whenCodeHasAlreadyBeenUsed() {
         try (var mockedRepo = mockConstruction(DatabaseDiscountCodeRepository.class,
                 (mock, ctx) -> when(mock.checkDiscountCode("CUST-001", DiscountCode.SUMMER20)).thenReturn(true))) {
 
@@ -24,7 +24,7 @@ class DiscountCodeServiceTest {
     }
 
     @Test
-    void checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
+    void p1_checkDiscountCode_returnsFalse_whenCodeHasNotBeenUsed() {
         try (var mockedRepo = mockConstruction(DatabaseDiscountCodeRepository.class,
                 (mock, ctx) -> when(mock.checkDiscountCode("CUST-001", DiscountCode.SUMMER20)).thenReturn(false))) {
 
@@ -35,7 +35,7 @@ class DiscountCodeServiceTest {
     }
 
     @Test
-    void markAsUsed_delegatesToRepository() {
+    void p1_markAsUsed_delegatesToRepository() {
         try (var mockedRepo = mockConstruction(DatabaseDiscountCodeRepository.class)) {
 
             var discountCodeService = new DiscountCodeService();

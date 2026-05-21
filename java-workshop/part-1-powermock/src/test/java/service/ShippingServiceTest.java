@@ -37,7 +37,7 @@ class ShippingServiceTest {
     }
 
     @Test
-    void createShipment_callsApiAndReturnsConfirmation() {
+    void p1_createShipment_callsApiAndReturnsConfirmation() {
         // Given
         var order = new Order(
             "ORDER-123",
@@ -78,7 +78,7 @@ class ShippingServiceTest {
     }
 
     @Test
-    void cancelShipment_callsApiAndReturnsResult() {
+    void p1_cancelShipment_callsApiAndReturnsResult() {
         // Given
         String trackingNumber = "TRACK-ABC123";
 

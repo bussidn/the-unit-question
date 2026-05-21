@@ -34,7 +34,7 @@ class StockServiceTest {
     }
 
     @Test
-    void reserveStock_updatesDatabaseAndReturnsReservations() {
+    void p1_reserveStock_updatesDatabaseAndReturnsReservations() {
         // Given
         var items = List.of(new OrderItem("PROD-001", 5, 10.0));
 

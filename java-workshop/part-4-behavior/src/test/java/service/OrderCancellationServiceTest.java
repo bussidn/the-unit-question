@@ -48,7 +48,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_succeeds_whenPaymentRefundedAndShipmentCancelled() {
+    void p4_cancelOrder_succeeds_whenPaymentRefundedAndShipmentCancelled() {
         Order order = OrderBuilder.confirmed()
             .withId("ORDER-001")
             .withTransaction("TXN-123")
@@ -70,7 +70,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_succeeds_whenNoShipmentExists() {
+    void p4_cancelOrder_succeeds_whenNoShipmentExists() {
         Order order = OrderBuilder.confirmed()
             .withId("ORDER-002")
             .withTransaction("TXN-456")
@@ -90,7 +90,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_fails_whenRefundFails() {
+    void p4_cancelOrder_fails_whenRefundFails() {
         Order order = OrderBuilder.confirmed()
             .withId("ORDER-001")
             .withTransaction("TXN-123")
@@ -108,7 +108,7 @@ class OrderCancellationServiceTest {
     }
 
     @Test
-    void cancelOrder_fails_whenOrderDoesNotExist() {
+    void p4_cancelOrder_fails_whenOrderDoesNotExist() {
         CancellationResult result = service.cancelOrder("ORDER-UNKNOWN");
 
         assertFailure(result, "Order not found");

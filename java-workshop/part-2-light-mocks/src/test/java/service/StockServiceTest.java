@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
 class StockServiceTest {
 
     @Test
-    void reserveStock_updatesRepositoryAndReturnsReservations() {
+    void p2_reserveStock_updatesRepositoryAndReturnsReservations() {
         StockRepository stockRepository = mock(StockRepository.class);
         RepositoryStockService stockService = new RepositoryStockService(stockRepository);
 
@@ -30,7 +30,7 @@ class StockServiceTest {
     }
 
     @Test
-    void releaseStock_restoresQuantity_forSuccessfulReservations() {
+    void p2_releaseStock_restoresQuantity_forSuccessfulReservations() {
         StockRepository stockRepository = mock(StockRepository.class);
         RepositoryStockService stockService = new RepositoryStockService(stockRepository);
 

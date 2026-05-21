@@ -58,7 +58,7 @@ class OrderServiceTest {
 
     @Disabled
     @Test
-    void orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
+    void p1_orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
         // GIVEN an order with discount code SUMMER20
         // AND this code has already been used by this customer
 
@@ -74,7 +74,7 @@ class OrderServiceTest {
 
     @Disabled
     @Test
-    void orderIsConfirmed_whenDiscountCodeIsValid() {
+    void p1_orderIsConfirmed_whenDiscountCodeIsValid() {
         // GIVEN an order with 2 items at €55 each (subtotal: €110)
         // AND discount code SUMMER20 (-20%)
         // AND the code has not yet been used by this customer
@@ -94,7 +94,7 @@ class OrderServiceTest {
     // ========== EXISTING TESTS (for reference) ========================================
 
     @Test
-    void orderIsConfirmed_whenAllStepsSucceed() {
+    void p1_orderIsConfirmed_whenAllStepsSucceed() {
         var order = new Order(
             "ORDER-123",
             "CUST-456",
@@ -129,7 +129,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void calculatedPriceIsSentToPayment() {
+    void p1_calculatedPriceIsSentToPayment() {
         var order = new Order(
             "ORDER-001",
             "CUST-001",
@@ -163,7 +163,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void customerIdIsUsedForPayment() {
+    void p1_customerIdIsUsedForPayment() {
         var order = new Order(
             "ORDER-002",
             "CUSTOMER-JOHN-DOE",
@@ -197,7 +197,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void transactionIdIsStoredInConfirmedOrder() {
+    void p1_transactionIdIsStoredInConfirmedOrder() {
         var order = new Order(
             "ORDER-003",
             "CUST-003",
@@ -232,7 +232,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void trackingNumberIsStoredInConfirmedOrder() {
+    void p1_trackingNumberIsStoredInConfirmedOrder() {
         var order = new Order(
             "ORDER-004",
             "CUST-004",
@@ -267,7 +267,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void confirmedOrderIsSavedToDatabase() {
+    void p1_confirmedOrderIsSavedToDatabase() {
         var order = new Order(
             "ORDER-005",
             "CUST-005",
@@ -306,7 +306,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void allOrderItemsAreCheckedForAvailability() {
+    void p1_allOrderItemsAreCheckedForAvailability() {
         var items = List.of(
             new OrderItem("PROD-A", 2, 10.0),
             new OrderItem("PROD-B", 1, 20.0),
@@ -351,7 +351,7 @@ class OrderServiceTest {
     // ========== STOCK UNAVAILABLE ==========
 
     @Test
-    void orderFails_whenStockIsUnavailable() {
+    void p1_orderFails_whenStockIsUnavailable() {
         var order = new Order(
             "ORDER-100",
             "CUST-100",
@@ -378,7 +378,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void paymentIsNotProcessed_whenStockIsUnavailable() {
+    void p1_paymentIsNotProcessed_whenStockIsUnavailable() {
         var order = new Order(
             "ORDER-101",
             "CUST-101",
@@ -404,7 +404,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void shipmentIsNotCreated_whenStockIsUnavailable() {
+    void p1_shipmentIsNotCreated_whenStockIsUnavailable() {
         var order = new Order(
             "ORDER-102",
             "CUST-102",
@@ -430,7 +430,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void orderIsNotSaved_whenStockIsUnavailable() {
+    void p1_orderIsNotSaved_whenStockIsUnavailable() {
         var order = new Order(
             "ORDER-103",
             "CUST-103",
@@ -458,7 +458,7 @@ class OrderServiceTest {
     // ========== PAYMENT FAILURE ==========
 
     @Test
-    void orderFails_whenPaymentIsDeclined() {
+    void p1_orderFails_whenPaymentIsDeclined() {
         var order = new Order(
             "ORDER-200",
             "CUST-200",
@@ -490,7 +490,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void stockIsReleased_whenPaymentFails() {
+    void p1_stockIsReleased_whenPaymentFails() {
         var order = new Order(
             "ORDER-201",
             "CUST-201",
@@ -522,7 +522,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void shipmentIsNotCreated_whenPaymentFails() {
+    void p1_shipmentIsNotCreated_whenPaymentFails() {
         var order = new Order(
             "ORDER-202",
             "CUST-202",
@@ -553,7 +553,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void orderIsNotSaved_whenPaymentFails() {
+    void p1_orderIsNotSaved_whenPaymentFails() {
         var order = new Order(
             "ORDER-203",
             "CUST-203",
