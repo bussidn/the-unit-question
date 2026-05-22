@@ -13,8 +13,13 @@ import repository.OrderRepository;
 
 import java.util.List;
 
+import static helper.PowerMock.invokePrivate;
+import static helper.PowerMock.spyOn;
+import static helper.PowerMock.whenPrivate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -42,6 +47,7 @@ import static org.mockito.Mockito.when;
  * always present in {@code constructed()} — even when their methods are never called.
  * Use {@code verify(..., never())} to assert that a method was not invoked.
  */
+@SuppressWarnings("unused")
 class OrderServiceTest {
 
     // ========== DISCOUNT CODE ==========
@@ -96,6 +102,38 @@ class OrderServiceTest {
     // Hint: verify(spy).markDiscountCodeAsUsed(any(), any());
     //   or: PowerMock.verifyPrivate(spy, "markDiscountCodeAsUsed");
 
+    // ========== VALIDATION (PowerMock.whenPrivate demo) ================================
+
+    @Test
+    void p1_orderIsRejected_whenValidationFails() {
+        var order = new Order(
+            "ORDER-999",
+            "CUST-999",
+            List.of(new OrderItem("PROD-001", 1, 10.0)),
+            OrderStatus.PENDING,
+            0.0,
+            null,
+            null
+        );
+
+        try (var mockedStock = mockConstruction(StockService.class);
+             var mockedPayment = mockConstruction(PaymentService.class);
+             var mockedShipping = mockConstruction(ShippingService.class);
+             var mockedRepo = mockConstruction(OrderRepository.class)) {
+
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(false);
+
+            OrderResult result = spy.placeOrder(order);
+
+            assertInstanceOf(OrderResult.Failure.class, result);
+            assertEquals("Invalid order", ((OrderResult.Failure) result).reason());
+            verify(mockedStock.constructed().getFirst(), never()).reserveStock(any());
+            verify(mockedPayment.constructed().getFirst(), never()).processPayment(any(), any(), anyDouble());
+            verify(mockedRepo.constructed().getFirst(), never()).save(any());
+        }
+    }
+
     // ========== EXISTING TESTS (for reference) ========================================
 
     @Test
@@ -123,11 +161,13 @@ class OrderServiceTest {
 
             mockedPricing.when(() -> PricingService.calculateTotal(any())).thenReturn(24.0);
 
-            OrderResult result = new OrderService().placeOrder(order);
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(true);
+            OrderResult result = spy.placeOrder(order);
 
             assertInstanceOf(OrderResult.Success.class, result);
             assertEquals(OrderStatus.CONFIRMED, ((OrderResult.Success) result).order().status());
-            verify(mockedRepo.constructed().get(0)).save(any());
+            verify(mockedRepo.constructed().getFirst()).save(any());
         }
     }
 
@@ -156,9 +196,11 @@ class OrderServiceTest {
 
             mockedPricing.when(() -> PricingService.calculateTotal(any())).thenReturn(45.0);
 
-            new OrderService().placeOrder(order);
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(true);
+            spy.placeOrder(order);
 
-            verify(mockedPayment.constructed().get(0)).processPayment(any(), any(), eq(45.0));
+            verify(mockedPayment.constructed().getFirst()).processPayment(any(), any(), eq(45.0));
         }
     }
 
@@ -187,9 +229,11 @@ class OrderServiceTest {
 
             mockedPricing.when(() -> PricingService.calculateTotal(any())).thenReturn(20.0);
 
-            new OrderService().placeOrder(order);
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(true);
+            spy.placeOrder(order);
 
-            verify(mockedPayment.constructed().get(0)).processPayment(any(), eq("CUSTOMER-JOHN-DOE"), anyDouble());
+            verify(mockedPayment.constructed().getFirst()).processPayment(any(), eq("CUSTOMER-JOHN-DOE"), anyDouble());
         }
     }
 
@@ -218,7 +262,9 @@ class OrderServiceTest {
 
             mockedPricing.when(() -> PricingService.calculateTotal(any())).thenReturn(10.0);
 
-            OrderResult result = new OrderService().placeOrder(order);
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(true);
+            OrderResult result = spy.placeOrder(order);
 
             var success = (OrderResult.Success) result;
             assertEquals("TRANSACTION-XYZ-789", success.order().transactionId());
@@ -250,7 +296,9 @@ class OrderServiceTest {
 
             mockedPricing.when(() -> PricingService.calculateTotal(any())).thenReturn(10.0);
 
-            OrderResult result = new OrderService().placeOrder(order);
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(true);
+            OrderResult result = spy.placeOrder(order);
 
             var success = (OrderResult.Success) result;
             assertEquals("TRACKING-NUMBER-ABC123", success.order().trackingNumber());
@@ -291,9 +339,11 @@ class OrderServiceTest {
 
             mockedPricing.when(() -> PricingService.calculateTotal(any())).thenReturn(65.0);
 
-            new OrderService().placeOrder(order);
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(true);
+            spy.placeOrder(order);
 
-            verify(mockedStock.constructed().get(0)).reserveStock(items);
+            verify(mockedStock.constructed().getFirst()).reserveStock(items);
         }
     }
 
@@ -317,11 +367,13 @@ class OrderServiceTest {
              var mockedShipping = mockConstruction(ShippingService.class);
              var mockedRepo = mockConstruction(OrderRepository.class)) {
 
-            OrderResult result = new OrderService().placeOrder(order);
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(true);
+            OrderResult result = spy.placeOrder(order);
 
             assertInstanceOf(OrderResult.Failure.class, result);
             assertEquals("Insufficient stock", ((OrderResult.Failure) result).reason());
-            verify(mockedRepo.constructed().get(0), never()).save(any());
+            verify(mockedRepo.constructed().getFirst(), never()).save(any());
         }
     }
 
@@ -343,9 +395,11 @@ class OrderServiceTest {
              var mockedShipping = mockConstruction(ShippingService.class);
              var mockedRepo = mockConstruction(OrderRepository.class)) {
 
-            new OrderService().placeOrder(order);
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(true);
+            spy.placeOrder(order);
 
-            verify(mockedPayment.constructed().get(0), never()).processPayment(any(), any(), anyDouble());
+            verify(mockedPayment.constructed().getFirst(), never()).processPayment(any(), any(), anyDouble());
         }
     }
 
@@ -367,9 +421,11 @@ class OrderServiceTest {
              var mockedShipping = mockConstruction(ShippingService.class);
              var mockedRepo = mockConstruction(OrderRepository.class)) {
 
-            new OrderService().placeOrder(order);
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(true);
+            spy.placeOrder(order);
 
-            verify(mockedShipping.constructed().get(0), never()).createShipment(any());
+            verify(mockedShipping.constructed().getFirst(), never()).createShipment(any());
         }
     }
 
@@ -398,11 +454,13 @@ class OrderServiceTest {
 
             mockedPricing.when(() -> PricingService.calculateTotal(any())).thenReturn(100.0);
 
-            OrderResult result = new OrderService().placeOrder(order);
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(true);
+            OrderResult result = spy.placeOrder(order);
 
             assertInstanceOf(OrderResult.Failure.class, result);
             assertEquals("Payment failed", ((OrderResult.Failure) result).reason());
-            verify(mockedRepo.constructed().get(0), never()).save(any());
+            verify(mockedRepo.constructed().getFirst(), never()).save(any());
         }
     }
 
@@ -429,9 +487,11 @@ class OrderServiceTest {
 
             mockedPricing.when(() -> PricingService.calculateTotal(any())).thenReturn(100.0);
 
-            new OrderService().placeOrder(order);
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(true);
+            spy.placeOrder(order);
 
-            verify(mockedStock.constructed().get(0)).releaseStock(any());
+            verify(mockedStock.constructed().getFirst()).releaseStock(any());
         }
     }
 
@@ -458,9 +518,64 @@ class OrderServiceTest {
 
             mockedPricing.when(() -> PricingService.calculateTotal(any())).thenReturn(75.0);
 
-            new OrderService().placeOrder(order);
+            OrderService spy = spyOn(new OrderService());
+            whenPrivate(spy, "isValid").thenReturn(true);
+            spy.placeOrder(order);
 
-            verify(mockedShipping.constructed().get(0), never()).createShipment(any());
+            verify(mockedShipping.constructed().getFirst(), never()).createShipment(any());
         }
+    }
+
+    // ========== VALIDATION (isValid tested in isolation) ================================
+
+    @Test
+    void p1_isValid_returnsTrue_whenOrderIsPendingWithItems() {
+        var order = new Order(
+            "ORDER-001",
+            "CUST-001",
+            List.of(new OrderItem("PROD-001", 1, 10.0)),
+            OrderStatus.PENDING,
+            0.0,
+            null,
+            null
+        );
+
+        boolean result = invokePrivate(new OrderService(), "isValid", order);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void p1_isValid_returnsFalse_whenOrderIsAlreadyConfirmed() {
+        var order = new Order(
+            "ORDER-001",
+            "CUST-001",
+            List.of(new OrderItem("PROD-001", 1, 10.0)),
+            OrderStatus.CONFIRMED,
+            50.0,
+            "TXN-001",
+            "TRACK-001"
+        );
+
+        boolean result = invokePrivate(new OrderService(), "isValid", order);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void p1_isValid_returnsFalse_whenOrderHasNoItems() {
+        var order = new Order(
+            "ORDER-001",
+            "CUST-001",
+            List.of(),
+            OrderStatus.PENDING,
+            0.0,
+            null,
+            null
+        );
+
+        boolean result = invokePrivate(new OrderService(), "isValid", order);
+
+        assertFalse(result);
     }
 }

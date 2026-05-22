@@ -1,6 +1,7 @@
 package service;
 
 import domain.Order;
+import domain.OrderStatus;
 import domain.PaymentResult;
 import domain.PaymentStatus;
 import domain.ShippingConfirmation;
@@ -20,6 +21,10 @@ public class OrderService {
         PaymentService paymentService = new PaymentService();
         ShippingService shippingService = new ShippingService();
         OrderRepository orderRepository = new OrderRepository();
+
+        if (!isValid(order)) {
+            return new OrderResult.Failure(order.reject(), "Invalid order");
+        }
 
         List<StockReservation> reservations = stockService.reserveStock(order.items());
         boolean hasUnavailableItems = reservations.stream().anyMatch(r -> !r.reserved());
@@ -44,5 +49,11 @@ public class OrderService {
 
         orderRepository.save(confirmedOrder);
         return new OrderResult.Success(confirmedOrder, shipping);
+    }
+
+    boolean isValid(Order order) {
+        return order.status() == OrderStatus.PENDING
+            && order.items() != null
+            && !order.items().isEmpty();
     }
 }

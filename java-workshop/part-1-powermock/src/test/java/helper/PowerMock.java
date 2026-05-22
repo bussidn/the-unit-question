@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 /**
@@ -41,6 +40,31 @@ public class PowerMock {
         return new PrivateMethodStub<>(spy, methodName);
     }
 
+    /**
+     * Invokes a package-private method by name using reflection.
+     * Mimics PowerMock's {@code Whitebox.invokeMethod(instance, "methodName", args)}.
+     *
+     * @param instance   the object to invoke the method on
+     * @param methodName the name of the method to call
+     * @param args       the arguments to pass
+     * @return the method's return value (or null for void)
+     */
+    @SuppressWarnings("unchecked")
+    public static <R> R invokePrivate(Object instance, String methodName, Object... args) {
+        try {
+            Class<?> clazz = instance.getClass();
+            Method method = Arrays.stream(clazz.getDeclaredMethods())
+                .filter(m -> m.getName().equals(methodName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                    "Method '" + methodName + "' not found in " + clazz.getSimpleName()));
+            method.setAccessible(true);
+            return (R) method.invoke(instance, args);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to invoke method: " + methodName, e);
+        }
+    }
+
     public static class PrivateMethodStub<T> {
         private final T spy;
         private final String methodName;
@@ -66,22 +90,6 @@ public class PowerMock {
             }
         }
 
-        /**
-         * Stubs the method to do nothing (for void methods).
-         */
-        public void thenDoNothing() {
-            try {
-                Method method = findMethod();
-                method.setAccessible(true);
-                // IMPORTANT: matchers must be created AFTER entering stubbing context
-                doNothing().when(spy);
-                Object[] matchers = buildMatchers(method);
-                method.invoke(spy, matchers);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to mock method: " + methodName, e);
-            }
-        }
-
         private Method findMethod() {
             Class<?> current = spy.getClass();
             // Walk up past Mockito proxy to the real class
@@ -97,7 +105,6 @@ public class PowerMock {
                     "Method '" + methodName + "' not found in " + targetClass.getSimpleName()));
         }
 
-        @SuppressWarnings("unchecked")
         private Object[] buildMatchers(Method method) {
             Class<?>[] paramTypes = method.getParameterTypes();
             Object[] matchers = new Object[paramTypes.length];
