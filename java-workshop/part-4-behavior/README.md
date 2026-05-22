@@ -10,13 +10,35 @@ The difference is in the tests.
 
 ## 🔄 What changed since Part 3
 
-In previous parts, every collaborator of `OrderService` was mocked. Each mock silently encoded an assumption about what `PricingService`, `StockService`, etc. would do.
+### Production code
 
-In Part 4, we remove those assumptions. Tests use **real implementations** of internal services. Only **external gateways** remain mocked — they represent third-party systems we don't control.
+Services now implement **interfaces** (ports). `OrderService` depends on abstractions, not concrete classes. This enables a ports-and-adapters architecture where infrastructure can be swapped.
 
-For repositories, we use **fakes**: simple in-memory implementations, no database.
+### Test style
+
+In Part 3, we stopped mocking pure logic (`PricingService`), but we still used Mockito for I/O services. In Part 4, **Mockito is gone entirely**. Every dependency is a real implementation backed by in-memory data structures:
+
+```java
+orderService = new OrderService(
+    orderRepository,                          // InMemoryOrderRepository
+    new RepositoryStockService(stockRepo),    // real logic, in-memory data
+    new PricingService(),                     // real — same as Part 3
+    new GatewayPaymentService(paymentGw),     // real logic, in-memory gateway
+    new GatewayShippingService(shippingGw)    // real logic, in-memory gateway
+);
+```
+
+No `@Mock`. No `when().thenReturn()`. No `verify()`. Tests describe business scenarios with real inputs and check real outcomes.
 
 The `OrderBuilder` is still available — it carries over from Part 3 and works the same way here.
+
+### 🤔 Discussion: what is the "unit" here?
+
+In Part 3, the unit was still **the class** — we let pure logic run but mocked I/O services.
+
+In Part 4, the unit is **the use case** — `placeOrder` runs the entire chain: validation → pricing → stock → payment → shipping → persistence. The test asserts that a business scenario produces the expected business outcome.
+
+> **Question to discuss:** Are these still "unit tests"? If so, what is the "unit"? If not, what are they?
 
 ---
 

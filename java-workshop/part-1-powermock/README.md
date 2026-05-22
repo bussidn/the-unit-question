@@ -119,6 +119,18 @@ Run: `./gradlew test` ✅
 
 ---
 
+### 🤔 Discussion: what is the "unit" here?
+
+In this part, the unit is **a single method**. We mock everything: other classes (`mockConstruction`), static methods (`mockStatic`), and even other methods of the class under test (`whenPrivate` on `isValid`).
+
+Each method is tested in complete isolation. `placeOrder` doesn't know what `isValid` actually does — we stub it. `isValid` is tested separately via `invokePrivate`.
+
+> **Question to discuss:** What happens when you refactor `placeOrder` to extract a helper method? What happens when you rename `isValid`? How many tests break — and why?
+
+---
+
+
+
 ## ➡️ Next
 
 Once done (or time's up), move on to **[Part 2](../part-2-light-mocks/README.md)**

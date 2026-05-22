@@ -32,7 +32,6 @@ import static org.mockito.Mockito.when;
 class OrderServiceTest {
 
     @Mock private StockService stockService;
-    @Mock private PricingService pricingService;
     @Mock private PaymentService paymentService;
     @Mock private ShippingService shippingService;
     @Mock private OrderRepository orderRepository;
@@ -41,7 +40,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(orderRepository, stockService, pricingService, paymentService, shippingService);
+        orderService = new OrderService(orderRepository, stockService, new PricingService(), paymentService, shippingService);
     }
 
     // ── Given helpers ─────────────────────────────────────────────────────────
@@ -51,10 +50,6 @@ class OrderServiceTest {
             .withId("ORDER-001")
             .withCustomerId("CUST-001")
             .withItems(List.of(new OrderItem("PROD-001", 1, 20.0)));
-    }
-
-    private void givenPricingCalculates(double total) {
-        when(pricingService.calculateTotal(any())).thenReturn(total);
     }
 
     private String givenPaymentSucceedsFor(Order order) {
@@ -141,7 +136,6 @@ class OrderServiceTest {
     @Test
     void p3_orderIsConfirmed_whenAllStepsSucceed() {
         var order = anOrder().build();
-        givenPricingCalculates(29.0);
         givenPaymentSucceedsFor(order);
         givenReservationSucceedsFor(order);
         givenShipmentCreatedFor(order);
@@ -154,8 +148,8 @@ class OrderServiceTest {
 
     @Test
     void p3_calculatedPriceIsStoredInOrder_whenAllStepsSucceed() {
+        // 1 x €20.00 → subtotal €20 + tax 20% (€4) + shipping €5 = €29.00
         var order = anOrder().build();
-        givenPricingCalculates(29.0);
         givenPaymentSucceedsFor(order);
         givenReservationSucceedsFor(order);
         givenShipmentCreatedFor(order);
@@ -168,7 +162,6 @@ class OrderServiceTest {
     @Test
     void p3_shippingConfirmationIsReturned_whenAllStepsSucceed() {
         var order = anOrder().build();
-        givenPricingCalculates(29.0);
         givenPaymentSucceedsFor(order);
         givenReservationSucceedsFor(order);
         ShippingConfirmation shipment = givenShipmentCreatedFor(order);
@@ -217,7 +210,6 @@ class OrderServiceTest {
     void p3_orderFails_whenPaymentIsDeclined() {
         var order = anOrder().build();
         givenReservationSucceedsFor(order);
-        givenPricingCalculates(45.0);
         givenPaymentIsDeclinedFor(order);
 
         OrderResult result = orderService.placeOrder(order);
@@ -230,7 +222,6 @@ class OrderServiceTest {
     void p3_shipmentIsNotCreated_whenPaymentIsDeclined() {
         var order = anOrder().build();
         givenReservationSucceedsFor(order);
-        givenPricingCalculates(45.0);
         givenPaymentIsDeclinedFor(order);
 
         orderService.placeOrder(order);
@@ -242,7 +233,6 @@ class OrderServiceTest {
     void p3_stockIsReleased_whenPaymentIsDeclined() {
         var order = anOrder().build();
         List<StockReservation> reservations = givenReservationSucceedsFor(order);
-        givenPricingCalculates(45.0);
         givenPaymentIsDeclinedFor(order);
 
         orderService.placeOrder(order);

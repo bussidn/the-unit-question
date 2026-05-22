@@ -10,13 +10,35 @@ La différence est dans les tests.
 
 ## 🔄 Ce qui a changé depuis la Part 3
 
-Dans les parties précédentes, tous les collaborateurs de `OrderService` étaient mockés. Chaque mock encodait silencieusement une hypothèse sur ce que feraient `PricingService`, `StockService`, etc.
+### Code de production
 
-En Part 4, on supprime ces hypothèses. Les tests utilisent **les vraies implémentations** des services internes. Seuls les **gateways externes** restent mockés — ils représentent des systèmes tiers qu'on ne contrôle pas.
+Les services implémentent maintenant des **interfaces** (ports). `OrderService` dépend d'abstractions, pas de classes concrètes. Cela permet une architecture ports-and-adapters où l'infrastructure est interchangeable.
 
-Pour les repositories, on utilise des **fakes** : des implémentations en mémoire simples, sans base de données.
+### Style de test
+
+En Part 3, on avait arrêté de mocker la logique pure (`PricingService`), mais on utilisait encore Mockito pour les services d'I/O. En Part 4, **Mockito a entièrement disparu**. Chaque dépendance est une vraie implémentation adossée à des structures en mémoire :
+
+```java
+orderService = new OrderService(
+    orderRepository,                          // InMemoryOrderRepository
+    new RepositoryStockService(stockRepo),    // vraie logique, données en mémoire
+    new PricingService(),                     // réel — comme en Part 3
+    new GatewayPaymentService(paymentGw),     // vraie logique, gateway en mémoire
+    new GatewayShippingService(shippingGw)    // vraie logique, gateway en mémoire
+);
+```
+
+Plus de `@Mock`. Plus de `when().thenReturn()`. Plus de `verify()`. Les tests décrivent des scénarios métier avec de vraies entrées et vérifient de vrais résultats.
 
 Le `OrderBuilder` est toujours disponible — il est repris de la Part 3 et fonctionne de la même manière ici.
+
+### 🤔 Discussion : c'est quoi l'« unité » ici ?
+
+En Part 3, l'unité était encore **la classe** — on laissait tourner la logique pure mais on mockait les services d'I/O.
+
+En Part 4, l'unité est **le cas d'usage** — `placeOrder` exécute toute la chaîne : validation → pricing → stock → paiement → expédition → persistence. Le test asserte qu'un scénario métier produit le résultat métier attendu.
+
+> **Question à discuter :** Est-ce que ce sont encore des « tests unitaires » ? Si oui, c'est quoi l'« unité » ? Si non, c'est quoi ?
 
 ---
 

@@ -2,14 +2,30 @@
 
 ## 🔄 Ce qui a changé depuis la Part 2
 
-Le **code de production est identique à la Part 2** — même `OrderService`, mêmes dépendances, même comportement.
+### Code de production
 
-Ce qui a changé, c'est l'écriture des tests :
+Le code de production est identique à la Part 2 — même `OrderService`, mêmes dépendances, même comportement.
 
-- Mockito est maintenant intégré via `@ExtendWith(MockitoExtension.class)` et les annotations `@Mock` sur les champs. Plus d'appels `mock()` manuels dans `@BeforeEach` — Mockito crée et injecte les mocks automatiquement avant chaque test.
-- Un `OrderBuilder` est maintenant disponible dans `helper/` pour rendre la construction des données de test plus lisible et expressive.
+### Style de test
 
-Ouvrez le `OrderServiceTest` existant et comparez-le côte à côte avec la version de la Part 2. Repérez-vous chaque différence ? Cette comparaison, c'est la moitié de l'apprentissage.
+Le plus gros changement est dans le **design des tests**. Comparez-les côte à côte avec la Part 2 :
+
+- Mockito est maintenant intégré via `@ExtendWith(MockitoExtension.class)` et les annotations `@Mock` sur les champs — plus d'appels `mock()` manuels dans `@BeforeEach`.
+- Un `OrderBuilder` est disponible dans `helper/` pour rendre les données de test plus lisibles.
+- Les patterns de setup récurrents sont factorisés dans des **given helpers** (`givenReservationSucceedsFor`, `givenPaymentSucceedsFor`, etc.).
+
+Ces helpers absorbent le coût des changements d'API. Si `PaymentService.processPayment` ajoute un paramètre demain, on le corrige à **un seul endroit** au lieu de chaque test qui touche au paiement. Ça change complètement l'économie de l'écriture de tests.
+
+Vous remarquerez aussi que `PricingService` n'est plus mocké — il est instancié pour de vrai (`new PricingService()`). C'est du calcul pur, pas d'I/O, pas d'effets de bord. Les tests assertent sur de vraies valeurs calculées plutôt que sur des nombres arbitraires stubbés.
+
+### 🤔 Discussion : c'est quoi l'« unité » ici ?
+
+Ouvrez les tests de la Part 2 à côté de ceux de la Part 3. Même code de production, mêmes scénarios — mais des choix de design différents dans les tests.
+
+> **Questions à discuter :**
+> - En Part 2, que se passe-t-il quand une signature d'API change ? Combien de tests faut-il toucher ?
+> - Est-ce que ce coût de maintenance influence le nombre de tests qu'on écrit — ou la façon dont on les écrit ?
+> - C'est quoi l'« unité » en Part 3 ? Est-ce la même qu'en Part 2 ?
 
 ---
 

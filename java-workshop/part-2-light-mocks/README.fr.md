@@ -2,6 +2,8 @@
 
 ## 🔄 Ce qui a changé depuis la Part 1
 
+### Code de production
+
 En Part 1, `OrderService` instanciait tous ses collaborateurs (`StockService`, `PricingService`, etc.) directement dans `placeOrder`. Pour tester ce code, il fallait des **hacks de type PowerMock** : `mockConstruction()` pour intercepter les appels `new SomeService()`, et `mockStatic()` pour stuber les méthodes statiques.
 
 En Part 2, ces mêmes services sont maintenant **injectés via le constructeur** :
@@ -15,22 +17,21 @@ public OrderService(
 ) { ... }
 ```
 
-Ce seul changement structurel suffit à faire disparaître entièrement les hacks. Les tests peuvent maintenant utiliser de simples appels **`mock()`** et passer les fakes directement dans le constructeur :
+Ce seul changement structurel suffit à faire disparaître entièrement les hacks. Les tests peuvent maintenant utiliser de simples appels **`mock()`** et passer les fakes directement dans le constructeur.
 
-```java
-@BeforeEach
-void setUp() {
-    stockService    = mock(StockService.class);
-    pricingService  = mock(PricingService.class);
-    paymentService  = mock(PaymentService.class);
-    shippingService = mock(ShippingService.class);
-    orderService    = new OrderService(stockService, pricingService, paymentService, shippingService);
-}
-```
+### Style de test
 
-Plus de `mockConstruction()`. Plus de `mockStatic()`. Plus de try-with-resources englobant chaque test.
+Plus de `mockConstruction()`. Plus de `mockStatic()`. Plus de try-with-resources englobant chaque test. La méthode `isValid()` s'exécute aussi pour de vrai maintenant — plus besoin de `whenPrivate` pour la stuber.
 
 La logique métier dans `placeOrder` fait **exactement la même chose** qu'en Part 1 — la seule différence est d'où viennent les dépendances. Jetez un œil au `OrderServiceTest` existant pour voir à quel point le style de test est devenu plus simple avant de commencer l'exercice.
+
+### 🤔 Discussion : c'est quoi l'« unité » ici ?
+
+En Part 1, l'unité était **une seule méthode** — on mockait même les autres méthodes de la classe sous test (`isValid`).
+
+En Part 2, l'unité est **la classe** — `OrderService` s'exécute entièrement pour de vrai, mais toutes les dépendances externes sont mockées.
+
+> **Question à discuter :** Qu'est-ce qu'on a gagné en passant de l'isolation par méthode à l'isolation par classe ? Quels problèmes de la Part 1 disparaissent ? Est-ce que de nouveaux apparaissent ?
 
 ---
 
