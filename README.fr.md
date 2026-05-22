@@ -20,10 +20,9 @@ Dans chaque langage, l'atelier se déroule en **4 parties qui s'enchaînent dans
 
 Les consignes détaillées, les scénarios métier et la feature à implémenter se trouvent dans le `README` de chaque partie.
 
-## 💻 Choisir un langage
+## 💻 Commencer
 
 - **Java** — [Commencer par la Part 1](java-workshop/part-1-powermock/README.fr.md)
-- **Kotlin** — [Commencer par la Part 1](kotlin-workshop/part-1-powermock/README.fr.md)
 
 ## 📄 Licence
 

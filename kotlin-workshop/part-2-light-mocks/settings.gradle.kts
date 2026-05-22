@@ -1,2 +1,0 @@
-rootProject.name = "part-2-light-mocks"
-

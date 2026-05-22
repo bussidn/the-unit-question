@@ -22,10 +22,9 @@ In each language, the workshop unfolds in **4 parts that are meant to be complet
 
 Detailed instructions, business scenarios, and the feature to implement are provided in each part's `README`.
 
-## 💻 Choose a language
+## 💻 Get started
 
 - **Java** — [Start with Part 1](java-workshop/part-1-powermock/README.md)
-- **Kotlin** — [Start with Part 1](kotlin-workshop/part-1-powermock/README.md)
 
 ## 📄 License
 
