@@ -14,8 +14,9 @@ public class OrderCancellationService {
         PaymentService paymentService = new PaymentService();
         StockService stockService = new StockService();
         ShippingService shippingService = new ShippingService();
+        OrderRepository orderRepository = new OrderRepository();
 
-        Order order = OrderRepository.findById(orderId);
+        Order order = orderRepository.findById(orderId);
         if (order == null) {
             return new CancellationResult.Failure("Order not found");
         }
@@ -33,7 +34,7 @@ public class OrderCancellationService {
             shippingService.cancelShipment(order.trackingNumber());
         }
 
-        OrderRepository.updateStatus(orderId, OrderStatus.CANCELLED);
+        orderRepository.updateStatus(orderId, OrderStatus.CANCELLED);
         return new CancellationResult.Success();
     }
 }

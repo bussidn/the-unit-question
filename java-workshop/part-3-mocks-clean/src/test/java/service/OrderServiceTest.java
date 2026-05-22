@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import repository.OrderRepository;
 
 import java.util.List;
 
@@ -34,12 +35,13 @@ class OrderServiceTest {
     @Mock private PricingService pricingService;
     @Mock private PaymentService paymentService;
     @Mock private ShippingService shippingService;
+    @Mock private OrderRepository orderRepository;
 
     private OrderService orderService;
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(stockService, pricingService, paymentService, shippingService);
+        orderService = new OrderService(orderRepository, stockService, pricingService, paymentService, shippingService);
     }
 
     // ── Given helpers ─────────────────────────────────────────────────────────

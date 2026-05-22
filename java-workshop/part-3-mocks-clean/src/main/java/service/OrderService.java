@@ -5,21 +5,25 @@ import domain.PaymentResult;
 import domain.PaymentStatus;
 import domain.ShippingConfirmation;
 import domain.StockReservation;
+import repository.OrderRepository;
 
 import java.util.List;
 
 public class OrderService {
+    private final OrderRepository orderRepository;
     private final StockService stockService;
     private final PricingService pricingService;
     private final PaymentService paymentService;
     private final ShippingService shippingService;
 
     public OrderService(
+        OrderRepository orderRepository,
         StockService stockService,
         PricingService pricingService,
         PaymentService paymentService,
         ShippingService shippingService
     ) {
+        this.orderRepository = orderRepository;
         this.stockService = stockService;
         this.pricingService = pricingService;
         this.paymentService = paymentService;
@@ -46,6 +50,7 @@ public class OrderService {
 
         ShippingConfirmation shippingConfirmation = shippingService.createShipment(order);
         Order confirmedOrder = order.confirm(totalPrice);
+        orderRepository.save(confirmedOrder);
         return new OrderResult.Success(confirmedOrder, shippingConfirmation);
     }
 }

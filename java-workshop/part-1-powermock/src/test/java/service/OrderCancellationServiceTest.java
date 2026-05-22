@@ -7,7 +7,6 @@ import domain.OrderStatus;
 import domain.StockReservation;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
-import org.mockito.MockedStatic;
 import repository.OrderRepository;
 
 import java.util.List;
@@ -29,14 +28,13 @@ class OrderCancellationServiceTest {
             "TRACK-ABC"
         );
 
-        try (MockedStatic<OrderRepository> mockedRepository = mockStatic(OrderRepository.class);
+        try (MockedConstruction<OrderRepository> mockedRepository = mockConstruction(OrderRepository.class,
+                 (mock, ctx) -> when(mock.findById("ORDER-123")).thenReturn(order));
              MockedConstruction<PaymentService> mockedPayment = mockConstruction(PaymentService.class,
                  (mock, context) -> when(mock.refundPayment("TXN-789")).thenReturn(true));
              MockedConstruction<StockService> mockedStock = mockConstruction(StockService.class);
              MockedConstruction<ShippingService> mockedShipping = mockConstruction(ShippingService.class,
                  (mock, context) -> when(mock.cancelShipment("TRACK-ABC")).thenReturn(true))) {
-
-            mockedRepository.when(() -> OrderRepository.findById("ORDER-123")).thenReturn(order);
 
             CancellationResult result = new OrderCancellationService().cancelOrder("ORDER-123");
 
@@ -49,18 +47,17 @@ class OrderCancellationServiceTest {
                     && reservations.getFirst().reserved()
             ));
             verify(mockedShipping.constructed().getFirst()).cancelShipment("TRACK-ABC");
-            mockedRepository.verify(() -> OrderRepository.updateStatus("ORDER-123", OrderStatus.CANCELLED));
+            verify(mockedRepository.constructed().getFirst()).updateStatus("ORDER-123", OrderStatus.CANCELLED);
         }
     }
 
     @Test
     void p1_cancelOrder_fails_whenOrderIsMissing() {
-        try (MockedStatic<OrderRepository> mockedRepository = mockStatic(OrderRepository.class);
+        try (MockedConstruction<OrderRepository> mockedRepository = mockConstruction(OrderRepository.class,
+                 (mock, ctx) -> when(mock.findById("UNKNOWN")).thenReturn(null));
              MockedConstruction<PaymentService> mockedPayment = mockConstruction(PaymentService.class);
              MockedConstruction<StockService> mockedStock = mockConstruction(StockService.class);
              MockedConstruction<ShippingService> mockedShipping = mockConstruction(ShippingService.class)) {
-
-            mockedRepository.when(() -> OrderRepository.findById("UNKNOWN")).thenReturn(null);
 
             CancellationResult result = new OrderCancellationService().cancelOrder("UNKNOWN");
 
@@ -72,8 +69,8 @@ class OrderCancellationServiceTest {
             verifyNoInteractions(mockedPayment.constructed().getFirst());
             verifyNoInteractions(mockedStock.constructed().getFirst());
             verifyNoInteractions(mockedShipping.constructed().getFirst());
-            mockedRepository.verify(() -> OrderRepository.findById("UNKNOWN"));
-            mockedRepository.verifyNoMoreInteractions();
+            verify(mockedRepository.constructed().getFirst()).findById("UNKNOWN");
+            verifyNoMoreInteractions(mockedRepository.constructed().getFirst());
         }
     }
 
@@ -89,13 +86,12 @@ class OrderCancellationServiceTest {
             "TRACK-ABC"
         );
 
-        try (MockedStatic<OrderRepository> mockedRepository = mockStatic(OrderRepository.class);
+        try (MockedConstruction<OrderRepository> mockedRepository = mockConstruction(OrderRepository.class,
+                 (mock, ctx) -> when(mock.findById("ORDER-123")).thenReturn(order));
              MockedConstruction<PaymentService> mockedPayment = mockConstruction(PaymentService.class,
                  (mock, context) -> when(mock.refundPayment("TXN-789")).thenReturn(false));
              MockedConstruction<StockService> mockedStock = mockConstruction(StockService.class);
              MockedConstruction<ShippingService> mockedShipping = mockConstruction(ShippingService.class)) {
-
-            mockedRepository.when(() -> OrderRepository.findById("ORDER-123")).thenReturn(order);
 
             CancellationResult result = new OrderCancellationService().cancelOrder("ORDER-123");
 
@@ -106,8 +102,8 @@ class OrderCancellationServiceTest {
             assertEquals(1, mockedShipping.constructed().size());
             verify(mockedStock.constructed().getFirst(), never()).releaseStock(any());
             verify(mockedShipping.constructed().getFirst(), never()).cancelShipment(anyString());
-            mockedRepository.verify(() -> OrderRepository.findById("ORDER-123"));
-            mockedRepository.verifyNoMoreInteractions();
+            verify(mockedRepository.constructed().getFirst()).findById("ORDER-123");
+            verifyNoMoreInteractions(mockedRepository.constructed().getFirst());
         }
     }
 }

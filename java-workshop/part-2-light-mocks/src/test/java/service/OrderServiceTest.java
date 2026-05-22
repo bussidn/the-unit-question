@@ -10,6 +10,7 @@ import domain.StockReservation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import repository.OrderRepository;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ class OrderServiceTest {
     private PaymentService paymentService;
     private ShippingService shippingService;
     private OrderService orderService;
+    private OrderRepository orderRepository;
 
     @BeforeEach
     void setUp() {
@@ -39,7 +41,8 @@ class OrderServiceTest {
         pricingService = mock(PricingService.class);
         paymentService = mock(PaymentService.class);
         shippingService = mock(ShippingService.class);
-        orderService = new OrderService(stockService, pricingService, paymentService, shippingService);
+        orderRepository = mock(OrderRepository.class);
+        orderService = new OrderService(orderRepository, stockService, pricingService, paymentService, shippingService);
     }
 
     // ── Discount code ─────────────────────────────────────────────────────────

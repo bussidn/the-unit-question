@@ -4,15 +4,17 @@ import domain.Order;
 import domain.OrderStatus;
 import infrastructure.Database;
 
-public final class OrderRepository {
-    private OrderRepository() {
-    }
+public class OrderRepository {
 
-    public static Order findById(String orderId) {
+    public Order findById(String orderId) {
         return Database.getOrder(orderId);
     }
 
-    public static void updateStatus(String orderId, OrderStatus status) {
+    public void updateStatus(String orderId, OrderStatus status) {
         Database.updateOrderStatus(orderId, status);
+    }
+
+    public void save(Order order) {
+        Database.saveOrder(order);
     }
 }

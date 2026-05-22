@@ -3,6 +3,7 @@ package service;
 import domain.Order;
 import domain.OrderItem;
 import domain.OrderStatus;
+import helper.InMemoryOrderRepository;
 import helper.InMemoryPaymentGateway;
 import helper.InMemoryShippingGateway;
 import helper.InMemoryStockRepository;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class OrderServiceTest {
 
+    private InMemoryOrderRepository orderRepository;
     private InMemoryPaymentGateway paymentGateway;
     private InMemoryShippingGateway shippingGateway;
     private InMemoryStockRepository stockRepository;
@@ -27,11 +29,13 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
+        orderRepository = new InMemoryOrderRepository();
         stockRepository = new InMemoryStockRepository();
         paymentGateway = new InMemoryPaymentGateway();
         shippingGateway = new InMemoryShippingGateway();
 
         orderService = new OrderService(
+            orderRepository,
             new RepositoryStockService(stockRepository),
             new PricingService(),
             new GatewayPaymentService(paymentGateway),

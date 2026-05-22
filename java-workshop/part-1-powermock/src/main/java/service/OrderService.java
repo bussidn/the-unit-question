@@ -5,48 +5,44 @@ import domain.PaymentResult;
 import domain.PaymentStatus;
 import domain.ShippingConfirmation;
 import domain.StockReservation;
-import infrastructure.Database;
+import repository.OrderRepository;
 
 import java.util.List;
 
 /**
  * Main orchestrator - creates all dependencies internally.
- * The PowerMock nightmare.
+ * This is typical legacy code: no dependency injection, everything is instantiated inline.
  */
 public class OrderService {
 
     public OrderResult placeOrder(Order order) {
         StockService stockService = new StockService();
-        PricingService pricingService = new PricingService();
         PaymentService paymentService = new PaymentService();
         ShippingService shippingService = new ShippingService();
+        OrderRepository orderRepository = new OrderRepository();
 
         List<StockReservation> reservations = stockService.reserveStock(order.items());
-        if (reservations.stream().anyMatch(reservation -> !reservation.reserved())) {
+        boolean hasUnavailableItems = reservations.stream().anyMatch(r -> !r.reserved());
+        if (hasUnavailableItems) {
             return new OrderResult.Failure(order.reject(), "Insufficient stock");
         }
 
-        double totalPrice = pricingService.calculateTotal(order.items());
-        PaymentResult paymentResult = paymentService.processPayment(
-            order.id(),
-            order.customerId(),
-            totalPrice
-        );
+        double totalPrice = PricingService.calculateTotal(order.items());
 
-        if (paymentResult.status() != PaymentStatus.SUCCESS) {
+        PaymentResult payment = paymentService.processPayment(order.id(), order.customerId(), totalPrice);
+        if (payment.status() != PaymentStatus.SUCCESS) {
             stockService.releaseStock(reservations);
             return new OrderResult.Failure(order.reject(), "Payment failed");
         }
 
-        ShippingConfirmation shippingConfirmation = shippingService.createShipment(order);
+        ShippingConfirmation shipping = shippingService.createShipment(order);
         Order confirmedOrder = order.confirm(
             totalPrice,
-            paymentResult.transactionId(),
-            shippingConfirmation.trackingNumber()
+            payment.transactionId(),
+            shipping.trackingNumber()
         );
 
-        Database.saveOrder(confirmedOrder);
-
-        return new OrderResult.Success(confirmedOrder, shippingConfirmation);
+        orderRepository.save(confirmedOrder);
+        return new OrderResult.Success(confirmedOrder, shipping);
     }
 }

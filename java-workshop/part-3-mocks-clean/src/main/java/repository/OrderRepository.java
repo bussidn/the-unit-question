@@ -7,4 +7,6 @@ public interface OrderRepository {
     Order findById(String orderId);
 
     void updateStatus(String orderId, OrderStatus status);
+
+    void save(Order order);
 }
