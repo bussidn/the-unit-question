@@ -1,22 +1,10 @@
 # The Unit Question — Part 4: Behaviour tests
 
-## 🏋️ Exercise (~25 min)
-
-Same exercise as Part 3 — same feature, same production code to migrate.
-
-The difference is in the tests.
-
----
-
 ## 🔄 What changed since Part 3
 
-### Production code
+Services now implement **interfaces** (ports). `OrderService` depends on abstractions, not concrete classes.
 
-Services now implement **interfaces** (ports). `OrderService` depends on abstractions, not concrete classes. This enables a ports-and-adapters architecture where infrastructure can be swapped.
-
-### Test style
-
-In Part 3, we stopped mocking pure logic (`PricingService`), but we still used Mockito for I/O services. In Part 4, **Mockito is gone entirely**. Every dependency is a real implementation backed by in-memory data structures:
+**Mockito is gone entirely.** Every dependency is a real implementation backed by in-memory data:
 
 ```java
 orderService = new OrderService(
@@ -30,15 +18,7 @@ orderService = new OrderService(
 
 No `@Mock`. No `when().thenReturn()`. No `verify()`. Tests describe business scenarios with real inputs and check real outcomes.
 
-The `OrderBuilder` is still available — it carries over from Part 3 and works the same way here.
-
-### 🤔 Discussion: what is the "unit" here?
-
-In Part 3, the unit was still **the class** — we let pure logic run but mocked I/O services.
-
-In Part 4, the unit is **the use case** — `placeOrder` runs the entire chain: validation → pricing → stock → payment → shipping → persistence. The test asserts that a business scenario produces the expected business outcome.
-
-> **Question to discuss:** Are these still "unit tests"? If so, what is the "unit"? If not, what are they?
+Have a look at the existing `OrderServiceTest` before you start.
 
 ---
 
@@ -125,6 +105,12 @@ Run: `./gradlew test` ✅
 
 - Look at the existing `OrderServiceTest` to see how real implementations are wired
 - `PricingService` has no dependencies — instantiate it directly: `new PricingService()`
+
+---
+
+### 🤔 What is the "unit" here?
+
+No mocks at all. `placeOrder` runs the entire chain — validation, pricing, stock, payment, shipping, persistence — with real implementations. The unit is **the use case**. Are these still "unit tests"?
 
 ---
 

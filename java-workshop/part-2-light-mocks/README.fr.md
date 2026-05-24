@@ -2,36 +2,11 @@
 
 ## 🔄 Ce qui a changé depuis la Part 1
 
-### Code de production
+Les dépendances sont maintenant **injectées via le constructeur** au lieu d'être instanciées en dur. Les tests utilisent de simples appels `mock()` passés directement au constructeur — plus de `mockConstruction`, `mockStatic`, ni de try-with-resources autour de chaque test.
 
-En Part 1, `OrderService` instanciait tous ses collaborateurs (`StockService`, `PricingService`, etc.) directement dans `placeOrder`. Pour tester ce code, il fallait des **hacks de type PowerMock** : `mockConstruction()` pour intercepter les appels `new SomeService()`, et `mockStatic()` pour stuber les méthodes statiques.
+`isValid()` s'exécute aussi pour de vrai maintenant — plus besoin de `whenPrivate` pour la stuber.
 
-En Part 2, ces mêmes services sont maintenant **injectés via le constructeur** :
-
-```java
-public OrderService(
-    StockService stockService,
-    PricingService pricingService,
-    PaymentService paymentService,
-    ShippingService shippingService
-) { ... }
-```
-
-Ce seul changement structurel suffit à faire disparaître entièrement les hacks. Les tests peuvent maintenant utiliser de simples appels **`mock()`** et passer les fakes directement dans le constructeur.
-
-### Style de test
-
-Plus de `mockConstruction()`. Plus de `mockStatic()`. Plus de try-with-resources englobant chaque test. La méthode `isValid()` s'exécute aussi pour de vrai maintenant — plus besoin de `whenPrivate` pour la stuber.
-
-La logique métier dans `placeOrder` fait **exactement la même chose** qu'en Part 1 — la seule différence est d'où viennent les dépendances. Jetez un œil au `OrderServiceTest` existant pour voir à quel point le style de test est devenu plus simple avant de commencer l'exercice.
-
-### 🤔 Discussion : c'est quoi l'« unité » ici ?
-
-En Part 1, l'unité était **une seule méthode** — on mockait même les autres méthodes de la classe sous test (`isValid`).
-
-En Part 2, l'unité est **la classe** — `OrderService` s'exécute entièrement pour de vrai, mais toutes les dépendances externes sont mockées.
-
-> **Question à discuter :** Qu'est-ce qu'on a gagné en passant de l'isolation par méthode à l'isolation par classe ? Quels problèmes de la Part 1 disparaissent ? Est-ce que de nouveaux apparaissent ?
+La logique métier est la même qu'en Part 1 ; seul le câblage a changé. Jetez un œil au `OrderServiceTest` existant avant de commencer.
 
 ---
 
@@ -95,6 +70,12 @@ Après un paiement réussi, appelez `DiscountCodeService.markAsUsed(customerId, 
 **Mettez à jour votre test précédent** pour asserter que le code est marqué comme utilisé.
 
 Lancez : `./gradlew test` ✅
+
+---
+
+### 🤔 C'est quoi l'« unité » ici ?
+
+Dans cette partie, l'unité est **la classe**. `OrderService` s'exécute entièrement pour de vrai, et toutes les dépendances externes sont mockées. On ne stubbe plus les méthodes internes comme `isValid`.
 
 ---
 

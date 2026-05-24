@@ -119,16 +119,11 @@ Lancez : `./gradlew test` ✅
 
 ---
 
-### 🤔 Discussion : c'est quoi l'« unité » ici ?
+### 🤔 C'est quoi l'« unité » ici ?
 
-Dans cette partie, l'unité est **une seule méthode**. On mocke tout : les autres classes (`mockConstruction`), les méthodes statiques (`mockStatic`), et même les autres méthodes de la classe sous test (`whenPrivate` sur `isValid`).
-
-Chaque méthode est testée en isolation complète. `placeOrder` ne sait pas ce que `isValid` fait réellement — on le stubbe. `isValid` est testée séparément via `invokePrivate`.
-
-> **Question à discuter :** Que se passe-t-il quand on refactore `placeOrder` pour extraire une méthode helper ? Que se passe-t-il quand on renomme `isValid` ? Combien de tests cassent — et pourquoi ?
+Dans cette partie, l'unité est **une seule méthode**. On mocke les autres classes, les méthodes statiques, et même les autres méthodes de la classe sous test (`whenPrivate` sur `isValid`). Chaque méthode est testée en isolation complète.
 
 ---
-
 
 ## ➡️ Suite
 

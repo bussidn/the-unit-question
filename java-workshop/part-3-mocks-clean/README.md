@@ -2,30 +2,14 @@
 
 ## 🔄 What changed since Part 2
 
-### Production code
+Same production code, same dependencies. The change is in **test design**:
 
-The production code is identical to Part 2 — same `OrderService`, same dependencies, same behaviour.
+- `@ExtendWith(MockitoExtension.class)` and `@Mock` annotations replace manual `mock()` calls.
+- An `OrderBuilder` (in `helper/`) makes test data more readable.
+- Recurring setup is factored into **given helpers** (`givenReservationSucceedsFor`, `givenPaymentSucceedsFor`, etc.).
+- `PricingService` is no longer mocked — it's pure computation, so tests assert on real calculated values.
 
-### Test style
-
-The biggest change is in **test design**. Compare the tests side-by-side with Part 2:
-
-- Mockito is now integrated via `@ExtendWith(MockitoExtension.class)` and `@Mock` field annotations — no more manual `mock()` calls in `@BeforeEach`.
-- An `OrderBuilder` is available in `helper/` to make test data more readable.
-- Recurring setup patterns are factored into **given helpers** (`givenReservationSucceedsFor`, `givenPaymentSucceedsFor`, etc.).
-
-These helpers absorb the cost of API changes. If `PaymentService.processPayment` adds a parameter tomorrow, you fix it in **one place** instead of every test that touches payment. That changes the economics of writing tests entirely.
-
-You'll also notice that `PricingService` is no longer mocked — it's instantiated for real (`new PricingService()`). It's pure computation, no I/O, no side effects. Tests assert on real calculated values instead of arbitrary stubbed numbers.
-
-### 🤔 Discussion: what is the "unit" here?
-
-Open the tests from Part 2 next to Part 3. Same production code, same scenarios — but different design choices in the tests.
-
-> **Questions to discuss:**
-> - In Part 2, what happens when an API signature changes? How many tests do you have to touch?
-> - Does that maintenance cost influence how many tests you write — or how you write them?
-> - What is the "unit" in Part 3? Is it the same as Part 2?
+Have a look at the existing `OrderServiceTest` before you start.
 
 ---
 
@@ -95,6 +79,12 @@ Run: `./gradlew test` ✅
 ### 💡 Tips
 
 - Use `OrderBuilder` (in `helper/`) to build test orders — it keeps the GIVEN block focused on what matters
+
+---
+
+### 🤔 What is the "unit" here?
+
+Same production code as Part 2, but different test design. Given helpers absorb API changes, and `PricingService` runs for real. The unit is still the class — but the boundary of what we mock has shifted.
 
 ---
 

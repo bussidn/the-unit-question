@@ -2,36 +2,11 @@
 
 ## 🔄 What changed since Part 1
 
-### Production code
+Dependencies are now **injected via constructor** instead of instantiated inline. Tests can use plain `mock()` calls and pass them straight into the constructor — no more `mockConstruction`, `mockStatic`, or try-with-resources wrapping every test.
 
-In Part 1, `OrderService` instantiated all its collaborators (`StockService`, `PricingService`, etc.) directly inside `placeOrder`. Testing required **PowerMock-style hacks**: `mockConstruction()` to intercept `new SomeService()` calls, and `mockStatic()` to stub static helpers.
+`isValid()` also runs for real now — no more `whenPrivate` to stub it.
 
-In Part 2, those same services are now **injected via constructor**:
-
-```java
-public OrderService(
-    StockService stockService,
-    PricingService pricingService,
-    PaymentService paymentService,
-    ShippingService shippingService
-) { ... }
-```
-
-That one structural change is enough to make the hacks disappear entirely. Tests can now use plain **`mock()`** calls and pass fakes straight into the constructor.
-
-### Test style
-
-No `mockConstruction()`. No `mockStatic()`. No try-with-resources wrapping every test. The `isValid()` method also runs for real now — no more `whenPrivate` to stub it.
-
-The production logic inside `placeOrder` does **exactly the same thing** as in Part 1 — the only difference is where the dependencies come from. Have a look at the existing `OrderServiceTest` to see how much simpler the test style has become before you start the exercise.
-
-### 🤔 Discussion: what is the "unit" here?
-
-In Part 1, the unit was **a single method** — we mocked even other methods of the same class (`isValid`).
-
-In Part 2, the unit is **the class** — `OrderService` runs entirely for real, and every external dependency is mocked.
-
-> **Question to discuss:** What did we gain by moving from method isolation to class isolation? What problems from Part 1 disappear? Do new ones appear?
+The production logic is the same as Part 1; only the wiring changed. Have a look at the existing `OrderServiceTest` before you start.
 
 ---
 
@@ -95,6 +70,12 @@ After successful payment, call `DiscountCodeService.markAsUsed(customerId, disco
 **Update your previous test** to assert the code is marked as used.
 
 Run: `./gradlew test` ✅
+
+---
+
+### 🤔 What is the "unit" here?
+
+In this part, the unit is **the class**. `OrderService` runs entirely for real, and every external dependency is mocked. We no longer stub internal methods like `isValid`.
 
 ---
 

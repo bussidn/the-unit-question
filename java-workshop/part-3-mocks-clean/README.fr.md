@@ -2,30 +2,14 @@
 
 ## 🔄 Ce qui a changé depuis la Part 2
 
-### Code de production
+Même code de production, mêmes dépendances. Le changement est dans le **design des tests** :
 
-Le code de production est identique à la Part 2 — même `OrderService`, mêmes dépendances, même comportement.
+- `@ExtendWith(MockitoExtension.class)` et annotations `@Mock` remplacent les appels `mock()` manuels.
+- Un `OrderBuilder` (dans `helper/`) rend les données de test plus lisibles.
+- Les setups récurrents sont factorisés dans des **given helpers** (`givenReservationSucceedsFor`, `givenPaymentSucceedsFor`, etc.).
+- `PricingService` n'est plus mocké — c'est du calcul pur, donc les tests assertent sur de vraies valeurs calculées.
 
-### Style de test
-
-Le plus gros changement est dans le **design des tests**. Comparez-les côte à côte avec la Part 2 :
-
-- Mockito est maintenant intégré via `@ExtendWith(MockitoExtension.class)` et les annotations `@Mock` sur les champs — plus d'appels `mock()` manuels dans `@BeforeEach`.
-- Un `OrderBuilder` est disponible dans `helper/` pour rendre les données de test plus lisibles.
-- Les patterns de setup récurrents sont factorisés dans des **given helpers** (`givenReservationSucceedsFor`, `givenPaymentSucceedsFor`, etc.).
-
-Ces helpers absorbent le coût des changements d'API. Si `PaymentService.processPayment` ajoute un paramètre demain, on le corrige à **un seul endroit** au lieu de chaque test qui touche au paiement. Ça change complètement l'économie de l'écriture de tests.
-
-Vous remarquerez aussi que `PricingService` n'est plus mocké — il est instancié pour de vrai (`new PricingService()`). C'est du calcul pur, pas d'I/O, pas d'effets de bord. Les tests assertent sur de vraies valeurs calculées plutôt que sur des nombres arbitraires stubbés.
-
-### 🤔 Discussion : c'est quoi l'« unité » ici ?
-
-Ouvrez les tests de la Part 2 à côté de ceux de la Part 3. Même code de production, mêmes scénarios — mais des choix de design différents dans les tests.
-
-> **Questions à discuter :**
-> - En Part 2, que se passe-t-il quand une signature d'API change ? Combien de tests faut-il toucher ?
-> - Est-ce que ce coût de maintenance influence le nombre de tests qu'on écrit — ou la façon dont on les écrit ?
-> - C'est quoi l'« unité » en Part 3 ? Est-ce la même qu'en Part 2 ?
+Jetez un œil au `OrderServiceTest` existant avant de commencer.
 
 ---
 
@@ -95,6 +79,12 @@ Lancez : `./gradlew test` ✅
 ### 💡 Conseils
 
 - Utilisez `OrderBuilder` (dans `helper/`) pour construire les commandes de test — ça garde le bloc GIVEN focalisé sur ce qui compte
+
+---
+
+### 🤔 C'est quoi l'« unité » ici ?
+
+Même code de production que la Part 2, mais un design de test différent. Les given helpers absorbent les changements d'API, et `PricingService` tourne pour de vrai. L'unité est toujours la classe — mais la frontière de ce qu'on mocke a bougé.
 
 ---
 
