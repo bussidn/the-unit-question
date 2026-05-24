@@ -60,6 +60,38 @@ class OrderServiceTest {
         paymentGateway.willDecline();
     }
 
+    // ── Validation ────────────────────────────────────────────────────────────
+
+    @Test
+    void p4_orderIsRejected_whenOrderIsAlreadyConfirmed() {
+        var order = anOrder().withStatus(OrderStatus.CONFIRMED).build();
+
+        OrderResult result = orderService.placeOrder(order);
+
+        assertInstanceOf(OrderResult.Failure.class, result);
+        assertEquals("Invalid order", ((OrderResult.Failure) result).reason());
+    }
+
+    @Test
+    void p4_orderIsRejected_whenOrderHasNoItems() {
+        var order = anOrder().withItems(List.of()).build();
+
+        OrderResult result = orderService.placeOrder(order);
+
+        assertInstanceOf(OrderResult.Failure.class, result);
+        assertEquals("Invalid order", ((OrderResult.Failure) result).reason());
+    }
+
+    @Test
+    void p4_noPaymentIsCharged_whenOrderIsInvalid() {
+        var order = anOrder().withItems(List.of()).build();
+
+        orderService.placeOrder(order);
+
+        assertFalse(paymentGateway.wasCharged());
+    }
+
+
     // ── Discount code ─────────────────────────────────────────────────────────
     // TODO: Implement the scenarios below, following the steps in the README.
     //       Follow the same pattern as the tests above:

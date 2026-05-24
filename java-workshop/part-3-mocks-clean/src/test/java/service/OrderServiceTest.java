@@ -86,6 +86,38 @@ class OrderServiceTest {
         return shipment;
     }
 
+    // ── Validation ────────────────────────────────────────────────────────────
+
+    @Test
+    void p3_orderIsRejected_whenOrderIsAlreadyConfirmed() {
+        var order = anOrder().withStatus(OrderStatus.CONFIRMED).build();
+
+        OrderResult result = orderService.placeOrder(order);
+
+        assertInstanceOf(OrderResult.Failure.class, result);
+        assertEquals("Invalid order", ((OrderResult.Failure) result).reason());
+    }
+
+    @Test
+    void p3_orderIsRejected_whenOrderHasNoItems() {
+        var order = anOrder().withItems(List.of()).build();
+
+        OrderResult result = orderService.placeOrder(order);
+
+        assertInstanceOf(OrderResult.Failure.class, result);
+        assertEquals("Invalid order", ((OrderResult.Failure) result).reason());
+    }
+
+    @Test
+    void p3_noStockIsReserved_whenOrderIsInvalid() {
+        var order = anOrder().withItems(List.of()).build();
+
+        orderService.placeOrder(order);
+
+        verifyNoInteractions(stockService);
+    }
+
+
     // ── Discount code ─────────────────────────────────────────────────────────
     // TODO: Implement the scenarios below, following the steps in the README.
     //       Follow the same pattern as the tests above:

@@ -1,6 +1,7 @@
 package service;
 
 import domain.Order;
+import domain.OrderStatus;
 import domain.PaymentResult;
 import domain.PaymentStatus;
 import domain.ShippingConfirmation;
@@ -31,6 +32,10 @@ public class OrderService {
     }
 
     public OrderResult placeOrder(Order order) {
+        if (!isValid(order)) {
+            return new OrderResult.Failure(order.reject(), "Invalid order");
+        }
+
         List<StockReservation> reservations = stockService.reserveStock(order.items());
         if (reservations.stream().anyMatch(reservation -> !reservation.reserved())) {
             return new OrderResult.Failure(order.reject(), "Insufficient stock");
@@ -52,5 +57,11 @@ public class OrderService {
         Order confirmedOrder = order.confirm(totalPrice);
         orderRepository.save(confirmedOrder);
         return new OrderResult.Success(confirmedOrder, shippingConfirmation);
+    }
+
+    private boolean isValid(Order order) {
+        return order.status() == OrderStatus.PENDING
+            && order.items() != null
+            && !order.items().isEmpty();
     }
 }

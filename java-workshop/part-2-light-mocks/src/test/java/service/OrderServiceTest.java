@@ -45,6 +45,38 @@ class OrderServiceTest {
         orderService = new OrderService(orderRepository, stockService, pricingService, paymentService, shippingService);
     }
 
+    // ── Validation ────────────────────────────────────────────────────────────
+
+    @Test
+    void p2_orderIsRejected_whenOrderIsAlreadyConfirmed() {
+        var order = new Order("ORDER-001", "CUST-001", List.of(new OrderItem("PROD-001", 1, 20.0)), OrderStatus.CONFIRMED, 50.0, "TXN-001", "TRACK-001");
+
+        OrderResult result = orderService.placeOrder(order);
+
+        assertInstanceOf(OrderResult.Failure.class, result);
+        assertEquals("Invalid order", ((OrderResult.Failure) result).reason());
+    }
+
+    @Test
+    void p2_orderIsRejected_whenOrderHasNoItems() {
+        var order = new Order("ORDER-001", "CUST-001", List.of(), OrderStatus.PENDING, 0.0, null, null);
+
+        OrderResult result = orderService.placeOrder(order);
+
+        assertInstanceOf(OrderResult.Failure.class, result);
+        assertEquals("Invalid order", ((OrderResult.Failure) result).reason());
+    }
+
+    @Test
+    void p2_noStockIsReserved_whenOrderIsInvalid() {
+        var order = new Order("ORDER-001", "CUST-001", List.of(), OrderStatus.PENDING, 0.0, null, null);
+
+        orderService.placeOrder(order);
+
+        verifyNoInteractions(stockService);
+    }
+
+
     // ── Discount code ─────────────────────────────────────────────────────────
     // TODO: Implement the scenarios below, following the steps in the README.
     //       Follow the same pattern as the tests above:
