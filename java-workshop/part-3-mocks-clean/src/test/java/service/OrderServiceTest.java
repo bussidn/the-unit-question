@@ -43,6 +43,71 @@ class OrderServiceTest {
         orderService = new OrderService(orderRepository, stockService, new PricingService(), paymentService, shippingService);
     }
 
+    // ══════════════════════════════════════════════════════════════════════════
+    // YOUR EXERCISE — See README for full instructions
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // --- Step 1 (README → Step 1): Reject already-used discount codes ---
+    // TODO: Add a @Mock DiscountCodeService field and inject it via the OrderService constructor.
+    //       Create a given helper (e.g. givenDiscountCodeIsAlreadyUsed).
+
+    @Disabled
+    @Test
+    void p3_orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
+        // GIVEN an order with discount code SUMMER20
+        // AND this code has already been used by this customer
+
+        // WHEN the customer places the order
+
+        // THEN the order is rejected with reason "Discount code already used"
+        // AND no payment is triggered
+
+        fail("TODO: implement scenario 'discount code already used'");
+    }
+    // ✅ Step 1 done → README for Step 2 instructions
+
+    // --- Step 2 (README → Step 2): Apply discount to the price ---
+    // TODO: Create a given helper for a valid discount code (e.g. givenDiscountCodeIsValid).
+    //       Wire all given helpers needed for a successful order (stock, payment, shipping).
+
+    @Disabled
+    @Test
+    void p3_orderIsConfirmed_whenDiscountCodeIsValid() {
+        // GIVEN an order with 2 items at €55 each (subtotal: €110)
+        // AND discount code SUMMER20 (-20%)
+        // AND the code has not yet been used by this customer
+
+        // WHEN the customer places the order
+
+        // THEN payment is processed for €105.60
+        // AND the order is confirmed
+
+        fail("TODO: implement scenario 'order with a valid discount code'");
+    }
+
+    // ✅ Step 2 done → README for Step 3 instructions
+
+    // --- Step 3 (README → Step 3): Mark as used after payment ---
+    // Update the test above to also verify that markAsUsed is called on DiscountCodeService.
+    // Hint: verify(discountCodeService).markAsUsed(customerId, discountCode);
+
+    @Disabled
+    @Test
+    void p3_discountCodeIsMarkedAsUsed_afterSuccessfulPayment() {
+        // GIVEN an order with a valid discount code
+        // AND payment succeeds
+
+        // WHEN the customer places the order
+
+        // THEN the discount code is marked as used
+
+        fail("TODO: implement scenario 'discount code marked as used after payment'");
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // REFERENCE TESTS — existing tests and helpers, for inspiration
+    // ══════════════════════════════════════════════════════════════════════════
+
     // ── Given helpers ─────────────────────────────────────────────────────────
 
     private OrderBuilder anOrder() {
@@ -117,53 +182,7 @@ class OrderServiceTest {
         verifyNoInteractions(stockService);
     }
 
-
-    // ── Discount code ─────────────────────────────────────────────────────────
-    // TODO: Implement the scenarios below, following the steps in the README.
-    //       Follow the same pattern as the tests above:
-    //       1. Add a @Mock DiscountCodeService field + inject it via the OrderService constructor
-    //       2. Create given helpers (e.g. givenDiscountCodeIsValid, givenDiscountCodeIsAlreadyUsed)
-    //       3. Call placeOrder
-    //       4. Assert the result
-
-    // --- Step 1: Guard clause — reject if discount code is already used ---
-
-    @Disabled
-    @Test
-    void p3_orderIsRejected_whenDiscountCodeIsAlreadyUsed() {
-        // GIVEN an order with discount code SUMMER20
-        // AND this code has already been used by this customer
-
-        // WHEN the customer places the order
-
-        // THEN the order is rejected with reason "Discount code already used"
-        // AND no payment is triggered
-
-        fail("TODO: implement scenario 'discount code already used'");
-    }
-
-    // --- Step 2: Apply discount — calculate total with discount code ---
-
-    @Disabled
-    @Test
-    void p3_orderIsConfirmed_whenDiscountCodeIsValid() {
-        // GIVEN an order with 2 items at €55 each (subtotal: €110)
-        // AND discount code SUMMER20 (-20%)
-        // AND the code has not yet been used by this customer
-
-        // WHEN the customer places the order
-
-        // THEN payment is processed for €105.60
-        // AND the order is confirmed
-
-        fail("TODO: implement scenario 'order with a valid discount code'");
-    }
-
-    // --- Step 3: Mark as used — after payment, mark the discount code as used ---
-    // Update the test above to also verify that markAsUsed is called on DiscountCodeService.
-    // Hint: verify(discountCodeService).markAsUsed(customerId, discountCode);
-
-    // ── Existing tests (for reference) ─────────────────────────────────────────
+    // ── Happy path ────────────────────────────────────────────────────────────
 
     @Test
     void p3_orderIsConfirmed_whenAllStepsSucceed() {

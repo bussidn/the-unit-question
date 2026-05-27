@@ -50,21 +50,16 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("unused")
 class OrderServiceTest {
 
-    // ========== DISCOUNT CODE ==========
-    // TODO: Implement the scenarios below, following the steps in the README.
-    //       Follow the same pattern as the tests below:
-    //       1. Open a try-with-resources block with mockConstruction() for each service
-    //          (StockService, PaymentService, ShippingService, DiscountCodeService)
-    //          and mockStatic(PricingService.class)
-    //       2. Configure the mocks inside the initializer lambdas
-    //       3. Call new OrderService().placeOrder(order)
-    //       4. Assert the result
-    //
+    // ══════════════════════════════════════════════════════════════════════════
+    // YOUR EXERCISE — See README for full instructions
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // --- Step 1 (README → Step 1): Reject already-used discount codes ---
+    // TODO: Open a try-with-resources block with mockConstruction() for each service
+    //       and mockStatic(PricingService.class). Configure the mocks in the initializer lambdas.
     //       Hint for DiscountCodeService:
     //         mockConstruction(DiscountCodeService.class, (mock, ctx) ->
-    //             when(mock.isAlreadyUsed(any(), any())).thenReturn(true/false));
-
-    // --- Step 1: Guard clause — reject if discount code is already used ---
+    //             when(mock.checkDiscountCode(any(), any())).thenReturn(true/false));
 
     @Disabled
     @Test
@@ -79,8 +74,11 @@ class OrderServiceTest {
 
         fail("TODO: implement scenario 'discount code already used'");
     }
+    // ✅ Step 1 done → README for Step 2 instructions
 
-    // --- Step 2: Apply discount — calculate total with discount code ---
+    // --- Step 2 (README → Step 2): Apply discount to the price ---
+    // TODO: Use mockStatic for PricingService.calculateTotal(items, discountCode).
+    //       Verify the payment amount matches the discounted total.
 
     @Disabled
     @Test
@@ -97,10 +95,28 @@ class OrderServiceTest {
         fail("TODO: implement scenario 'order with a valid discount code'");
     }
 
-    // --- Step 3: Mark as used — after payment, mark the discount code as used ---
-    // Update the test above to also verify that markAsUsed is called.
-    // Hint: verify(spy).markDiscountCodeAsUsed(any(), any());
-    //   or: PowerMock.verifyPrivate(spy, "markDiscountCodeAsUsed");
+    // ✅ Step 2 done → README for Step 3 instructions
+
+    // --- Step 3 (README → Step 3): Mark as used after payment ---
+    // Update the test above to also verify that markAsUsed is called on DiscountCodeService.
+    // Hint: verify(constructed.get(0)).markAsUsed(customerId, discountCode);
+
+    @Disabled
+    @Test
+    void p1_discountCodeIsMarkedAsUsed_afterSuccessfulPayment() {
+        // GIVEN an order with a valid discount code
+        // AND payment succeeds
+
+        // WHEN the customer places the order
+
+        // THEN the discount code is marked as used
+
+        fail("TODO: implement scenario 'discount code marked as used after payment'");
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // REFERENCE TESTS — existing tests, for inspiration
+    // ══════════════════════════════════════════════════════════════════════════
 
     // ========== VALIDATION (PowerMock.whenPrivate demo) ================================
 

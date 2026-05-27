@@ -9,15 +9,13 @@ Même code de production, mêmes dépendances. Le changement est dans le **desig
 - Les setups récurrents sont factorisés dans des **given helpers** (`givenReservationSucceedsFor`, `givenPaymentSucceedsFor`, etc.).
 - `PricingService` n'est plus mocké — c'est du calcul pur, donc les tests assertent sur de vraies valeurs calculées.
 
-Jetez un œil au `OrderServiceTest` existant avant de commencer.
+Jetez un œil au `OrderServiceTest` existant (`src/test/java/service/`) avant de commencer.
 
 ---
 
 ## 🏋️ Exercice (~25 min)
 
 `OrderService.placeOrder` ne supporte pas encore les codes de réduction. Votre mission : ajouter cette feature étape par étape, en écrivant les tests au fur et à mesure.
-
-Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patterns.
 
 ---
 
@@ -41,6 +39,8 @@ ALORS la commande est rejetée avec la raison "Discount code already used"
 ET aucun paiement n'est déclenché
 ```
 
+> 📝 Implémentez dans `OrderServiceTest` → cherchez **Step 1**
+
 Lancez : `./gradlew test` ✅
 
 ---
@@ -62,6 +62,8 @@ ALORS le paiement est effectué pour 105.60€
 ET la commande est confirmée
 ```
 
+> 📝 Implémentez dans `OrderServiceTest` → cherchez **Step 2**
+
 Lancez : `./gradlew test` ✅
 
 ---
@@ -71,6 +73,8 @@ Lancez : `./gradlew test` ✅
 Après un paiement réussi, appelez `DiscountCodeService.markAsUsed(customerId, discountCode)`.
 
 **Mettez à jour votre test précédent** pour asserter que le code est marqué comme utilisé.
+
+> 📝 Implémentez dans `OrderServiceTest` → cherchez **Step 3**
 
 Lancez : `./gradlew test` ✅
 

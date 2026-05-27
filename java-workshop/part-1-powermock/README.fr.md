@@ -47,6 +47,8 @@ Vous devriez voir `BUILD SUCCESSFUL`. Si c'est le cas, vous êtes prêt !
 
 Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patterns.
 
+Ouvrez `OrderServiceTest.java` — l'exercice commence juste après la Javadoc de la classe.
+
 > 💡 Pour mocker un constructeur dans vos tests, utilisez :
 > ```java
 > MockedConstruction<SomeService> mocked = mockConstruction(SomeService.class, (mock, ctx) -> {
@@ -76,6 +78,8 @@ ALORS la commande est rejetée avec la raison "Discount code already used"
 ET aucun paiement n'est déclenché
 ```
 
+> 📝 Implémentez dans `OrderServiceTest` → cherchez **Step 1**
+
 Lancez : `./gradlew test` ✅
 
 ---
@@ -97,6 +101,8 @@ ALORS le paiement est effectué pour 105.60€
 ET la commande est confirmée
 ```
 
+> 📝 Implémentez dans `OrderServiceTest` → cherchez **Step 2**
+
 Lancez : `./gradlew test` ✅
 
 ---
@@ -106,6 +112,8 @@ Lancez : `./gradlew test` ✅
 Après un paiement réussi, appelez `DiscountCodeService.markAsUsed(customerId, discountCode)`.
 
 **Mettez à jour votre test précédent** pour asserter que le code est marqué comme utilisé.
+
+> 📝 Implémentez dans `OrderServiceTest` → cherchez **Step 3**
 
 Lancez : `./gradlew test` ✅
 

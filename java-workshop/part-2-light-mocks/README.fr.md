@@ -6,7 +6,7 @@ Les dépendances sont maintenant **injectées via le constructeur** au lieu d'ê
 
 `isValid()` s'exécute aussi pour de vrai maintenant — plus besoin de `whenPrivate` pour la stuber.
 
-La logique métier est la même qu'en Part 1 ; seul le câblage a changé. Jetez un œil au `OrderServiceTest` existant avant de commencer.
+La logique métier est la même qu'en Part 1 ; seul le câblage a changé. Jetez un œil au `OrderServiceTest` existant (`src/test/java/service/`) avant de commencer.
 
 ---
 
@@ -14,9 +14,7 @@ La logique métier est la même qu'en Part 1 ; seul le câblage a changé. Jetez
 
 `OrderService.placeOrder` ne supporte pas encore les codes de réduction. Votre mission : ajouter cette feature étape par étape, en écrivant les tests au fur et à mesure.
 
-Regardez le `OrderServiceTest` existant pour le style et suivez les mêmes patterns.
-
----
+---@@
 
 ### Étape 1 — Rejeter les codes de réduction déjà utilisés
 
@@ -37,6 +35,8 @@ QUAND le client valide la commande
 ALORS la commande est rejetée avec la raison "Discount code already used"
 ET aucun paiement n'est déclenché
 ```
+
+> 📝 Implémentez dans `OrderServiceTest` → cherchez **Step 1**
 
 Lancez : `./gradlew test` ✅
 
@@ -59,6 +59,8 @@ ALORS le paiement est effectué pour 105.60€
 ET la commande est confirmée
 ```
 
+> 📝 Implémentez dans `OrderServiceTest` → cherchez **Step 2**
+
 Lancez : `./gradlew test` ✅
 
 ---
@@ -68,6 +70,8 @@ Lancez : `./gradlew test` ✅
 Après un paiement réussi, appelez `DiscountCodeService.markAsUsed(customerId, discountCode)`.
 
 **Mettez à jour votre test précédent** pour asserter que le code est marqué comme utilisé.
+
+> 📝 Implémentez dans `OrderServiceTest` → cherchez **Step 3**
 
 Lancez : `./gradlew test` ✅
 
