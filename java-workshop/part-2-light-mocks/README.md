@@ -1,4 +1,4 @@
-# The Unit Question — Part 2: Constructor injection
+# The Unit Question — Part 2: Light mocks
 
 ## 🔄 What changed since Part 1
 

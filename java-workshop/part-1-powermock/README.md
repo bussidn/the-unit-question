@@ -1,4 +1,4 @@
-# The Unit Question — Part 1
+# The Unit Question — Part 1: Method isolation
 
 > **What is a "unit" in unit test?**
 

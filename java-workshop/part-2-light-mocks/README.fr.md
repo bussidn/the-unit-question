@@ -1,4 +1,4 @@
-# The Unit Question — Part 2 : Injection par constructeur
+# The Unit Question — Part 2 : Light mocks
 
 ## 🔄 Ce qui a changé depuis la Part 1
 
