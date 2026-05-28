@@ -67,6 +67,9 @@ class OrderServiceTest {
         fail("TODO: implement scenario 'discount code already used'");
     }
     // ✅ 1.5. Run: ./gradlew test — then back to README for Step 2
+    // ─── END OF STEP 1 ──────────────────────────────────────────────────────
+
+
 
     // --- Step 2: Apply discount to the price ---
     // 2.2. Create a given helper for a valid discount code.
@@ -90,6 +93,9 @@ class OrderServiceTest {
     }
 
     // ✅ 2.4. Run: ./gradlew test — then back to README for Step 3
+    // ─── END OF STEP 2 ──────────────────────────────────────────────────────
+
+
 
     // --- Step 3: Mark as used after payment ---
     // 3.2. Update the test above to also verify that the discount code is marked as used.
@@ -109,6 +115,9 @@ class OrderServiceTest {
         fail("TODO: implement scenario 'discount code marked as used after payment'");
     }
     // ✅ 3.4. Run: ./gradlew test ✅
+    // ─── END OF STEP 3 ──────────────────────────────────────────────────────
+
+
 
     // ══════════════════════════════════════════════════════════════════════════
     // REFERENCE TESTS — existing tests and helpers, for inspiration
