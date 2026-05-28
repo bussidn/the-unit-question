@@ -47,10 +47,11 @@ class OrderServiceTest {
     // YOUR EXERCISE — See README for full instructions
     // ══════════════════════════════════════════════════════════════════════════
 
-    // --- Step 1 (README → Step 1): Reject already-used discount codes ---
-    // TODO: Create an InMemoryDiscountCodeRepository (already provided in helpers).
-    //       Wire a DiscountCodeService into OrderService via the constructor.
-    //       Create a given helper to set up the discount code state.
+    // --- Step 1: Reject already-used discount codes ---
+    // 1.4. Create an InMemoryDiscountCodeRepository (already provided in helpers).
+    //      Wire a DiscountCodeService into OrderService via the constructor.
+    //      Create a given helper to set up the discount code state.
+    // 1.5. Fill in the GIVEN/WHEN/THEN below
 
     @Disabled
     @Test
@@ -65,11 +66,12 @@ class OrderServiceTest {
 
         fail("TODO: implement scenario 'discount code already used'");
     }
-    // ✅ Step 1 done → README for Step 2 instructions
+    // ✅ 1.6. Run: ./gradlew test — then back to README for Step 2
 
-    // --- Step 2 (README → Step 2): Apply discount to the price ---
-    // TODO: Create a given helper for a valid discount code.
-    //       Don't forget to set up sufficient stock.
+    // --- Step 2: Apply discount to the price ---
+    // 2.3. Create a given helper for a valid discount code.
+    //      Don't forget to set up sufficient stock.
+    // 2.4. Fill in the GIVEN/WHEN/THEN below
 
     @Disabled
     @Test
@@ -87,11 +89,12 @@ class OrderServiceTest {
         fail("TODO: implement scenario 'order with a valid discount code'");
     }
 
-    // ✅ Step 2 done → README for Step 3 instructions
+    // ✅ 2.5. Run: ./gradlew test — then back to README for Step 3
 
-    // --- Step 3 (README → Step 3): Mark as used after payment ---
-    // Update the test above to also verify that the discount code is marked as used.
-    // Hint: assertTrue(discountCodeRepository.isUsed("CUST-001", DiscountCode.SUMMER20));
+    // --- Step 3: Mark as used after payment ---
+    // 3.4. Update the test above to also verify that the discount code is marked as used.
+    //      Hint: assertTrue(discountCodeRepository.isUsed("CUST-001", DiscountCode.SUMMER20));
+    // 3.5. Fill in the GIVEN/WHEN/THEN below
 
     @Disabled
     @Test
@@ -105,6 +108,7 @@ class OrderServiceTest {
 
         fail("TODO: implement scenario 'discount code marked as used after payment'");
     }
+    // ✅ 3.6. Run: ./gradlew test ✅
 
     // ══════════════════════════════════════════════════════════════════════════
     // REFERENCE TESTS — existing tests and helpers, for inspiration

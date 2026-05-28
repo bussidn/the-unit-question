@@ -48,9 +48,9 @@ Regardez le `OrderServiceTest` existant — il a été transformé en test compo
 
 ### Étape 1 — Rejeter les codes de réduction déjà utilisés
 
-Ajoutez un champ nullable `discountCode` au record `Order` (l'enum `DiscountCode` est déjà dans `domain/`). La signature `placeOrder(Order)` reste inchangée.
+**1.1.** Ajoutez un champ nullable `discountCode` au record `Order` (l'enum `DiscountCode` est déjà dans `domain/`). La signature `placeOrder(Order)` reste inchangée.
 
-Ajoutez `DiscountCodeService` comme dépendance. Dans `placeOrder` : si un code de réduction est présent et **non disponible**, rejetez la commande.
+**1.2.** Ajoutez `DiscountCodeService` comme dépendance. Dans `placeOrder` : si un code de réduction est présent et **non disponible**, rejetez la commande.
 
 **Test à écrire :**
 
@@ -64,15 +64,13 @@ ALORS la commande est rejetée avec la raison "Discount code already used"
 ET aucun paiement n'est déclenché
 ```
 
-> 📝 Implémentez dans `OrderServiceTest` → cherchez **Step 1**
-
-Lancez : `./gradlew test` ✅
+> 📝 **1.3.** Implémentez dans `OrderServiceTest` → cherchez **Step 1**
 
 ---
 
 ### Étape 2 — Appliquer la réduction au prix
 
-Si le code de réduction est présent et disponible, utilisez `PricingService.calculateTotal(items, discountCode)` à la place de l'appel existant.
+**2.1.** Si le code de réduction est présent et disponible, utilisez `PricingService.calculateTotal(items, discountCode)` à la place de l'appel existant.
 
 **Test à écrire :**
 
@@ -87,21 +85,17 @@ ALORS le paiement est effectué pour 105.60€
 ET la commande est confirmée
 ```
 
-> 📝 Implémentez dans `OrderServiceTest` → cherchez **Step 2**
-
-Lancez : `./gradlew test` ✅
+> 📝 **2.2.** Implémentez dans `OrderServiceTest` → cherchez **Step 2**
 
 ---
 
 ### Étape 3 — Marquer le code comme utilisé après paiement
 
-Après un paiement réussi, appelez `DiscountCodeService.markAsUsed(customerId, discountCode)`.
+**3.1.** Après un paiement réussi, appelez `DiscountCodeService.markAsUsed(customerId, discountCode)`.
 
-**Mettez à jour votre test précédent** pour asserter que le code est marqué comme utilisé.
+**3.2.** **Mettez à jour votre test précédent** pour asserter que le code est marqué comme utilisé.
 
-> 📝 Implémentez dans `OrderServiceTest` → cherchez **Step 3**
-
-Lancez : `./gradlew test` ✅
+> 📝 **3.3.** Implémentez dans `OrderServiceTest` → cherchez **Step 3**
 
 ---
 

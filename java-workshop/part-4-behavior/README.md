@@ -48,9 +48,9 @@ Look at the existing `OrderServiceTest` — it has been transformed into a behav
 
 ### Step 1 — Reject already-used discount codes
 
-Add a nullable `discountCode` field to the `Order` record (the `DiscountCode` enum is already in `domain/`). The `placeOrder(Order)` signature stays the same.
+**1.1.** Add a nullable `discountCode` field to the `Order` record (the `DiscountCode` enum is already in `domain/`). The `placeOrder(Order)` signature stays the same.
 
-Add `DiscountCodeService` as a dependency. In `placeOrder`: if a discount code is present and **not available**, reject the order.
+**1.2.** Add `DiscountCodeService` as a dependency. In `placeOrder`: if a discount code is present and **not available**, reject the order.
 
 **Test to write:**
 
@@ -64,15 +64,13 @@ THEN the order is rejected with reason "Discount code already used"
 AND no payment is triggered
 ```
 
-> 📝 Now implement in `OrderServiceTest` → look for **Step 1**
-
-Run: `./gradlew test` ✅
+> 📝 **1.3.** Now implement in `OrderServiceTest` → look for **Step 1**
 
 ---
 
 ### Step 2 — Apply the discount to the price
 
-If the discount code is present and available, use `PricingService.calculateTotal(items, discountCode)` instead of the existing call.
+**2.1.** If the discount code is present and available, use `PricingService.calculateTotal(items, discountCode)` instead of the existing call.
 
 **Test to write:**
 
@@ -87,21 +85,17 @@ THEN payment is processed for €105.60
 AND the order is confirmed
 ```
 
-> 📝 Now implement in `OrderServiceTest` → look for **Step 2**
-
-Run: `./gradlew test` ✅
+> 📝 **2.2.** Now implement in `OrderServiceTest` → look for **Step 2**
 
 ---
 
 ### Step 3 — Mark the code as used after payment
 
-After successful payment, call `DiscountCodeService.markAsUsed(customerId, discountCode)`.
+**3.1.** After successful payment, call `DiscountCodeService.markAsUsed(customerId, discountCode)`.
 
-**Update your previous test** to assert the code is marked as used.
+**3.2.** **Update your previous test** to assert the code is marked as used.
 
-> 📝 Now implement in `OrderServiceTest` → look for **Step 3**
-
-Run: `./gradlew test` ✅
+> 📝 **3.3.** Now implement in `OrderServiceTest` → look for **Step 3**
 
 ---
 

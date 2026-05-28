@@ -49,9 +49,10 @@ class OrderServiceTest {
     // YOUR EXERCISE — See README for full instructions
     // ══════════════════════════════════════════════════════════════════════════
 
-    // --- Step 1 (README → Step 1): Reject already-used discount codes ---
-    // TODO: Add a DiscountCodeService mock field and inject it via the OrderService constructor.
-    //       Stub it with when(discountCodeService.checkDiscountCode(...)).thenReturn(...)
+    // --- Step 1: Reject already-used discount codes ---
+    // 1.5. Add a DiscountCodeService mock field and inject it via the OrderService constructor.
+    //      Stub it with when(discountCodeService.checkDiscountCode(...)).thenReturn(...)
+    // 1.6. Fill in the GIVEN/WHEN/THEN below
 
     @Disabled
     @Test
@@ -66,11 +67,12 @@ class OrderServiceTest {
 
         fail("TODO: implement scenario 'discount code already used'");
     }
-    // ✅ Step 1 done → README for Step 2 instructions
+    // ✅ 1.7. Run: ./gradlew test — then back to README for Step 2
 
-    // --- Step 2 (README → Step 2): Apply discount to the price ---
-    // TODO: Stub PricingService.calculateTotal to return the discounted total.
-    //       Wire all the mocks needed for a successful order.
+    // --- Step 2: Apply discount to the price ---
+    // 2.3. Stub PricingService.calculateTotal to return the discounted total.
+    //      Wire all the mocks needed for a successful order.
+    // 2.4. Fill in the GIVEN/WHEN/THEN below
 
     @Disabled
     @Test
@@ -87,11 +89,12 @@ class OrderServiceTest {
         fail("TODO: implement scenario 'order with a valid discount code'");
     }
 
-    // ✅ Step 2 done → README for Step 3 instructions
+    // ✅ 2.5. Run: ./gradlew test — then back to README for Step 3
 
-    // --- Step 3 (README → Step 3): Mark as used after payment ---
-    // Update the test above to also verify that markAsUsed is called on DiscountCodeService.
-    // Hint: verify(discountCodeService).markAsUsed(customerId, discountCode);
+    // --- Step 3: Mark as used after payment ---
+    // 3.4. Update the test above to also verify that markAsUsed is called on DiscountCodeService.
+    //      Hint: verify(discountCodeService).markAsUsed(customerId, discountCode);
+    // 3.5. Fill in the GIVEN/WHEN/THEN below
 
     @Disabled
     @Test
@@ -105,6 +108,7 @@ class OrderServiceTest {
 
         fail("TODO: implement scenario 'discount code marked as used after payment'");
     }
+    // ✅ 3.6. Run: ./gradlew test ✅
 
     // ══════════════════════════════════════════════════════════════════════════
     // REFERENCE TESTS — existing tests, for inspiration
