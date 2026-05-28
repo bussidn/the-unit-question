@@ -64,6 +64,7 @@ class OrderServiceTest {
 
         // THEN the order is rejected with reason "Discount code already used"
         // AND no payment is triggered
+        //     Hint: verifyNoInteractions(paymentService)
 
         fail("TODO: implement scenario 'discount code already used'");
     }
