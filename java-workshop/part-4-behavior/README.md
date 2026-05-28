@@ -48,11 +48,7 @@ Look at the existing `OrderServiceTest` — it has been transformed into a behav
 
 ### Step 1 — Reject already-used discount codes
 
-**1.1.** Add a nullable `discountCode` field to the `Order` record (the `DiscountCode` enum is already in `domain/`). The `placeOrder(Order)` signature stays the same.
-
-**1.2.** Add `DiscountCodeService` as a dependency. In `placeOrder`: if a discount code is present and **not available**, reject the order.
-
-**Test to write:**
+Objective: reject an order if the discount code has already been used.
 
 ```
 GIVEN an order with discount code SUMMER20
@@ -64,15 +60,18 @@ THEN the order is rejected with reason "Discount code already used"
 AND no payment is triggered
 ```
 
-> 📝 **1.3.** Now implement in `OrderServiceTest` → look for **Step 1**
+**1.1.** Add a nullable `discountCode` field to the `Order` record (the `DiscountCode` enum is already in `domain/`). The `placeOrder(Order)` signature stays the same.
+
+**1.2.** Add `DiscountCodeService` as a dependency. In `placeOrder`: if a discount code is present and **not available**, reject the order.
+
+📝 Open `OrderServiceTest` → method `p4_orderIsRejected_whenDiscountCodeIsAlreadyUsed`.
+The instructions and scenario are waiting for you in the comments.
 
 ---
 
 ### Step 2 — Apply the discount to the price
 
-**2.1.** If the discount code is present and available, use `PricingService.calculateTotal(items, discountCode)` instead of the existing call.
-
-**Test to write:**
+Objective: apply the discount to the price calculation.
 
 ```
 GIVEN an order with 2 items at €55 each (subtotal: €110)
@@ -85,17 +84,33 @@ THEN payment is processed for €105.60
 AND the order is confirmed
 ```
 
-> 📝 **2.2.** Now implement in `OrderServiceTest` → look for **Step 2**
+**2.1.** If the discount code is present and available, use `PricingService.calculateTotal(items, discountCode)` instead of the existing call.
+
+📝 Open `OrderServiceTest` → method `p4_orderIsConfirmed_whenDiscountCodeIsValid`.
+The instructions and scenario are waiting for you in the comments.
 
 ---
 
 ### Step 3 — Mark the code as used after payment
 
+Objective: after successful payment, mark the code as used. Update the Step 2 test with a new assertion:
+
+```
+GIVEN an order with 2 items at €55 each (subtotal: €110)
+AND discount code SUMMER20 (-20%)
+AND the code has not yet been used by this customer
+
+WHEN the customer places the order
+
+THEN payment is processed for €105.60
+AND the order is confirmed
+AND the discount code is marked as used   ← NEW
+```
+
 **3.1.** After successful payment, call `DiscountCodeService.markAsUsed(customerId, discountCode)`.
 
-**3.2.** **Update your previous test** to assert the code is marked as used.
-
-> 📝 **3.3.** Now implement in `OrderServiceTest` → look for **Step 3**
+📝 Open `OrderServiceTest` → method `p4_discountCodeIsMarkedAsUsed_afterSuccessfulPayment`.
+The instructions are waiting for you in the comments.
 
 ---
 

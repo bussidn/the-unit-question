@@ -48,10 +48,10 @@ class OrderServiceTest {
     // ══════════════════════════════════════════════════════════════════════════
 
     // --- Step 1: Reject already-used discount codes ---
-    // 1.4. Create an InMemoryDiscountCodeRepository (already provided in helpers).
+    // 1.3. Create an InMemoryDiscountCodeRepository (already provided in helpers).
     //      Wire a DiscountCodeService into OrderService via the constructor.
     //      Create a given helper to set up the discount code state.
-    // 1.5. Fill in the GIVEN/WHEN/THEN below
+    // 1.4. Fill in the GIVEN/WHEN/THEN below
 
     @Disabled
     @Test
@@ -66,12 +66,12 @@ class OrderServiceTest {
 
         fail("TODO: implement scenario 'discount code already used'");
     }
-    // ✅ 1.6. Run: ./gradlew test — then back to README for Step 2
+    // ✅ 1.5. Run: ./gradlew test — then back to README for Step 2
 
     // --- Step 2: Apply discount to the price ---
-    // 2.3. Create a given helper for a valid discount code.
+    // 2.2. Create a given helper for a valid discount code.
     //      Don't forget to set up sufficient stock.
-    // 2.4. Fill in the GIVEN/WHEN/THEN below
+    // 2.3. Fill in the GIVEN/WHEN/THEN below
 
     @Disabled
     @Test
@@ -89,12 +89,12 @@ class OrderServiceTest {
         fail("TODO: implement scenario 'order with a valid discount code'");
     }
 
-    // ✅ 2.5. Run: ./gradlew test — then back to README for Step 3
+    // ✅ 2.4. Run: ./gradlew test — then back to README for Step 3
 
     // --- Step 3: Mark as used after payment ---
-    // 3.4. Update the test above to also verify that the discount code is marked as used.
+    // 3.2. Update the test above to also verify that the discount code is marked as used.
     //      Hint: assertTrue(discountCodeRepository.isUsed("CUST-001", DiscountCode.SUMMER20));
-    // 3.5. Fill in the GIVEN/WHEN/THEN below
+    // 3.3. Fill in the GIVEN/WHEN/THEN below
 
     @Disabled
     @Test
@@ -108,7 +108,7 @@ class OrderServiceTest {
 
         fail("TODO: implement scenario 'discount code marked as used after payment'");
     }
-    // ✅ 3.6. Run: ./gradlew test ✅
+    // ✅ 3.4. Run: ./gradlew test ✅
 
     // ══════════════════════════════════════════════════════════════════════════
     // REFERENCE TESTS — existing tests and helpers, for inspiration

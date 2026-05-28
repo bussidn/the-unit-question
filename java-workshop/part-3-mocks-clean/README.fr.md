@@ -21,13 +21,7 @@ Jetez un œil au `OrderServiceTest` existant (`src/test/java/service/`) avant de
 
 ### Étape 1 — Rejeter les codes de réduction déjà utilisés
 
-**1.1.** Ajoutez un champ nullable `discountCode` au record `Order` (l'enum `DiscountCode` est déjà dans `domain/`). La signature `placeOrder(Order)` reste inchangée.
-
-**1.2.** Un `DiscountCodeService` est disponible dans la codebase. Ajoutez-le comme dépendance. Il fournit `checkDiscountCode(customerId, discountCode)` — retourne `true` si le code est disponible pour ce client.
-
-**1.3.** Dans `placeOrder` : si un code de réduction est présent et **non disponible**, rejetez la commande.
-
-**Test à écrire :**
+Objectif : rejeter une commande si le code de réduction a déjà été utilisé.
 
 ```
 ÉTANT DONNÉ une commande avec le code de réduction SUMMER20
@@ -39,15 +33,20 @@ ALORS la commande est rejetée avec la raison "Discount code already used"
 ET aucun paiement n'est déclenché
 ```
 
-> 📝 **1.4.** Implémentez dans `OrderServiceTest` → cherchez **Step 1**
+**1.1.** Ajoutez un champ nullable `discountCode` au record `Order` (l'enum `DiscountCode` est déjà dans `domain/`). La signature `placeOrder(Order)` reste inchangée.
+
+**1.2.** Un `DiscountCodeService` est disponible dans la codebase. Ajoutez-le comme dépendance. Il fournit `checkDiscountCode(customerId, discountCode)` — retourne `true` si le code est disponible pour ce client.
+
+**1.3.** Dans `placeOrder` : si un code de réduction est présent et **non disponible**, rejetez la commande.
+
+📝 Ouvrez `OrderServiceTest` → méthode `p3_orderIsRejected_whenDiscountCodeIsAlreadyUsed`.
+Les instructions et le scénario vous y attendent en commentaires.
 
 ---
 
 ### Étape 2 — Appliquer la réduction au prix
 
-**2.1.** Si le code de réduction est présent et disponible, utilisez `PricingService.calculateTotal(items, discountCode)` à la place de l'appel existant.
-
-**Test à écrire :**
+Objectif : appliquer la réduction au calcul du prix.
 
 ```
 ÉTANT DONNÉ une commande avec 2 articles à 55€ chacun (sous-total : 110€)
@@ -60,17 +59,33 @@ ALORS le paiement est effectué pour 105.60€
 ET la commande est confirmée
 ```
 
-> 📝 **2.2.** Implémentez dans `OrderServiceTest` → cherchez **Step 2**
+**2.1.** Si le code de réduction est présent et disponible, utilisez `PricingService.calculateTotal(items, discountCode)` à la place de l'appel existant.
+
+📝 Ouvrez `OrderServiceTest` → méthode `p3_orderIsConfirmed_whenDiscountCodeIsValid`.
+Les instructions et le scénario vous y attendent en commentaires.
 
 ---
 
 ### Étape 3 — Marquer le code comme utilisé après paiement
 
-**3.1.** Après un paiement réussi, appelez `DiscountCodeService.markAsUsed(customerId, discountCode)`.
+Objectif : après un paiement réussi, marquer le code comme utilisé. On met à jour le test de l'étape 2 avec une nouvelle assertion :
 
-**3.2.** **Mettez à jour votre test précédent** pour asserter que le code est marqué comme utilisé.
+```
+ÉTANT DONNÉ une commande avec 2 articles à 55€ chacun (sous-total : 110€)
+ET le code de réduction SUMMER20 (-20%)
+ET le code n'a pas encore été utilisé par ce client
 
-> 📝 **3.3.** Implémentez dans `OrderServiceTest` → cherchez **Step 3**
+QUAND le client valide la commande
+
+ALORS le paiement est effectué pour 105.60€
+ET la commande est confirmée
+ET le code de réduction est marqué comme utilisé   ← NOUVEAU
+```
+
+**3.1.** Appelez `DiscountCodeService.markAsUsed(customerId, discountCode)` après un paiement réussi.
+
+📝 Ouvrez `OrderServiceTest` → méthode `p3_discountCodeIsMarkedAsUsed_afterSuccessfulPayment`.
+Les instructions vous y attendent en commentaires.
 
 ---
 
