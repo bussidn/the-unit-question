@@ -25,11 +25,19 @@ Les slides Marp sont le support visuel ; ce fichier contient le narratif et les 
 - Les parties sont censées être **de plus en plus faciles** — si c'est le cas, c'est que l'approche est de plus en plus naturelle
 - Avantage de la répétition : on ne perd pas de temps à re-découvrir un domaine métier, on se concentre sur le ressenti
 
+### COup doeil dans le code
+👉 *Ouvrir le fichier et le dérouler à voix haute — il raconte le cycle de vie d'une commande :*
+
+1. **Valider** la commande (statut PENDING, items présents).
+2. **Réserver le stock** — si quelque chose est indisponible → rejet.
+3. **Calculer le prix** via `PricingService`.
+4. **Traiter le paiement** — en cas d'échec, libérer le stock et rejeter.
+5. **Créer l'expédition**, **confirmer** la commande, la **sauver**, retourner le succès.
+
 ### Conseils pratiques aux participants
 
 - **Copiez votre code de prod** d'une partie à l'autre — c'est fait pour
 - **Ouvrez chaque partie comme un projet séparé** dans votre IDE pour éviter les confusions de navigation (mauvais fichier, mauvaise part)
-- L'objectif n'est **pas de finir** — c'est de ressentir les différences
 - Travaillez **par analogie** avec les tests existants dans chaque part
 
 ---
