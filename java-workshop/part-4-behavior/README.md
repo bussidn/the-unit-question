@@ -1,4 +1,4 @@
-# The Unit Question — Part 4: Behaviour tests
+# The Unit Question — Part 4: Behavior tests
 
 ## 🔄 What changed since Part 3
 
@@ -22,12 +22,33 @@ Have a look at the existing `OrderServiceTest` (`src/test/java/service/`) before
 
 ---
 
+## 🛠️ Setup
+
+```bash
+cd java-workshop/part-4-behavior
+./gradlew test
+```
+
+💡 Open this part as a **separate IDE project** to avoid editing the wrong `OrderService`.
+
+---
+
+## 🪂 Safety net — production code
+
+The production code is identical to Part 3. **If you fall behind**, grab the reference commit and jump straight to the tests:
+
+```bash
+git cherry-pick <SHA>  # ask the facilitator for the SHA
+```
+
+---
+
 ## What is provided
 
-Look at the existing `OrderServiceTest` — it has been transformed into a behaviour test. It shows you how to:
+Look at the existing `OrderServiceTest` — it has been transformed into a behavior test. It shows you how to:
 - Wire real implementations by hand in `@BeforeEach`
 - Use `InMemoryStockRepository` and in-memory gateways
-- Assert on real behaviour instead of mock interactions
+- Assert on real behavior instead of mock interactions
 
 `InMemoryOrderRepository`, `InMemoryStockRepository` and `InMemoryDiscountCodeRepository` are available in `helper/`.
 
@@ -40,7 +61,7 @@ Look at the existing `OrderServiceTest` — it has been transformed into a behav
 
 ---
 
-## 🎯 Your mission
+## 🎯 Your mission (~13 min)
 
 `OrderService.placeOrder` does not support discount codes yet. Your job is to add this feature step by step, writing tests as you go.
 

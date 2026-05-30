@@ -10,7 +10,7 @@ Everyone talks about "unit tests", but nobody agrees on what a "unit" is.
 - Should we mock everything? Nothing? Something in between?
 - Why do some test suites break with every refactoring while others survive major changes?
 
-**This workshj'aop makes you experience different testing approaches** through hands-on exercises. You'll feel the friction of each strategy and discover which one works best for you.
+**This workshop makes you experience different testing approaches** through hands-on exercises. You'll feel the friction of each strategy and discover which one works best for you.
 
 4 parts, each with a different approach. You'll implement features and experience firsthand the pros and cons of each strategy.
 
@@ -41,7 +41,7 @@ You should see `BUILD SUCCESSFUL`. If so, you're ready!
 
 ---
 
-## 🏋️ Exercise (~15 min)
+## 🏋️ Exercise (~10 min)
 
 `OrderService.placeOrder` does not support discount codes yet. Your job is to add this feature step by step, writing tests as you go.
 

@@ -10,7 +10,28 @@ La logique métier est la même qu'en Part 1 ; seul le câblage a changé. Jetez
 
 ---
 
-## 🏋️ Exercice (~25 min)
+## 🛠️ Installation
+
+```bash
+cd java-workshop/part-2-light-mocks
+./gradlew test
+```
+
+💡 Ouvrez cette partie comme un **projet IDE séparé** pour éviter d'éditer le mauvais `OrderService`.
+
+---
+
+## 🪂 Filet de sécurité — code de production
+
+Vous allez refaire les changements de prod de la Part 1 ici (c'est rapide). **Si vous décrochez**, récupérez le commit de référence et concentrez-vous sur les tests :
+
+```bash
+git cherry-pick <SHA>  # demandez le SHA à l'animateur
+```
+
+---
+
+## 🏋️ Exercice (~13 min)
 
 `OrderService.placeOrder` ne supporte pas encore les codes de réduction. Votre mission : ajouter cette feature étape par étape, en écrivant les tests au fur et à mesure.
 

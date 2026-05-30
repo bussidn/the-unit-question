@@ -10,7 +10,28 @@ The production logic is the same as Part 1; only the wiring changed. Have a look
 
 ---
 
-## 🏋️ Exercise (~25 min)
+## 🛠️ Setup
+
+```bash
+cd java-workshop/part-2-light-mocks
+./gradlew test
+```
+
+💡 Open this part as a **separate IDE project** to avoid editing the wrong `OrderService`.
+
+---
+
+## 🪂 Safety net — production code
+
+You'll redo the Part 1 production changes here (it's quick). **If you fall behind**, grab the reference commit and jump straight to the tests:
+
+```bash
+git cherry-pick <SHA>  # ask the facilitator for the SHA
+```
+
+---
+
+## 🏋️ Exercise (~13 min)
 
 `OrderService.placeOrder` does not support discount codes yet. Your job is to add this feature step by step, writing tests as you go.
 

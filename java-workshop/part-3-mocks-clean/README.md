@@ -13,7 +13,28 @@ Have a look at the existing `OrderServiceTest` (`src/test/java/service/`) before
 
 ---
 
-## 🏋️ Exercise (~25 min)
+## 🛠️ Setup
+
+```bash
+cd java-workshop/part-3-mocks-clean
+./gradlew test
+```
+
+💡 Open this part as a **separate IDE project** to avoid editing the wrong `OrderService`.
+
+---
+
+## 🪂 Safety net — production code
+
+The production code is identical to Part 2. **If you fall behind**, grab the reference commit and jump straight to the tests:
+
+```bash
+git cherry-pick <SHA>  # ask the facilitator for the SHA
+```
+
+---
+
+## 🏋️ Exercise (~13 min)
 
 `OrderService.placeOrder` does not support discount codes yet. Your job is to add this feature step by step, writing tests as you go.
 

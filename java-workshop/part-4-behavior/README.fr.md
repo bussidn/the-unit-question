@@ -22,6 +22,27 @@ Jetez un œil au `OrderServiceTest` existant (`src/test/java/service/`) avant de
 
 ---
 
+## 🛠️ Installation
+
+```bash
+cd java-workshop/part-4-behavior
+./gradlew test
+```
+
+💡 Ouvrez cette partie comme un **projet IDE séparé** pour éviter d'éditer le mauvais `OrderService`.
+
+---
+
+## 🪂 Filet de sécurité — code de production
+
+Le code de production est identique à celui de la Part 3. **Si vous décrochez**, récupérez le commit de référence et concentrez-vous sur les tests :
+
+```bash
+git cherry-pick <SHA>  # demandez le SHA à l'animateur
+```
+
+---
+
 ## Ce qui est fourni
 
 Regardez le `OrderServiceTest` existant — il a été transformé en test comportemental. Il vous montre comment :
@@ -40,7 +61,7 @@ Regardez le `OrderServiceTest` existant — il a été transformé en test compo
 
 ---
 
-## 🎯 Votre mission
+## 🎯 Votre mission (~13 min)
 
 `OrderService.placeOrder` ne supporte pas encore les codes de réduction. Votre mission : ajouter cette feature étape par étape, en écrivant les tests au fur et à mesure.
 
