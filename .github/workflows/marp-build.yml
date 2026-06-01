@@ -1,0 +1,28 @@
+name: Build Marp slides
+
+on:
+  push:
+    paths:
+      - 'marp/slides.fr.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Marp CLI
+        run: npm install -g @marp-team/marp-cli
+
+      - name: Build HTML
+        run: marp marp/slides.fr.md -o marp/slides.fr.html
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add marp/slides.fr.html
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "chore: rebuild slides.fr.html"
+          git push
+
