@@ -129,12 +129,17 @@
 
 ### Débrief (~3 min) — points à faire émerger
 
+#### 🎯 Core — la « unit »
+
 - C'était quoi la « unit » ici ? → **une méthode**
-- Combien de lignes de **setup** pour combien de lignes d'**assertion** ? (compter à voix haute sur un test ref — typiquement 20+ lignes de plomberie pour 2-3 lignes utiles)
-- `try-with-resources` à 5 niveaux : qu'est-ce qu'on lit vraiment ?
 - Si on **renomme `isValid`** ou qu'on **inline le code de validation**, que se passe-t-il ? → tests cassent **sans qu'il y ait de régression métier**
 - `verify(constructed.get(0))` : on teste **l'ordre de construction des objets**, pas un comportement métier
-- Est-ce que ce test vous protège vraiment contre une **vraie régression** ?
+- Est-ce que ce test vous protège vraiment contre une **vraie régression** ? Qu'est-ce qui casserait ce test — un changement de comportement métier ou un refactoring interne ?
+
+#### 📎 Annexe — ergonomie et lisibilité
+
+- Combien de lignes de **setup** pour combien de lignes d'**assertion** ? (compter à voix haute — typiquement 20+ lignes de plomberie pour 2-3 lignes utiles)
+- `try-with-resources` à 5 niveaux : qu'est-ce qu'on lit vraiment ?
 - Combien de temps avant qu'un nouvel arrivant comprenne ce qu'il y a à modifier ?
 
 ---
@@ -182,12 +187,18 @@
 
 ### Débrief (~2 min) — points à faire émerger
 
+#### 🎯 Core — la « unit »
+
+- C'était quoi la « unit » ici ? → **la classe** (via injection constructeur)
+- Qu'est-ce qui a changé par rapport à P1 ? → on est passé de la méthode à la classe, mais on teste toujours des **interactions** (`verify`), pas des **résultats métier**
+- Si on change la signature d'une méthode (ajouter un paramètre à `processPayment`), **combien de tests il faut toucher** ?
+
+#### 📎 Annexe — ergonomie et observations
+
 - C'était plus rapide à écrire ? Plus lisible ? (oui, clairement — c'est même agréable)
 - **Mais regardez les répétitions** : chaque test « happy path » duplique 4 lignes de `when(...)` (stock, pricing, payment, shipping). Ouvrir 2 tests côte à côte.
 - On **mocke `PricingService`** — c'est du **calcul pur**. Pourquoi le mocker ?
   → On en fait une boîte noire alors qu'on pourrait juste l'utiliser
-- Les tests décrivent encore **les interactions** (« verify que `processPayment` a été appelé »), pas vraiment **le comportement métier**
-- Si on change la signature d'une méthode (ajouter un paramètre à `processPayment`), **combien de tests il faut toucher** ?
 
 ---
 
@@ -234,11 +245,17 @@
 
 ### Débrief (~2 min) — points à faire émerger
 
+#### 🎯 Core — la « unit »
+
+- C'était quoi la « unit » ici ? → on a essayé de passer de **la classe** à **la couche applicative** : `PricingService` n'est plus mocké, on l'utilise pour de vrai. C'est ce qu'on ferait dans un Controller où on mocke la couche suivante (usecase/domain) mais on garde les vrais mappers.
+- La « unit » a-t-elle vraiment changé entre P2 et P3 ? → à peine. Le confort a changé, pas le fond. On a toujours du `verify(...)`, `verifyNoInteractions(...)` → on teste encore des **interactions**
+- Si demain on ajoute une dépendance à `OrderService`, combien de tests à modifier ? → la fragilité structurelle reste
+
+#### 📎 Annexe — ergonomie et lisibilité
+
 - Comparez la longueur d'un test P2 vs P3 (ouvrir les deux côte à côte). Lisibilité ?
 - Sur un test P3, on lit **quoi** plutôt que **comment** → on se rapproche d'une spec
-- **Mais regardez** : on a toujours du `verify(...)`, `verifyNoInteractions(...)` → on teste encore des **interactions**
 - Les given helpers, c'est de la mécanique qu'on construit nous-mêmes pour cacher Mockito → est-ce qu'on ne réinvente pas, manuellement, une **couche d'infrastructure de test** ?
-- Question piège : si demain on ajoute une dépendance à `OrderService`, combien de tests à modifier ?
 
 ---
 
@@ -289,11 +306,18 @@
 
 ### Débrief (~2 min) — points à faire émerger
 
-- Lisibilité ? On lit **du métier** sans bruit technique.
-- Si je renomme `reserveStock` en `holdInventory`, **combien de tests cassent** ? (réponse : zéro, sauf ceux qui testent réellement le stock — et ils ne cassent que sur du vrai changement de comportement)
+#### 🎯 Core — la « unit »
+
+- C'était quoi la « unit » ici ? → **le use case, le comportement**
+- Si je renomme `reserveStock` en `holdInventory`, **combien de tests cassent** ? → zéro. En P1, un renommage cassait tout — qu'est-ce qui a changé ?
 - Est-ce que c'est encore un « test unitaire » ? **C'est tout l'enjeu de l'atelier.**
+- `placeOrder` exerce **vraiment** la chaîne complète — si une intégration interne casse, le test échoue. C'est très différent d'un test mocké.
+- 💣 **Le twist** : regardez `checkDiscountCode`. Il renvoie `true` quand le code est **déjà utilisé**, pas quand il est disponible. La spec était fausse depuis le début. En P1, P2 et P3, personne n'a vu le bug — on mockait le résultat attendu, on ne testait jamais le vrai comportement. Ici, le test exécute le vrai code, et le bug saute aux yeux. **C'est ça, la différence entre tester du câblage et tester du comportement.**
+
+#### 📎 Annexe — trade-offs pratiques
+
+- Lisibilité ? On lit **du métier** sans bruit technique.
 - Coût d'entrée : il fallait des interfaces. Mais ce sont **les mêmes interfaces qu'on poserait pour faire de l'archi hexagonale**.
-- À noter : `placeOrder` exerce **vraiment** la chaîne complète — si une intégration interne casse, le test échoue. C'est très différent d'un test mocké.
 - Question ouverte : quand un test échoue ici, le diagnostic est-il plus facile ou plus difficile ?
 
 ---
