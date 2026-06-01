@@ -5,6 +5,7 @@ paginate: true
 header: "The Unit Question"
 ---
 
+
 <!-- _class: lead -->
 
 # 🎯 The Unit Question
@@ -12,7 +13,7 @@ header: "The Unit Question"
 ## Qu'est-ce qu'un *« unit »* dans **unit test** ?
 
 <!--
-NOTES — Intro
+NOTES — Intro 
 
 OUVERTURE (~1 min)
 - « Test unitaire » : tout le monde le dit, personne ne le définit pareil.
