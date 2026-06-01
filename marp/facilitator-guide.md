@@ -221,6 +221,8 @@
 - Avec très peu d'outillage (un builder, quelques helpers, un peu de bon sens sur ce qu'on mocke), les tests deviennent **lisibles comme une spec**.
 - Ce sont de bonnes pratiques applicables **immédiatement** dans n'importe quelle base existante, sans aucun changement de design côté prod.
 
+> ⚠️ **Honnêteté intellectuelle** : reconnaître que le saut P2→P3 vient du **design des tests**, pas de la définition de "unit" — ça met du plomb dans l'aile de la thèse de l'atelier, et c'est OK de le dire.
+
 ### Lancement de l'exercice (~13 min)
 
 🎬 **Slide 8 — "Exo Partie 3"** (mémo, reste affichée pendant l'exo)
