@@ -96,7 +96,7 @@ NOTES — Cover Partie 1 (~3 min)
 - Pousser l'idée d'isolation à l'extrême → on remplace TOUT (constructeurs, statiques, méthode privée `isValid`).
 - Les 3 keywords PowerMock = les 3 outils nécessaires pour tenir cette philosophie.
 - Ce n'est PAS la « bonne » méthode — c'est le bout de la logique d'isolation.
-- Puis : passer au live-code du code de prod (~4 min) avant l'exo.
+- Puis : enchaîner sur l'exo. Les participants écriront prod ET tests, vous coderez la prod en parallèle, lentement, comme repère.
 -->
 
 ---
@@ -143,10 +143,10 @@ NOTES — Lancement Partie 1
   · `p1_orderIsRejected_whenDiscountCodeIsAlreadyUsed`
   · `p1_orderIsConfirmed_whenDiscountCodeIsValid`
   · `p1_discountCodeIsMarkedAsUsed_afterSuccessfulPayment`
-- ⚠️ Particularité Partie 1 : le code de prod est **live-codé par l'animateur** AVANT l'exo (~4 min). Les participants démarrent l'exo avec un prod déjà à jour.
+- 👨‍💻 **Geste clé Partie 1** : pendant que les participants codent, vous écrivez la prod en parallèle, **lentement**, sur écran visible. Pacer, pas devancer.
 - 💡 Astuce à rappeler : le code de prod sera identique en Partie 2 → ils pourront le recopier ou `cherry-pick`.
 - **Le but n'est PAS de finir.** Le but est de ressentir la friction d'écrire des tests dans ce style.
-- ⏱ Timer : ~10 min. Go.
+- ⏱ Timer : ~14 min. Go.
 -->
 
 ---
@@ -344,4 +344,42 @@ Conclusion à exprimer :
 - Notre parti pris : unit = comportement (use case).
 - Le vrai message : QUESTIONNEZ ce que vous mockez. Chaque mock est une dette.
 - Le réflexe à emporter : « pourquoi ne pas l'utiliser pour de vrai ? »
+
+→ Une fois la conclusion landed, passer à la slide suivante (« À quoi servent les tests unitaires ? ») pour l'image finale à emporter.
+-->
+
+---
+
+<!-- _class: lead -->
+
+# À quoi servent les tests unitaires ?
+
+<br>
+
+> Un test = une **spécification exécutable**.
+> Ce que vous testez, vous le **figez**.
+
+## Qu'est-ce qui mérite d'être figé ?
+
+<!--
+NOTES — Message de clôture (~2 min)
+
+À DIRE APRÈS QUE LA CONCLUSION DU DÉBRIEF AIT ÉTÉ DITE. C'est l'image finale à emporter, pas l'ouverture d'un nouveau débat.
+
+L'IDÉE CENTRALE
+- Un test, c'est une spec qui tourne. Tant qu'il passe, il fixe le comportement qu'il décrit.
+- Les tests sont une documentation dynamique : ils disent NON quand on essaie de changer ce qu'ils décrivent.
+- Donc : la granularité de ce que vous testez = la granularité de ce que vous bloquez.
+
+LE PIÈGE (rappel P1)
+- Tester finement un détail d'implémentation (méthode privée, ordre d'appels, construction d'objet) → vous figez ce détail.
+- Souvenez-vous P1 : renommer `isValid` ou inliner la validation cassait des tests SANS qu'il y ait de vraie régression métier. C'est exactement ça, figer ce qui ne devrait pas l'être.
+
+LE CONTRE-POINT (rappel P4)
+- En P4, on a figé le COMPORTEMENT métier (commande confirmée, stock décrémenté, paiement encaissé). Ça, ça MÉRITE d'être figé — c'est le contrat avec le métier.
+- Conséquence : ces tests survivent au refactoring et restent lisibles comme une spec dans 6 mois.
+
+LE LIEN AVEC LA CONCLUSION DU DÉBRIEF
+- C'est l'autre face de « chaque mock est une dette » : chaque assertion est un engagement. Choisissez ce sur quoi vous vous engagez.
+- La question à se poser avant d'écrire un test : « est-ce que je veux vraiment empêcher ce comportement de changer ? »
 -->
