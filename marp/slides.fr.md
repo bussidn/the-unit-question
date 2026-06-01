@@ -351,36 +351,48 @@ Conclusion à exprimer :
 
 ---
 
-<!-- _class: lead -->
+<!--
+_class: compact
+-->
+<style scoped>
+  section { font-size: 24px; }
+  h1 { margin-bottom: 0.5em; }
+  h2 { margin-top: 0.7em; margin-bottom: 0.2em; color: #444; }
+  ul:nth-of-type(1) { font-size: 32px; line-height: 1.8; font-weight: 600; }
+  ul:nth-of-type(2) { font-size: 22px; line-height: 1.5; color: #666; }
+</style>
 
 # À quoi servent les tests unitaires ?
 
-<br>
+## Avant tout
 
-> Un test = une **spécification exécutable**.
-> Ce que vous testez, vous le **figez**.
+- Validation fonctionnelle
+- Spécification
+- Documentation technique
 
-## Qu'est-ce qui mérite d'être figé ?
+## Aussi
+
+- Non-régression
+- Refactoring
+- Aide à la conception via le TDD
 
 <!--
 NOTES — Message de clôture (~2 min)
 
 À DIRE APRÈS QUE LA CONCLUSION DU DÉBRIEF AIT ÉTÉ DITE. C'est l'image finale à emporter, pas l'ouverture d'un nouveau débat.
 
-L'IDÉE CENTRALE
-- Un test, c'est une spec qui tourne. Tant qu'il passe, il fixe le comportement qu'il décrit.
-- Les tests sont une documentation dynamique : ils disent NON quand on essaie de changer ce qu'ils décrivent.
-- Donc : la granularité de ce que vous testez = la granularité de ce que vous bloquez.
+LES 3 RÔLES PRIMAIRES (à dérouler, dans l'ordre)
+- VALIDATION FONCTIONNELLE : prouver que le comportement métier est correct. C'est ce qui justifie l'existence du test.
+- SPÉCIFICATION : un test bien écrit décrit l'intention métier mieux qu'un commentaire. GIVEN / WHEN / THEN = spec exécutable.
+- DOCUMENTATION TECHNIQUE : la seule doc qui ne ment pas, parce qu'elle s'exécute. Documentation DYNAMIQUE : elle dit NON quand on essaie de changer ce qu'elle décrit.
 
-LE PIÈGE (rappel P1)
-- Tester finement un détail d'implémentation (méthode privée, ordre d'appels, construction d'objet) → vous figez ce détail.
-- Souvenez-vous P1 : renommer `isValid` ou inliner la validation cassait des tests SANS qu'il y ait de vraie régression métier. C'est exactement ça, figer ce qui ne devrait pas l'être.
+LES 3 RÔLES SECONDAIRES (mentionner brièvement, ne pas s'y attarder)
+- NON-RÉGRESSION : un bénéfice automatique des 3 premiers, pas une raison d'écrire un test.
+- REFACTORING : les tests supportent le refactoring SI ils testent le comportement et non l'implémentation (cf. P1 → P4). Effet de bord du « bien tester ».
+- TDD / DESIGN : le TDD donne du feedback sur la conception. Utile, mais c'est un outil de DESIGN — pas le but premier d'un test.
 
-LE CONTRE-POINT (rappel P4)
-- En P4, on a figé le COMPORTEMENT métier (commande confirmée, stock décrémenté, paiement encaissé). Ça, ça MÉRITE d'être figé — c'est le contrat avec le métier.
-- Conséquence : ces tests survivent au refactoring et restent lisibles comme une spec dans 6 mois.
-
-LE LIEN AVEC LA CONCLUSION DU DÉBRIEF
-- C'est l'autre face de « chaque mock est une dette » : chaque assertion est un engagement. Choisissez ce sur quoi vous vous engagez.
-- La question à se poser avant d'écrire un test : « est-ce que je veux vraiment empêcher ce comportement de changer ? »
+POURQUOI LA HIÉRARCHIE COMPTE
+- Quand on confond les rôles secondaires avec les rôles primaires, on écrit des tests pour « se protéger » plutôt que pour « spécifier » — et on se retrouve avec une suite qui fige des détails (cf. P1) au lieu du comportement (cf. P4).
+- C'est l'autre face de « chaque mock est une dette » : chaque assertion est un engagement. Choisissez ce que vous engagez.
+- Le test sert d'abord à DIRE ce que le code doit faire. Le reste suit.
 -->
