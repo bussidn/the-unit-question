@@ -27,4 +27,3 @@ jobs:
           git diff --cached --quiet && echo "No changes to commit" && exit 0
           git commit -m "chore: rebuild slides.fr.html"
           git push
-
