@@ -61,7 +61,7 @@ Regardez le `OrderServiceTest` existant — il a été transformé en test compo
 
 ---
 
-## 🎯 Votre mission (~13 min)
+## 🎯 Votre mission (~11 min)
 
 `OrderService.placeOrder` ne supporte pas encore les codes de réduction. Votre mission : ajouter cette feature étape par étape, en écrivant les tests au fur et à mesure.
 

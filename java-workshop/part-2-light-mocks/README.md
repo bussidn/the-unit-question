@@ -31,7 +31,7 @@ git cherry-pick <SHA>  # ask the facilitator for the SHA
 
 ---
 
-## 🏋️ Exercise (~13 min)
+## 🏋️ Exercise (~15 min)
 
 `OrderService.placeOrder` does not support discount codes yet. Your job is to add this feature step by step, writing tests as you go.
 

@@ -31,7 +31,7 @@ git cherry-pick <SHA>  # demandez le SHA à l'animateur
 
 ---
 
-## 🏋️ Exercice (~13 min)
+## 🏋️ Exercice (~15 min)
 
 `OrderService.placeOrder` ne supporte pas encore les codes de réduction. Votre mission : ajouter cette feature étape par étape, en écrivant les tests au fur et à mesure.
 

@@ -41,7 +41,7 @@ Vous devriez voir `BUILD SUCCESSFUL`. Si c'est le cas, vous êtes prêt !
 
 ---
 
-## 🏋️ Exercice (~10 min)
+## 🏋️ Exercice (~14 min)
 
 `OrderService.placeOrder` ne supporte pas encore les codes de réduction. Votre mission : ajouter cette feature étape par étape, en écrivant les tests au fur et à mesure.
 

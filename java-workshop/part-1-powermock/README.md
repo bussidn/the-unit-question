@@ -41,7 +41,7 @@ You should see `BUILD SUCCESSFUL`. If so, you're ready!
 
 ---
 
-## 🏋️ Exercise (~10 min)
+## 🏋️ Exercise (~14 min)
 
 `OrderService.placeOrder` does not support discount codes yet. Your job is to add this feature step by step, writing tests as you go.
 

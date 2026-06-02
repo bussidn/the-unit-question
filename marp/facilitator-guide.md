@@ -8,23 +8,24 @@
 
 ---
 
-## ⏱ Budget temps (1h45 disponibles, ~15 min de marge)
+## ⏱ Budget temps (1h45 disponibles, ~13 min de marge)
 
 | Phase | Durée | Slides |
 |---|---|---|
 | Intro | 8 min | 1 + 2 |
-| Partie 1 — présentation + **live-code prod** + exo + débrief | 3 + 4 + 10 + 3 = **20 min** | 3 (cover) + 4 (mémo exo) |
+| Partie 1 — présentation + exo (anim code en parallèle, lentement) + débrief | 3 + 13 + 3 = **19 min** | 3 (cover) + 4 (mémo exo) |
 | Transition P1 → P2 | 1 min | — |
-| Partie 2 — présentation + exo (prod + tests) + débrief | 2 + 13 + 2 = **17 min** | 5 (cover) + 6 (mémo exo) |
+| Partie 2 — présentation + exo (prod + tests) + débrief | 2 + 15 + 2 = **19 min** | 5 (cover) + 6 (mémo exo) |
 | Transition P2 → P3 | 1 min | — |
 | Partie 3 — présentation + exo + débrief | 2 + 13 + 2 = **17 min** | 7 (cover) + 8 (mémo exo) |
 | Transition P3 → P4 | 1 min | — |
-| Partie 4 — présentation + exo + débrief | 3 + 13 + 2 = **18 min** | 9 (cover) + 10 (mémo exo) |
+| Partie 4 — présentation + exo + débrief | 3 + 11 + 2 = **16 min** | 9 (cover) + 10 (mémo exo) |
 | Débrief final | 8 min | 11 |
-| **Total** | **~1h31** | |
+| Message de clôture | 2 min | 12 |
+| **Total** | **~1h32** | |
 
 📌 **Particularités** :
-- **Partie 1** : le code de prod est **live-codé** par l'animateur pendant la présentation. Pour l'exo, *« le but n'est pas de finir »*.
+- **Partie 1** : les participants écrivent **le code de prod ET les tests**. L'animateur code la prod en parallèle, **lentement**, sur un écran visible — comme un repère pour ceux qui décrochent. *« Le but n'est pas de finir »* — il s'agit surtout de **ressentir la friction** de l'isolation extrême.
 - **Parties 2/3/4** : les participants refont eux-mêmes le code de prod (c'est rapide, ils l'ont déjà fait en P1). Un `git cherry-pick <SHA>` est documenté dans chaque README comme **filet de sécurité** s'ils décrochent. **Le but, ici, est de finir.**
 
 ⚠️ Si on dérape sur la Partie 1, c'est la Partie 4 qui en pâtit — or c'est elle la destination. Tenir le timing.
@@ -76,7 +77,7 @@
 
 ---
 
-## 2. Partie 1 — Method isolation / PowerMock (~20 min)
+## 2. Partie 1 — Method isolation / PowerMock (~19 min)
 
 🎬 **Slide 3 — "Partie 1 / Method isolation"** (cover, affichée pendant les ~3 min de présentation)
 
@@ -102,30 +103,25 @@
 - `whenPrivate` / `spyOn` pour stuber jusqu'à `isValid` (méthode privée de la classe sous test)
 - Le test ne touche **que** la méthode `placeOrder` — tout le reste est simulé
 
-### Live-coding du code de prod (~4 min)
+### Lancement de l'exercice (~13 min)
 
-> 👨‍💻 **Geste clé** : l'animateur écrit le code de prod en direct pendant que la salle observe.
-> Les participants démarrent l'exo avec un code de prod **déjà à jour** et se concentrent uniquement sur les tests.
+🎬 **Slide 4 — "Exo Partie 1"** (mémo, reste affichée pendant les 14 min)
 
-- Ouvrir `OrderService` côté Part 1
-- Ajouter le champ `discountCode` dans `Order` (record)
-- Wirer `DiscountCodeService` (instanciation interne, vu qu'on n'a pas la DI en P1)
-- Ajouter la branche `if (discountCode != null && !discountCodeService.checkDiscountCode(...))` → reject
-- Brancher `PricingService.calculateTotal(items, discountCode)` quand le code est valide
-- Appeler `markAsUsed` après paiement réussi
-- Narrer en parallèle : « regardez, c'est petit côté prod — c'est sur les tests qu'on va sentir la différence »
+> 👨‍💻 **Geste clé** : pendant que les participants codent, l'animateur écrit le code de prod en parallèle, **lentement**, sur un écran visible — comme un pacer pour ceux qui se sentent dépassés. **Ne pas devancer la salle.**
 
-### Lancement de l'exercice (~10 min)
-
-🎬 **Slide 4 — "Exo Partie 1"** (mémo, reste affichée pendant les 10 min)
-
-- 3 squelettes dans `OrderServiceTest` :
+- **Côté prod** (à faire dans `OrderService`, sans DI en P1 → instanciation en dur) :
+  - Ajouter le champ nullable `discountCode` au record `Order`
+  - Wirer `DiscountCodeService` (instanciation interne)
+  - `if (discountCode != null && !discountCodeService.checkDiscountCode(...))` → reject
+  - `PricingService.calculateTotal(items, discountCode)` quand le code est valide
+  - Appeler `markAsUsed` après paiement réussi
+- **Côté tests** : 3 squelettes dans `OrderServiceTest` :
   - `p1_orderIsRejected_whenDiscountCodeIsAlreadyUsed`
   - `p1_orderIsConfirmed_whenDiscountCodeIsValid`
   - `p1_discountCodeIsMarkedAsUsed_afterSuccessfulPayment`
 - **Rappel : le but n'est pas de finir.** Le but est de ressentir.
   *(C'est la seule partie où on dit ça — sur P2/3/4, on veut qu'ils finissent.)*
-- Timer : ~10 min
+- Timer : ~13 min
 
 ### Débrief (~3 min) — points à faire émerger
 
@@ -153,7 +149,7 @@
 ---
 
 
-## 4. Partie 2 — Light mocks (~17 min)
+## 4. Partie 2 — Light mocks (~19 min)
 
 🎬 **Slide 5 — "Partie 2 / Light mocks"** (cover, affichée pendant les ~2 min de présentation)
 
@@ -170,20 +166,20 @@
 
 #### Le positionnement de cette approche
 
-> ⚠️ **À dire explicitement — important pour ne pas braquer la salle :**
+> ⚠️ **À dire explicitement :**
 >
 > Cette approche entre dans la catégorie **« choses que je vois aujourd'hui dans des bases de code écrites par des gens compétents »** — mais qui n'ont pas vu l'intérêt d'aller plus loin sur le design des tests. Pour beaucoup, c'est **suffisant** et ça leur donne la **confiance d'envoyer en prod**.
 >
 > Ce n'est pas « mauvais ». C'est juste **pas optimal** quand on regarde de près. Et c'est ce qu'on va regarder.
 
-### Lancement de l'exercice (~13 min)
+### Lancement de l'exercice (~15 min)
 
 🎬 **Slide 6 — "Exo Partie 2"** (mémo, reste affichée pendant l'exo)
 
 - 3 squelettes parallèles à la Partie 1 (préfixe `p2_`)
 - **Code de prod** : ils le refont eux-mêmes (très proche de la Partie 1, juste adapté pour la DI). Filet de sécurité : `git cherry-pick <SHA>` documenté dans le README s'ils décrochent.
 - **Le but, ici, est de finir.**
-- Timer : ~13 min
+- Timer : ~15 min
 
 ### Débrief (~2 min) — points à faire émerger
 
@@ -268,7 +264,7 @@
 
 ---
 
-## 8. Partie 4 — Behaviour tests / No mocks (~18 min)
+## 8. Partie 4 — Behaviour tests / No mocks (~16 min)
 
 🎬 **Slide 9 — "Partie 4 / Behavior tests"** (cover, affichée pendant les ~3 min de présentation)
 
@@ -295,14 +291,14 @@
 - **Coût** : il faut accepter d'introduire des interfaces côté prod et maintenir des in-memory adapters.
 - **Bénéfice** : les tests **survivent au refactoring** (renommer une méthode interne ne casse rien), et donnent une **confiance réelle** sur le comportement métier de bout en bout.
 
-### Lancement de l'exercice (~13 min)
+### Lancement de l'exercice (~11 min)
 
 🎬 **Slide 10 — "Exo Partie 4"** (mémo, reste affichée pendant l'exo)
 
 - 3 squelettes (préfixe `p4_`)
 - **Code de prod** : identique à la Partie 3 — ils peuvent le retaper ou `git cherry-pick <SHA>` (documenté dans le README)
 - `InMemoryDiscountCodeRepository` est **déjà fourni** dans `helper/` → ils n'ont qu'à wirer le `DiscountCodeService`
-- Timer : ~13 min
+- Timer : ~11 min
 
 ### Débrief (~2 min) — points à faire émerger
 
@@ -349,6 +345,38 @@
 - Mais le vrai message est plus important que la conclusion : **questionnez ce que vous mockez**. Chaque mock est une dette qu'on paie au moment de refactorer.
 - Si vous repartez avec **un seul réflexe** : avant de mocker quelque chose, demandez-vous *« pourquoi ne pas l'utiliser pour de vrai ? »*
 
+> Une fois cette conclusion exprimée, **avancer sur la slide 12** pour l'image finale à emporter.
+
+---
+
+## 10. Message de clôture (~2 min)
+
+🎬 **Slide 12 — "À quoi servent les tests unitaires ?"**
+
+### Quand l'afficher
+
+Après que la conclusion du §9 ait été dite. C'est l'**image finale** qu'on laisse à la salle — pas l'ouverture d'un nouveau débat.
+
+### Message
+
+#### Les 3 rôles à mettre en avant (à dérouler dans l'ordre)
+
+- **Validation fonctionnelle** : prouver que le comportement métier est correct. C'est ce qui justifie l'existence du test.
+- **Spécification** : un test bien écrit décrit l'intention métier mieux qu'un commentaire. GIVEN / WHEN / THEN = spec exécutable.
+- **Documentation technique** : la seule doc qui ne ment pas, parce qu'elle s'exécute. Documentation **dynamique** : elle dit *non* quand on essaie de changer ce qu'elle décrit.
+
+#### « Mais aussi » (à enchaîner d'un trait, sans s'y attarder)
+
+- **Non-régression** : bénéfice automatique des 3 premiers, pas une raison d'écrire un test.
+- **Refactoring** : les tests supportent le refactoring **si** ils testent le comportement et non l'implémentation (cf. P1 → P4). Effet de bord du « bien tester ».
+- **TDD / aide au design** : le TDD donne du feedback sur la conception. Utile, mais c'est un outil de **design** — pas le but premier d'un test.
+
+#### Pourquoi la hiérarchie compte
+
+- Quand on confond les rôles secondaires avec les rôles primaires, on écrit des tests pour *« se protéger »* plutôt que pour *« spécifier »* — et on se retrouve avec une suite qui fige des **détails** (cf. P1) au lieu du **comportement** (cf. P4).
+- C'est l'autre face de *« chaque mock est une dette »* : **chaque assertion est un engagement**. Choisissez ce que vous engagez.
+- Le test sert d'abord à **dire ce que le code doit faire**. Le reste suit.
+
 ---
 
 ## Annexes
@@ -368,6 +396,7 @@
 | Slide 9 — Cover Partie 4 | §8 (présentation) | Pendant les ~3 min de présentation |
 | Slide 10 — Mémo Exo Partie 4 | §8 (exo) | Reste affichée pendant l'exo |
 | Slide 11 — Débrief | §9 | Questions de synthèse + extensions |
+| Slide 12 — Message de clôture | §10 | Après la conclusion du débrief |
 
 > 💡 **Transitions P1→P2, P2→P3, P3→P4** : pas de slide, purement oral (la cover de la partie suivante prend le relais).
 
@@ -375,6 +404,5 @@
 
 - ❌ **Ne pas conclure trop tôt** « voilà la bonne approche » — laisser émerger
 - ❌ **Ne pas sauter le code walkthrough** en intro — c'est le repère commun pour tout l'atelier
-- ❌ **Ne pas oublier la note positive sur la Part 2** (« ce que beaucoup de gens compétents font ») — ça évite de braquer ceux qui s'y reconnaissent
 - ❌ **Ne pas dépasser sur la Part 1** : si on déborde, c'est la Part 4 qui en pâtit — or c'est elle, la destination
 - ❌ **Ne pas répondre à la place de la salle** sur les questions de débrief — silence inconfortable = bonne chose

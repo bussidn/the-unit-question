@@ -61,7 +61,7 @@ Look at the existing `OrderServiceTest` — it has been transformed into a behav
 
 ---
 
-## 🎯 Your mission (~13 min)
+## 🎯 Your mission (~11 min)
 
 `OrderService.placeOrder` does not support discount codes yet. Your job is to add this feature step by step, writing tests as you go.
 
