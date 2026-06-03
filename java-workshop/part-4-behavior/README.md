@@ -33,12 +33,12 @@ cd java-workshop/part-4-behavior
 
 ---
 
-## 🪂 Safety net — production code
+## 🪂 Fast track — production code
 
-The production code is identical to Part 3. **If you fall behind**, grab the reference commit and jump straight to the tests:
+The production code is identical to Part 3. **Want to focus on the tests?** Merge the reference branch to fast-track the production code:
 
 ```bash
-git cherry-pick <SHA>  # ask the facilitator for the SHA
+git merge part-4-prod
 ```
 
 ---

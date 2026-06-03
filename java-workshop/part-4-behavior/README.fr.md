@@ -33,12 +33,12 @@ cd java-workshop/part-4-behavior
 
 ---
 
-## 🪂 Filet de sécurité — code de production
+## 🪂 Raccourci — code de production
 
-Le code de production est identique à celui de la Part 3. **Si vous décrochez**, récupérez le commit de référence et concentrez-vous sur les tests :
+Le code de production est identique à celui de la Part 3. **Envie de vous concentrer sur les tests ?** Fusionnez la branche de référence pour récupérer directement le code de prod :
 
 ```bash
-git cherry-pick <SHA>  # demandez le SHA à l'animateur
+git merge part-4-prod
 ```
 
 ---

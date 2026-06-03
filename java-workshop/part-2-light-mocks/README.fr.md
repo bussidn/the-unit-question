@@ -21,12 +21,12 @@ cd java-workshop/part-2-light-mocks
 
 ---
 
-## 🪂 Filet de sécurité — code de production
+## 🪂 Raccourci — code de production
 
-Vous allez refaire les changements de prod de la Part 1 ici (c'est rapide). **Si vous décrochez**, récupérez le commit de référence et concentrez-vous sur les tests :
+Vous allez refaire les changements de prod de la Part 1 ici (c'est rapide). **Envie de vous concentrer sur les tests ?** Fusionnez la branche de référence pour récupérer directement le code de prod :
 
 ```bash
-git cherry-pick <SHA>  # demandez le SHA à l'animateur
+git merge part-2-prod
 ```
 
 ---

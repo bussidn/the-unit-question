@@ -74,7 +74,7 @@ _class: compact
 - 🗂️ **Ouvrez chaque partie comme un projet séparé** dans votre IDE
 - 🎯 **Travaillez par analogie** — copiez les patterns des tests existants
 - ✏️ **Code de prod** : vous le refaites à chaque partie (c'est court)
-- 🪂 **Parties 2, 3 & 4** : `git cherry-pick <SHA>` (cf. README) recopie le code de prod — filez directement aux tests
+- 🪂 **Parties 2, 3 & 4** : `git merge part-N-prod` (cf. README) récupère le code de prod — filez directement aux tests
 
 
 ---
@@ -138,7 +138,7 @@ _class: compact
 # 🏋️ Exercice Partie 2
 
 <div class="cherry-pick">
-🪂 <strong>Raccourci dispo</strong> — <code>git cherry-pick &lt;SHA&gt;</code> (cf. README) recopie le code de prod tel quel
+🪂 <strong>Raccourci dispo</strong> — <code>git merge part-2-prod</code> (cf. README) recopie le code de prod tel quel
 </div>
 
 ## Code de production
@@ -189,7 +189,7 @@ _class: compact
 # 🏋️ Exercice Partie 3
 
 <div class="cherry-pick">
-🪂 <strong>Raccourci dispo</strong> — <code>git cherry-pick &lt;SHA&gt;</code> (cf. README) recopie le code de prod tel quel
+🪂 <strong>Raccourci dispo</strong> — <code>git merge part-3-prod</code> (cf. README) recopie le code de prod tel quel
 </div>
 
 ## Code de production
@@ -240,7 +240,7 @@ _class: compact
 # 🏋️ Exercice Partie 4
 
 <div class="cherry-pick">
-🪂 <strong>Raccourci dispo</strong> — <code>git cherry-pick &lt;SHA&gt;</code> (cf. README) recopie le code de prod tel quel
+🪂 <strong>Raccourci dispo</strong> — <code>git merge part-4-prod</code> (cf. README) recopie le code de prod tel quel
 </div>
 
 ## Code de production

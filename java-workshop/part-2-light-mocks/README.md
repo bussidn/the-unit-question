@@ -21,12 +21,12 @@ cd java-workshop/part-2-light-mocks
 
 ---
 
-## 🪂 Safety net — production code
+## 🪂 Fast track — production code
 
-You'll redo the Part 1 production changes here (it's quick). **If you fall behind**, grab the reference commit and jump straight to the tests:
+You'll redo the Part 1 production changes here (it's quick). **Want to focus on the tests?** Merge the reference branch to fast-track the production code:
 
 ```bash
-git cherry-pick <SHA>  # ask the facilitator for the SHA
+git merge part-2-prod
 ```
 
 ---
