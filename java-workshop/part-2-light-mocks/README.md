@@ -26,7 +26,7 @@ cd java-workshop/part-2-light-mocks
 You'll redo the Part 1 production changes here (it's quick). **Want to focus on the tests?** Merge the reference branch to fast-track the production code:
 
 ```bash
-git merge part-2-prod
+git merge --no-edit origin/part-2-prod
 ```
 
 ---

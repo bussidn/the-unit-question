@@ -4,7 +4,7 @@
 > Les slides Marp (`slides.fr.md`) sont le support visuel ; ce fichier contient le narratif.
 > 👉 À garder ouvert sur un second écran pendant l'animation.
 
-> 📌 **TODO avant le J** : pousser les branches de référence du code de prod (`part-2-prod`, `part-3-prod`, `part-4-prod`) sur le remote pour que les participants puissent faire `git merge part-N-prod` (READMEs et slides mémos pointent déjà dessus). Sans ça, le raccourci `git merge` ne marche pas.
+> 📌 **TODO avant le J** : pousser les branches de référence du code de prod (`part-2-prod`, `part-3-prod`, `part-4-prod`) sur le remote pour que les participants puissent faire `git merge --no-edit origin/part-N-prod` (READMEs et slides mémos pointent déjà dessus). Sans ça, le raccourci `git merge` ne marche pas.
 
 ---
 
@@ -26,7 +26,7 @@
 
 📌 **Particularités** :
 - **Partie 1** : les participants écrivent **le code de prod ET les tests**. L'animateur code la prod en parallèle, **lentement**, sur un écran visible — comme un repère pour ceux qui décrochent. *« Le but n'est pas de finir »* — il s'agit surtout de **ressentir la friction** de l'isolation extrême.
-- **Parties 2/3/4** : les participants refont eux-mêmes le code de prod (c'est rapide, ils l'ont déjà fait en P1). Un `git merge part-N-prod` est documenté dans chaque README comme **raccourci** pour filer directement aux tests. **Le but, ici, est de finir.**
+- **Parties 2/3/4** : les participants refont eux-mêmes le code de prod (c'est rapide, ils l'ont déjà fait en P1). Un `git merge --no-edit origin/part-N-prod` est documenté dans chaque README comme **raccourci** pour filer directement aux tests. **Le but, ici, est de finir.**
 
 ⚠️ Si on dérape sur la Partie 1, c'est la Partie 4 qui en pâtit — or c'est elle la destination. Tenir le timing.
 
@@ -73,7 +73,7 @@
 
 - **Travaillez par analogie** avec les tests existants dans chaque partie — copiez le pattern
 - **Ouvrez chaque partie comme un projet séparé** dans votre IDE pour éviter les confusions de navigation (mauvais fichier, mauvaise part)
-- **Code de prod** : à chaque partie, vous le refaites vous-mêmes (c'est court). Envie de vous concentrer sur les tests ? Un `git merge part-N-prod` documenté dans le README de chaque partie récupère le code de prod directement
+- **Code de prod** : à chaque partie, vous le refaites vous-mêmes (c'est court). Envie de vous concentrer sur les tests ? Un `git merge --no-edit origin/part-N-prod` documenté dans le README de chaque partie récupère le code de prod directement
 
 ---
 
@@ -177,7 +177,7 @@
 🎬 **Slide 6 — "Exo Partie 2"** (mémo, reste affichée pendant l'exo)
 
 - 3 squelettes parallèles à la Partie 1 (préfixe `p2_`)
-- **Code de prod** : ils le refont eux-mêmes (très proche de la Partie 1, juste adapté pour la DI). Raccourci : `git merge part-2-prod` documenté dans le README pour filer directement aux tests.
+- **Code de prod** : ils le refont eux-mêmes (très proche de la Partie 1, juste adapté pour la DI). Raccourci : `git merge --no-edit origin/part-2-prod` documenté dans le README pour filer directement aux tests.
 - **Le but, ici, est de finir.**
 - Timer : ~15 min
 
@@ -235,7 +235,7 @@
 🎬 **Slide 8 — "Exo Partie 3"** (mémo, reste affichée pendant l'exo)
 
 - 3 squelettes (préfixe `p3_`)
-- **Code de prod** : identique à la Partie 2 — ils peuvent le retaper ou `git merge part-3-prod` (documenté dans le README)
+- **Code de prod** : identique à la Partie 2 — ils peuvent le retaper ou `git merge --no-edit origin/part-3-prod` (documenté dans le README)
 - **Astuce à rappeler** : ils peuvent (et doivent) écrire leur propre `givenDiscountCodeIsAvailable(...)` / `givenDiscountCodeIsAlreadyUsed(...)` — c'est l'esprit
 - Timer : ~13 min
 
@@ -296,7 +296,7 @@
 🎬 **Slide 10 — "Exo Partie 4"** (mémo, reste affichée pendant l'exo)
 
 - 3 squelettes (préfixe `p4_`)
-- **Code de prod** : identique à la Partie 3 — ils peuvent le retaper ou `git merge part-4-prod` (documenté dans le README)
+- **Code de prod** : identique à la Partie 3 — ils peuvent le retaper ou `git merge --no-edit origin/part-4-prod` (documenté dans le README)
 - `InMemoryDiscountCodeRepository` est **déjà fourni** dans `helper/` → ils n'ont qu'à wirer le `DiscountCodeService`
 - Timer : ~11 min
 

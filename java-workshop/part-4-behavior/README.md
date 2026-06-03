@@ -38,7 +38,7 @@ cd java-workshop/part-4-behavior
 The production code is identical to Part 3. **Want to focus on the tests?** Merge the reference branch to fast-track the production code:
 
 ```bash
-git merge part-4-prod
+git merge --no-edit origin/part-4-prod
 ```
 
 ---

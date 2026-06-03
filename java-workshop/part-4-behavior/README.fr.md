@@ -38,7 +38,7 @@ cd java-workshop/part-4-behavior
 Le code de production est identique à celui de la Part 3. **Envie de vous concentrer sur les tests ?** Fusionnez la branche de référence pour récupérer directement le code de prod :
 
 ```bash
-git merge part-4-prod
+git merge --no-edit origin/part-4-prod
 ```
 
 ---

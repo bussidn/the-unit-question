@@ -26,7 +26,7 @@ cd java-workshop/part-2-light-mocks
 Vous allez refaire les changements de prod de la Part 1 ici (c'est rapide). **Envie de vous concentrer sur les tests ?** Fusionnez la branche de référence pour récupérer directement le code de prod :
 
 ```bash
-git merge part-2-prod
+git merge --no-edit origin/part-2-prod
 ```
 
 ---

@@ -29,7 +29,7 @@ cd java-workshop/part-3-mocks-clean
 The production code is identical to Part 2. **Want to focus on the tests?** Merge the reference branch to fast-track the production code:
 
 ```bash
-git merge part-3-prod
+git merge --no-edit origin/part-3-prod
 ```
 
 ---

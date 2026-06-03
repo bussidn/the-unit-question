@@ -29,7 +29,7 @@ cd java-workshop/part-3-mocks-clean
 Le code de production est identique à celui de la Part 2. **Envie de vous concentrer sur les tests ?** Fusionnez la branche de référence pour récupérer directement le code de prod :
 
 ```bash
-git merge part-3-prod
+git merge --no-edit origin/part-3-prod
 ```
 
 ---
