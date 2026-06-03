@@ -24,12 +24,26 @@ _class: compact
   ul { line-height: 1.8; }
 </style>
 
-# 💡 Conseils pratiques
+# 🛠️ Setup
 
-- 🎯 **Travaillez par analogie** — copiez les patterns des tests existants
-- 🗂️ **Ouvrez chaque partie comme un projet séparé** dans votre IDE
-- ✏️ **Code de prod** : vous le refaites à chaque partie (c'est court)
-- 🪂 Décroché ? `git cherry-pick <SHA>` documenté dans chaque README
+- 📦 **Repo** : `github.com/bussidn/the-unit-question`
+- ☕ **Java 21** requis
+- 💻 Votre **IDE préféré** (IntelliJ, VS Code, …)
+
+
+---
+
+<!-- _class: lead -->
+
+# 👋 Qui parle ?
+
+**Doriane Bussi** — *« la test freak »* 🧪
+
+**Amélie Morille** — *« la test-curieuse »* 🔍️
+
+👭 Leurs points communs : 
+- diplomées de l'**ENSMA** 🎓 *(ingé méca & aéro ✈️)*
+- développeuses **@sunday** 
 
 
 ---
@@ -42,6 +56,25 @@ _class: compact
 > Une méthode sous test. **Tout le reste mocké.**
 
 `mockConstruction` · `mockStatic` · `whenPrivate`
+
+
+---
+
+<!--
+_class: compact
+-->
+<style scoped>
+  section { font-size: 26px; }
+  h1 { margin-bottom: 0.6em; }
+  ul { line-height: 1.8; }
+</style>
+
+# 💡 Conseils pratiques
+
+- 🗂️ **Ouvrez chaque partie comme un projet séparé** dans votre IDE
+- 🎯 **Travaillez par analogie** — copiez les patterns des tests existants
+- ✏️ **Code de prod** : vous le refaites à chaque partie (c'est court)
+- 🪂 **Parties 2, 3 & 4** : `git cherry-pick <SHA>` (cf. README) recopie le code de prod — filez directement aux tests
 
 
 ---
@@ -72,8 +105,7 @@ _class: compact
 > `checkDiscountCode(customerId, code)` retourne `true` si le code est disponible
 
 ## Tests
-
-Complétez les squelettes existants dans `OrderServiceTest`.
+3 squelettes `p1_*` dans `OrderServiceTest`.
 
 💡 **Travaillez par analogie** avec les tests existants — suivez les mêmes patterns !
 
