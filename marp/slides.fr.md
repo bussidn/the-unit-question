@@ -60,7 +60,7 @@ _class: compact
 
 ## Code de production
 
-**`Order`** — ajouter un champ nullable `DiscountCode` *(l'enum existe dans `domain/`)*
+**`Order`** — ajouter un champ `DiscountCode` *(l'enum existe dans `domain/`)*
 **`OrderService`** — câbler `DiscountCodeService` *(déjà fourni)* et modifier `placeOrder` :
 
 | | Modification |
@@ -111,7 +111,7 @@ _class: compact
 
 ## Code de production
 
-**`Order`** — ajouter un champ nullable `DiscountCode` *(l'enum existe dans `domain/`)*
+**`Order`** — ajouter un champ `DiscountCode` *(l'enum existe dans `domain/`)*
 **`OrderService`** — câbler `DiscountCodeService` *(déjà fourni)* et modifier `placeOrder` :
 
 | | Modification |
@@ -162,7 +162,7 @@ _class: compact
 
 ## Code de production
 
-**`Order`** — ajouter un champ nullable `DiscountCode` *(l'enum existe dans `domain/`)*
+**`Order`** — ajouter un champ `DiscountCode` *(l'enum existe dans `domain/`)*
 **`OrderService`** — câbler `DiscountCodeService` *(déjà fourni)* et modifier `placeOrder` :
 
 | | Modification |
@@ -213,7 +213,7 @@ _class: compact
 
 ## Code de production
 
-**`Order`** — ajouter un champ nullable `DiscountCode` *(l'enum existe dans `domain/`)*
+**`Order`** — ajouter un champ `DiscountCode` *(l'enum existe dans `domain/`)*
 **`OrderService`** — câbler `DiscountCodeService` *(déjà fourni)* et modifier `placeOrder` :
 
 | | Modification |

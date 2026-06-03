@@ -54,7 +54,7 @@ ALORS la commande est rejetée avec la raison "Discount code already used"
 ET aucun paiement n'est déclenché
 ```
 
-**1.1.** Ajoutez un champ nullable `discountCode` au record `Order` (l'enum `DiscountCode` est déjà dans `domain/`). La signature `placeOrder(Order)` reste inchangée.
+**1.1.** Ajoutez un champ `discountCode` au record `Order` (l'enum `DiscountCode` est déjà dans `domain/`). La signature `placeOrder(Order)` reste inchangée.
 
 **1.2.** Un `DiscountCodeService` est disponible dans la codebase. Ajoutez-le comme dépendance. Il fournit `checkDiscountCode(customerId, discountCode)` — retourne `true` si le code est disponible pour ce client.
 

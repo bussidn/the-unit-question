@@ -81,7 +81,7 @@ THEN the order is rejected with reason "Discount code already used"
 AND no payment is triggered
 ```
 
-**1.1.** Add a nullable `discountCode` field to the `Order` record (the `DiscountCode` enum is already in `domain/`). The `placeOrder(Order)` signature stays the same.
+**1.1.** Add a `discountCode` field to the `Order` record (the `DiscountCode` enum is already in `domain/`). The `placeOrder(Order)` signature stays the same.
 
 **1.2.** Add `DiscountCodeService` as a dependency. In `placeOrder`: if a discount code is present and **not available**, reject the order.
 

@@ -110,7 +110,7 @@
 > 👨‍💻 **Geste clé** : pendant que les participants codent, l'animateur écrit le code de prod en parallèle, **lentement**, sur un écran visible — comme un pacer pour ceux qui se sentent dépassés. **Ne pas devancer la salle.**
 
 - **Côté prod** (à faire dans `OrderService`, sans DI en P1 → instanciation en dur) :
-  - Ajouter le champ nullable `discountCode` au record `Order`
+  - Ajouter le champ `discountCode` au record `Order`
   - Wirer `DiscountCodeService` (instanciation interne)
   - `if (discountCode != null && !discountCodeService.checkDiscountCode(...))` → reject
   - `PricingService.calculateTotal(items, discountCode)` quand le code est valide
