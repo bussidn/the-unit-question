@@ -1,0 +1,56 @@
+using Part2.LightMocks.Domain;
+using Part2.LightMocks.Repository;
+
+namespace Part2.LightMocks.Service;
+
+public class OrderCancellationService
+{
+    private readonly IOrderRepository _orderRepository;
+    private readonly IPaymentService _paymentService;
+    private readonly IStockService _stockService;
+    private readonly IShippingService _shippingService;
+
+    public OrderCancellationService(
+        IOrderRepository orderRepository,
+        IPaymentService paymentService,
+        IStockService stockService,
+        IShippingService shippingService)
+    {
+        _orderRepository = orderRepository;
+        _paymentService = paymentService;
+        _stockService = stockService;
+        _shippingService = shippingService;
+    }
+
+    public CancellationResult CancelOrder(string orderId)
+    {
+        var order = _orderRepository.FindById(orderId);
+        if (order == null)
+        {
+            return new CancellationResult.Failure("Order not found");
+        }
+
+        if (order.Status != OrderStatus.Confirmed)
+        {
+            return new CancellationResult.Failure("Order cannot be cancelled");
+        }
+
+        if (order.TransactionId != null && !_paymentService.RefundPayment(order.TransactionId))
+        {
+            return new CancellationResult.Failure("Refund failed");
+        }
+
+        var reservations = order.Items
+            .Select(item => new StockReservation(item.ProductId, item.Quantity, true))
+            .ToList();
+        _stockService.ReleaseStock(reservations);
+
+        if (order.TrackingNumber != null && !_shippingService.CancelShipment(order.TrackingNumber))
+        {
+            return new CancellationResult.Failure("Shipment cancellation failed");
+        }
+
+        _orderRepository.UpdateStatus(orderId, OrderStatus.Cancelled);
+        return new CancellationResult.Success();
+    }
+}
