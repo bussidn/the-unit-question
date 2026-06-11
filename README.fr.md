@@ -23,6 +23,7 @@ Les consignes détaillées, les scénarios métier et la feature à implémenter
 ## 💻 Commencer
 
 - **Java** — [Commencer par la Part 1](java-workshop/part-1-powermock/README.fr.md)
+- **C#** — [Commencer par la Partie 1](csharp-workshop/Part1.StaticDeps/README.fr.md)
 
 ## 📄 Licence
 

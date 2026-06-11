@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/Part1/">
+    <Project Path="Part1.StaticDeps/Part1.StaticDeps.csproj" />
+    <Project Path="Part1.StaticDeps.Tests/Part1.StaticDeps.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Part2/">
+    <Project Path="Part2.LightMocks/Part2.LightMocks.csproj" />
+    <Project Path="Part2.LightMocks.Tests/Part2.LightMocks.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Part3/">
+    <Project Path="Part3.MocksClean/Part3.MocksClean.csproj" />
+    <Project Path="Part3.MocksClean.Tests/Part3.MocksClean.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Part4/">
+    <Project Path="Part4.Behavior/Part4.Behavior.csproj" />
+    <Project Path="Part4.Behavior.Tests/Part4.Behavior.Tests.csproj" />
+  </Folder>
+</Solution>

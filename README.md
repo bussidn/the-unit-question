@@ -25,6 +25,7 @@ Detailed instructions, business scenarios, and the feature to implement are prov
 ## 💻 Get started
 
 - **Java** — [Start with Part 1](java-workshop/part-1-powermock/README.md)
+- **C#** — [Start with Part 1](csharp-workshop/Part1.StaticDeps/README.md)
 
 ## 📄 License
 
